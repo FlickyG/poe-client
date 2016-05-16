@@ -1,0 +1,58 @@
+https://www.pathofexile.com/character-window/get-account-name
+
+https://www.pathofexile.com/character-window/get-characters
+
+https://www.pathofexile.com/character-window/get-stash-items?league= [League] &tabs=1&tabIndex= [Stashnumber] &accountName= [AccountName]
+
+http://www.pathofexile.com/character-window/get-items?character= [Charname] &accountName= [AccountName]
+
+
+
+>>> pprint.pprint(x['tabs'][121])
+{'colour': {'b': 0, 'g': 128, 'r': 99},
+ 'hidden': False,
+ 'i': 121,
+ 'id': '893fa9dbdc22cb1d7ddbdc21413c06f1e72063cfd387441c6ac2bb5652709eda',
+ 'n': '20%',
+ 'pi': False,
+ 'selected': False,
+ 'srcC': '/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjI7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/d6161fcf22/Stash_TabC.png',
+ 'srcL': '/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjE7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/c64747b68d/Stash_TabL.png',
+ 'srcR': '/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjM7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/1185e76da6/Stash_TabR.png'}
+
+
+ 
+ 
+ 
+ >>> pprint.pprint(x['items'][42])
+{'corrupted': False,
+ 'descrText': 'Place into an item socket of the right colour to gain this '
+              'skill. Right click to remove from a socket.',
+ 'frameType': 4,
+ 'h': 1,
+ 'icon': 'https://p7p4m6s5.ssl.hwcdn.net/image/Art/2DItems/Gems/Portal.png?scale=1&w=1&h=1&v=fd6ee627290a2740288252707d190b673',
+ 'id': '205cc106152ca19f6238cdc0dc7f31d4ef7732dae12fc049af3c69a4d0276007',
+ 'identified': True,
+ 'ilvl': 0,
+ 'inventoryId': 'Stash3',
+ 'league': 'Standard',
+ 'lockedToCharacter': False,
+ 'name': '',
+ 'properties': [{'displayMode': 0, 'name': 'Spell', 'values': []},
+                {'displayMode': 0,
+                 'name': 'Level',
+                 'values': [['1 (Max)', 0]]},
+                {'displayMode': 0, 'name': 'Mana Cost', 'values': [['0', 0]]},
+                {'displayMode': 0,
+                 'name': 'Cast Time',
+                 'values': [['2.50 sec', 0]]}],
+ 'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['10', 0]]}],
+ 'secDescrText': "Creates a portal to the current area's town.",
+ 'socketedItems': [],
+ 'sockets': [],
+ 'support': False,
+ 'typeLine': 'Portal',
+ 'verified': False,
+ 'w': 1,
+ 'x': 4,
+ 'y': 11}
