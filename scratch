@@ -3,6 +3,8 @@ https://www.pathofexile.com/character-window/get-account-name
 https://www.pathofexile.com/character-window/get-characters
 
 https://www.pathofexile.com/character-window/get-stash-items?league= [League] &tabs=1&tabIndex= [Stashnumber] &accountName= [AccountName]
+https://www.pathofexile.com/character-window/get-stash-items?league=Standard&tabs=1&tabIndex=0&accountName=greenmasteflick
+
 
 http://www.pathofexile.com/character-window/get-items?character= [Charname] &accountName= [AccountName]
 
@@ -56,3 +58,46 @@ http://www.pathofexile.com/character-window/get-items?character= [Charname] &acc
  'w': 1,
  'x': 4,
  'y': 11}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ ## an exmaple of a rare chest 
+ >>> pprint.pprint(some_items[0])
+{'corrupted': False,
+ 'explicitMods': ['+12 to Intelligence',
+                  '+215 to Armour',
+                  '+6 to maximum Life',
+                  '+4 to maximum Energy Shield',
+                  '+41% to Lightning Resistance'],
+ 'frameType': 2,
+ 'h': 3,
+ 'icon': 'https://p7p4m6s5.ssl.hwcdn.net/image/Art/2DItems/Armours/BodyArmours/BodyStrInt3C.png?scale=1&w=2&h=3&v=bbdf9f67046cb1f1c0311066d0f7fada3',
+ 'id': '9b717661d98da82127dce95f6006dc5609bf2b5d11b79f702141d4e244c698c8',
+ 'identified': True,
+ 'ilvl': 75,
+ 'inventoryId': 'Stash42',
+ 'league': 'Perandus',
+ 'lockedToCharacter': False,
+ 'name': '<<set:MS>><<set:M>><<set:S>>Viper Keep',
+ 'properties': [{'displayMode': 0, 'name': 'Armour', 'values': [['501', 1]]},
+                {'displayMode': 0,
+                 'name': 'Energy Shield',
+                 'values': [['102', 1]]}],
+ 'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['70', 0]]},
+                  {'displayMode': 1, 'name': 'Str', 'values': [['99', 0]]},
+                  {'displayMode': 1, 'name': 'Int', 'values': [['115', 0]]}],
+ 'socketedItems': [],
+ 'sockets': [{'attr': 'I', 'group': 0}],
+ 'typeLine': 'Saintly Chainmail',
+ 'verified': False,
+ 'w': 2,
+ 'x': 0,
+ 'y': 0}
+>>> 
+ 

@@ -118,13 +118,12 @@ def  get_equiped_items(values, characters, account_name):
 #get stash items
 
 def get_stash_items(sessid, tabIndex, the_account):
-    league = "Standard"
+    league = "Perandus"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex, acc = the_account.account_name))
     resp = s.get(marketStatUrl, cookies = {'POESESSID': sessid})
     stash_items = resp.json()
-    #print("stash_items", stash_items)
     return stash_items
     
 def get_tab_numbers_and_names(data):
@@ -177,40 +176,101 @@ s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
 COOKIES = {'greenmasterflick': '9bc6ad9b60bcfd4d8521c6a0fa6d146c'}
 
-#get account name
-for keys, values in COOKIES.items():
-    marketStatUrl = "https://www.pathofexile.com/character-window/get-account-name"
-    #print("values", values)
-    resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
-    account_name = resp.json()
-    print("accounts Names!", account_name)
-    for key, value in account_name.items():
-        print("print account!", key, value)
-        ACCOUNTS.append(account(value))
-    for accounts in ACCOUNTS:
-        print ("values and stuff", values, 0, accounts)
-        #get tabs
-        print(accounts.account_name)
-        tabs = get_tabs(values, accounts)
-        for tab in tabs:
-            print (tab.name)
-            #get stash items
-            x = get_stash_items(value, tab.id, accounts)
-            pprint.pprint(x)
-        #get character names
-        marketStatUrl = "https://www.pathofexile.com/character-window/get-characters"
-        resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
-        for the_characters in resp.json():
-            pass
-            #CHARACTERS.append(poe_character(the_characters))
-            #print("the_characters", the_characters)
-        for the_character in CHARACTERS:
-            pass #get_equiped_items(values, the_character, accounts.account_name)
 
-        
-            
-            
-    
+def scrape_data():
+    for keys, values in COOKIES.items():
+        marketStatUrl = "https://www.pathofexile.com/character-window/get-account-name"
+        #print("values", values)
+        resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
+        account_name = resp.json()
+        print("accounts Names!", account_name)
+        for key, value in account_name.items():
+            print("print account!", key, value)
+            ACCOUNTS.append(account(value))
+
+#get account name
+def scrape_all_data():
+    for keys, values in COOKIES.items():
+        marketStatUrl = "https://www.pathofexile.com/character-window/get-account-name"
+        #print("values", values)
+        resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
+        account_name = resp.json()
+        print("accounts Names!", account_name)
+        for key, value in account_name.items():
+            print("print account!", key, value)
+            ACCOUNTS.append(account(value))
+        for accounts in ACCOUNTS:
+            print ("values and stuff", values, 0, accounts)
+            #get tabs
+            print(accounts.account_name)
+            tabs = get_tabs(values, accounts)
+            for tab in tabs:
+                #get stash items
+                time.sleep(1)
+                x = get_stash_items(values, tab.id, accounts)
+                for item in x["items"]:
+                    pprint.pprint(item["typeLine"])
+            #get character names
+            marketStatUrl = "https://www.pathofexile.com/character-window/get-characters"
+            resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
+            for the_characters in resp.json():
+                pass
+                #CHARACTERS.append(poe_character(the_characters))
+                #print("the_characters", the_characters)
+            for the_character in CHARACTERS:
+                pass #get_equiped_items(values, the_character, accounts.account_name)
+
+#ACCOUNTS[0].account_name          
+#ACCOUNTS[0].id
+
+def items_in_tab(tab_number):
+    ITEMS = []
+    items = get_stash_items(COOKIES[ACCOUNTS[0].account_name], tab_number, ACCOUNTS[0])
+    for item in items["items"]:
+        ITEMS.append(item)
+        for item in ITEMS:
+            print(item["name"], "|", item["typeLine"])
+            pprint.pprint(item)
+    return ITEMS
+
+
+scrape_data()            
+x = get_tabs(COOKIES[ACCOUNTS[0].account_name], ACCOUNTS[0])
+for y in x:
+    print (y.id, "|", y.name)
+some_items = items_in_tab(41)
+for items in some_items:
+    if 'descrText' in items:
+        # currecy, gems, cards
+        print(items['typeLine'])
+
+
+for items in some_items:
+    if items['ilvl'] == 0: #currency,  cards, gems
+        if 'secDescrText' in items: #gems
+            pass
+            #print(items['typeLine'])
+            #pprint.pprint(items)
+        else:
+            pass
+    elif items['ilvl'] > 0:
+        if 'Amulet' in items['typeLine'] or 'Ring' in items['typeLine']:
+            pass
+        elif (items['typeLine'] and items['name']):
+            #rare items, and magic ones too?
+            print("'typeLine' and 'name'", items['typeLine'])
+            the_keys = list(items.keys())
+            print(len(the_keys))
+        elif ("Sacrifice at " in items['typeLine']):
+            pass
+        elif ("Flask" in items['typeLine']):
+            #print ('flask', items['typeLine'])
+            pass
+        else:
+            print("else", items['typeLine'], items['name'])
+        #pprint.pprint(items)
+            #print (items['typeLine'], items['ilvl'], items['name'])
+
 #print(CHARACTERS)
 '''
 #get active leagues
