@@ -4,6 +4,19 @@ import time, requests, requests_cache
 from bs4 import BeautifulSoup
 import re
 from email._header_value_parser import Section
+import psycopg2
+import logging, logging.config
+
+logging.config.fileConfig('poe_tools_logging.conf')
+logger = logging.getLogger(__name__)
+logger.debug("hello world")
+print(__name__)
+
+def write_weapon_types(list):
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    
+
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
@@ -16,6 +29,18 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
             time.sleep(timeout)
         return response
     return hook
+
+requests_cache.install_cache('first_go', expires_after = 1)
+requests_cache.clear()
+s =  requests.Session()
+s.hooks = {'response': make_throttle_hook(0.1)}
+
+url_weap = "https://www.pathofexile.com/item-data/weapon"
+url_clothes = "http://www.pathofexile.com/item-data/armour"
+url_jewelry = "http://www.pathofexile.com/item-data/jewelry"
+url_prefixes = "http://www.pathofexile.com/item-data/prefixmod"
+url_suffixes = "http://www.pathofexile.com/item-data/suffixmod"
+
 
 def parse_weapon(item_data):
     item = {}
@@ -42,6 +67,7 @@ def parse_weapon(item_data):
             item["max_implicit_value"] = item_data[1][1].get_text().split()[2]
         else:
             item["max_implicit_value"] = item_data[1][1].get_text().split()[0]
+        return item
     except IndexError:
         pass   
     
@@ -236,18 +262,8 @@ def parse_suffixes(item_data):
             item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
     print(item)
 
-requests_cache.install_cache('first_go', expires_after = 1)
-requests_cache.clear()
-s =  requests.Session()
-s.hooks = {'response': make_throttle_hook(0.1)}
-
-url_weap = "https://www.pathofexile.com/item-data/weapon"
-url_clothes = "http://www.pathofexile.com/item-data/armour"
-url_jewelry = "http://www.pathofexile.com/item-data/jewelry"
-url_prefixes = "http://www.pathofexile.com/item-data/prefixmod"
-url_suffixes = "http://www.pathofexile.com/item-data/suffixmod"
-
 def get_weapons():
+    weapon_types = []
     resp = s.get(url_weap)
     soup = BeautifulSoup(resp.text, 'html.parser')
     #print all weapon names
@@ -256,13 +272,13 @@ def get_weapons():
     for y in weapons:
         a = y.find_all("td", {"class": "name"})
         #print (a[0].text)
-    print ("### END OF PRINTIONG ALL WEAPON NAMES ###")
-        
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
-    
+    print ("### END OF PRINTIONG ALL WEAPON NAMES ###")        
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
     #print all item typyes
     for item_type in all_items:
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        print(w_type)
+        weapon_types.append(w_type)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
@@ -275,8 +291,9 @@ def get_weapons():
                 x = x+1
                 implicits = data[x].find_all("td")
                 item_data.append(implicits)
-                parse_weapon(item_data)
+                item = parse_weapon(item_data)
                 x = x+1
+    write_weapon_types(weapon_types)
 
 def get_clothes():
     resp = s.get(url_clothes)
@@ -391,9 +408,9 @@ def get_suffixes(): #layout is different - implicit mods are on the same line
                 parse_suffixes(item_data)
                 x = x+1              
  
-#get_weapons()
+get_weapons()
 #get_clothes()
 #get_jewelry()
 #get_prefixes()
-get_suffixes()
+#get_suffixes()
 
