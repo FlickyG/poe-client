@@ -156,12 +156,18 @@ def parse_prefixes(item_data):
     #top of while loop
     #item_data [[<td class="name">Catalysing</td>, <td>4</td>, <td>Weapon Elemental Damage +%</td>, <td>5 to 10</td>]]
     item = {}
+    if '(Master Crafted)' in item_data[0][0].get_text():
+        item["name"] = item_data[0][0].get_text().split("(Master Crafted)")[0]
+        item['master_crafted'] = True
+    else:
+        item["name"] = item_data[0][0].get_text()
+        item['master_crafted'] = False
     item["name"] = item_data[0][0].get_text()
     item["level"] = item_data[0][1].get_text()
     mods = [ x for x in re.findall(r">(.*?)<",str(item_data[0][2:])) if (x and ((x != ", ") or (x != ", ")))]
     assert len(mods)%2 == 0
     stop = int(len(mods)/2) #NEED TO ROUN THIS UP
-    print("stop", stop, mods)
+    #print("stop", stop, mods)
     key_results = mods[:stop]
     values_results = mods[stop:]
     assert len(key_results) == len(values_results)
@@ -183,22 +189,23 @@ def parse_prefixes(item_data):
             these_values.append(max_value)
             mod_values.append(these_values)
         number_of_mods = len(these_values)
-        print("number_of_mods", number_of_mods, mod_values) NOT GETTING THE SECOND SET
-        for x in range(0,stop):
-            print("x is", x)
-            item["implicit_mod_key_"+str(x)] = key_results[x]
-            item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
-            item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-            print(key_results)
-        print(item)
-        #print(item)
+        #print("number_of_mods", number_of_mods, mod_values) #NOT GETTING THE SECOND SET
+    for x in range(0,stop):   
+        item["implicit_mod_key_"+str(x)] = key_results[x]
+        item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
+        item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
         
 def parse_suffixes(item_data):
     #item_data [[<td class="name">Electrocuting</td>, <td>74</td>, <td>Spell Minimum Added Lightning Damage<br/>Spell Maximum Added Lightning Damage</td>, <td>5 to 15<br/>189 to 200</td>]]
     #top of while loop
     #item_data [[<td class="name">Catalysing</td>, <td>4</td>, <td>Weapon Elemental Damage +%</td>, <td>5 to 10</td>]]
     item = {}
-    item["name"] = item_data[0][0].get_text()
+    if '(Master Crafted)' in item_data[0][0].get_text():
+        item["name"] = item_data[0][0].get_text().split("(Master Crafted)")[0]
+        item['master_crafted'] = True
+    else:
+        item["name"] = item_data[0][0].get_text()
+        item['master_crafted'] = False
     item["level"] = item_data[0][1].get_text()
     mods = [ x for x in re.findall(r">(.*?)<",str(item_data[0][2:])) if (x and ((x != ", ") or (x != ", ")))]
     assert len(mods)%2 == 0
@@ -225,7 +232,6 @@ def parse_suffixes(item_data):
             mod_values.append(these_values)
         number_of_mods = len(these_values)-1
         for x in range(0,number_of_mods):
-            item["implicit_mod_key_"+str(x)] = key_results[x]
             item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
             item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
     print(item)
@@ -334,6 +340,7 @@ def get_jewelry(): #layout is different - implicit mods are on the same line
 def get_prefixes(): #layout is different - implicit mods are on the same line
     resp = s.get(url_prefixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
+    print(soup)
     prefixes = soup.find_all("tr") 
     prefixes[0].find_all("td", {"class": "name"})
     for y in prefixes:
@@ -361,9 +368,9 @@ def get_prefixes(): #layout is different - implicit mods are on the same line
 def get_suffixes(): #layout is different - implicit mods are on the same line
     resp = s.get(url_suffixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
-    prefixes = soup.find_all("tr") 
-    prefixes[0].find_all("td", {"class": "name"})
-    for y in prefixes:
+    suffixes = soup.find_all("tr") 
+    suffixes[0].find_all("td", {"class": "name"})
+    for y in suffixes:
         a = y.find_all("td", {"class": "name"})
         if len(a) > 0:
             pass
@@ -387,6 +394,6 @@ def get_suffixes(): #layout is different - implicit mods are on the same line
 #get_weapons()
 #get_clothes()
 #get_jewelry()
-get_prefixes()
-#get_suffixes()
+#get_prefixes()
+get_suffixes()
 
