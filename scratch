@@ -101,3 +101,13 @@ http://www.pathofexile.com/character-window/get-items?character= [Charname] &acc
  'y': 0}
 >>> 
  
+ #[logger_EVECrest]
+#level=DEBUG
+#handlers=fileHandler
+#qualname = EVECrest
+
+#[logger_EVEMarkets]
+#level=DEBUG
+#handlers=fileHandler
+#qualname = EVEMarkets
+ 
