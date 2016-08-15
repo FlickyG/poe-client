@@ -5,26 +5,52 @@ CREATE DATABASE poe_data;
 
 CREATE TABLE weapon_types(
 	id SERIAL PRIMARY KEY NOT NULL,
-	type CHAR(50) NOT NULL UNIQUE
+	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
 	
 CREATE TABLE clothing_types(
 	id SERIAL PRIMARY KEY NOT NULL,
-	type CHAR(50) NOT NULL UNIQUE
+	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
 	
 CREATE TABLE jewelry_types(
 	id SERIAL PRIMARY KEY NOT NULL,
-	type CHAR(50) NOT NULL UNIQUE
+	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
 	
 CREATE TABLE prefix_types(
 	id SERIAL PRIMARY KEY NOT NULL,
-	type CHAR(50) NOT NULL UNIQUE
+	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
 	
 CREATE TABLE suffix_types(
 	id SERIAL PRIMARY KEY NOT NULL,
-	type CHAR(50) NOT NULL UNIQUE
+	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
 	
+DROP TABLE weapon_types;
+DROP TABLE clothing_types;
+DROP TABLE jewelry_types;
+DROP TABLE prefix_types;
+DROP TABLE suffix_types;
+
+
+############################################
+############################################
+############################################
+############################################
+
+implicit_mod_values_1_min': '16', 'level': '78', 'name': "Hummingbird's", 'implicit_mod_key_1': 'Base Stun Recovery +%', 'implicit_mod_key_0': 'Local Evasion And Energy Shield +%', 'implicit_mod_values_1_max': '17'}
+
+# implicit
+id SERIAL PRIMARY KEY NOT NULL
+master_crafted BOOL NOT NULL
+level INT NOT NULL
+name CHAR VARYING(50) NOT NULL UNIQUE
+
+# stat
+
+id SERIAL PRIMARY KEY NMOT NULL
+description CHAR VARYING(50) NOT NULL
+min INT
+max INT

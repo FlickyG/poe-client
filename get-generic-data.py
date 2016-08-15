@@ -6,6 +6,7 @@ import re
 from email._header_value_parser import Section
 import psycopg2
 import logging, logging.config
+import sys #for excepotion handling and printing
 
 logging.config.fileConfig('poe_tools_logging.conf')
 logger = logging.getLogger(__name__)
@@ -408,8 +409,54 @@ def fetch_jewelry(): #layout is different - implicit mods are on the same line
                 x = x+1
     write_jewelry_types(jewelry_types)
 
+def get_prefix_types(key):
+    prefix_types = {}
+    logger.debug("entering write_clothing_types (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    try:
+        currQ.execute("SELECT * FROM prefix_types")
+        a = currQ.fetchall()
+        print("he")
+        temp_prefixes = []
+        for x in a:
+            temp_prefixes.append(x[::-1])
+        prefix_types = dict(temp_prefixes)
+        return(prefix_types[key])
+    except:
+        print("entering exception case in get_prefix_types", sys.exc_info()[0])
+    currQ.close()
+    
+def write_prefix(p_type, prefix):
+    prefixes have stats, which we need to know first,
+    print("entering prefixes", p_type, prefix)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    try:
+        pass
+    except:
+        print("entering exception case in write_prefix_types", sys.exc_info()[0])
+    
+def fetch_prefixes_types(): #layout is different - implicit mods are on the same line
+    prefix_types = []
+    prefixes = []
+    resp = s.get(url_prefixes)
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    prefixes = soup.find_all("tr") 
+    prefixes[0].find_all("td", {"class": "name"})
+    for y in prefixes:
+        a = y.find_all("td", {"class": "name"})
+        if len(a) > 0:
+            pass
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
+    for item_type in all_items:
+        p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        prefix_types.append(p_type)
+    write_prefix_types(prefix_types)
+
 def fetch_prefixes(): #layout is different - implicit mods are on the same line
     prefix_types = []
+    prefixes = []
     resp = s.get(url_prefixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
     prefixes = soup.find_all("tr") 
@@ -431,9 +478,9 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
                 raw_data = data[x].find_all("td")
                 item_data.append(raw_data)
                 prefix = parse_prefixes(item_data)
-                print(p_type, prefix)
+                write_prefix(get_prefix_types(p_type), prefix)
                 x = x+1
-    write_prefix_types(prefix_types)
+
     
  
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
@@ -463,11 +510,12 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
                 x = x+1
     write_suffix_types(suffix_types)     
  
- 
+fetch_prefixes_types()
 fetch_prefixes()
-fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+print(get_prefix_types("Armour"))
+#fetch_suffixes()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
 
 
