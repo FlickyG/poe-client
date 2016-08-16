@@ -428,7 +428,6 @@ def get_prefix_types(key):
     currQ.close()
     
 def write_prefix(p_type, prefix):
-    prefixes have stats, which we need to know first,
     print("entering prefixes", p_type, prefix)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -477,12 +476,70 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
                 item_data = []
                 raw_data = data[x].find_all("td")
                 item_data.append(raw_data)
-                prefix = parse_prefixes(item_data)
-                write_prefix(get_prefix_types(p_type), prefix)
+                #prefix = parse_prefixes(item_data)
+                #write_prefix(get_prefix_types(p_type), prefix)
                 x = x+1
-
     
- 
+                
+def fetch_prefix_stats(): #layout is different - implicit mods are on the same line
+    all_the_stats = set()
+    xxx = []
+    prefixes = []
+    resp = s.get(url_prefixes)
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    prefixes = soup.find_all("tr") 
+    prefixes[0].find_all("td", {"class": "name"})
+    for y in prefixes:
+        a = y.find_all("td", {"class": "name"})
+        if len(a) > 0:
+            pass
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
+    for item_type in all_items:
+        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        for each_class in items: # for each prefix class
+            data = each_class.find_all("tr") #get the raw data
+            y = 1 #first two entries are table formatting aspects
+            while y < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                item_data = []
+                raw_data = data[y].find_all("td")
+                item_data.append(raw_data)
+                #prefix = parse_prefixes(item_data)
+                mods = [ z for z in re.findall(r">(.*?)<",str(item_data[0][2:])) if (z and ((z != ", ") or (z != ", ")))]
+                assert len(mods)%2 == 0
+                stop = int(len(mods)/2) #NEED TO ROUN THIS UP
+                key_results = mods[:stop]
+                values_results = mods[stop:]
+                assert len(key_results) == len(values_results)
+                mod_keys = []
+                mod_values = []
+                for x in values_results:
+                    #print(x) 
+                    these_values = []  
+                    # the values cover a range
+                    if "to" in x:
+                        min_value = x.split()[0]
+                        max_value = x.split()[2]
+                        these_values.append(min_value)
+                        these_values.append(max_value)
+                        mod_values.append(these_values)
+                    else: # if there is a single number and no 'to' 
+                        min_value = x
+                        max_value = x
+                        these_values.append(min_value)
+                        these_values.append(max_value)
+                        mod_values.append(these_values)
+                    number_of_mods = len(these_values)
+                for x in range(0,stop):
+                    test_stat = {}
+                    test_stat["implicit_mod_key_"+str(x)] = key_results[x]
+                    test_stat["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
+                    test_stat["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
+                    all_the_stats.add((key_results[x], mod_values[x][0], mod_values[x][1])) #use tuples as ordered and hashable
+                    #all_the_stats.update(test_stat)
+                y = y+1
+    print(all_the_stats)
+    WE HAVE ALL THE STATS NOW NEED TO WRITE THEM TO DB
+    
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
     suffix_types = []
     resp = s.get(url_suffixes)
@@ -510,8 +567,9 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
                 x = x+1
     write_suffix_types(suffix_types)     
  
-fetch_prefixes_types()
-fetch_prefixes()
+#fetch_prefixes_types()
+#fetch_prefixes()
+fetch_prefix_stats()
 print(get_prefix_types("Armour"))
 #fetch_suffixes()
 #fetch_weapons()
