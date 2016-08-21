@@ -7,10 +7,13 @@ from email._header_value_parser import Section
 import psycopg2
 import logging, logging.config
 import sys #for excepotion handling and printing
+import datetime, time #to analyuse how long things take
+
 
 logging.config.fileConfig('poe_tools_logging.conf')
 logger = logging.getLogger(__name__)
-logger.debug("hello world")
+start_time = datetime.datetime.now()
+logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
 def write_weapon_types(list):
@@ -426,94 +429,47 @@ def get_prefix_types(key):
     except:
         print("entering exception case in get_prefix_types", sys.exc_info()[0])
     currQ.close()
-    
-def write_prefix(p_type, prefix):
-    print("entering prefixes", p_type, prefix)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    try:
-        pass
-    except:
-        print("entering exception case in write_prefix_types", sys.exc_info()[0])
-    
-def fetch_prefixes_types(): #layout is different - implicit mods are on the same line
-    prefix_types = []
-    prefixes = []
-    resp = s.get(url_prefixes)
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    prefixes = soup.find_all("tr") 
-    prefixes[0].find_all("td", {"class": "name"})
-    for y in prefixes:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
-    for item_type in all_items:
-        p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        prefix_types.append(p_type)
-    write_prefix_types(prefix_types)
-
+               
 def fetch_prefixes(): #layout is different - implicit mods are on the same line
-    prefix_types = []
+    logger.debug("entering fetch_refix_2 (%s)", list)
+    prefix_types = set()
+    stats = set()
     prefixes = []
     resp = s.get(url_prefixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
-    prefixes = soup.find_all("tr") 
-    prefixes[0].find_all("td", {"class": "name"})
-    for y in prefixes:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
     for item_type in all_items:
         p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        prefix_types.append(p_type)
-        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
-        for item_data in items: # for each clothing class
-            data = item_data.find_all("tr") #get the raw data
-            x = 1 #first two entries are table formatting aspects
-            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
-                item_data = []
-                raw_data = data[x].find_all("td")
-                item_data.append(raw_data)
-                #prefix = parse_prefixes(item_data)
-                #write_prefix(get_prefix_types(p_type), prefix)
-                x = x+1
-    
-                
-def fetch_prefix_stats(): #layout is different - implicit mods are on the same line
-    all_the_stats = set()
-    xxx = []
-    prefixes = []
-    resp = s.get(url_prefixes)
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    prefixes = soup.find_all("tr") 
-    prefixes[0].find_all("td", {"class": "name"})
-    for y in prefixes:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
-    for item_type in all_items:
+        prefix_types.add(p_type)
+        #print("prefix type", p_type)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         for each_class in items: # for each prefix class
-            data = each_class.find_all("tr") #get the raw data
+            data = each_class.find_all("tr") #get the raw data for each line
             y = 1 #first two entries are table formatting aspects
             while y < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                prefix = {}
                 item_data = []
-                raw_data = data[y].find_all("td")
-                item_data.append(raw_data)
-                #prefix = parse_prefixes(item_data)
-                mods = [ z for z in re.findall(r">(.*?)<",str(item_data[0][2:])) if (z and ((z != ", ") or (z != ", ")))]
-                assert len(mods)%2 == 0
-                stop = int(len(mods)/2) #NEED TO ROUN THIS UP
+                prefix["type"] = p_type
+                prefix["i_level"] = data[y].find_all("td")[1].get_text()
+                name_data = data[y].find_all("td")[0].get_text()
+                if "(Master Crafted)" in name_data:
+                    prefix["name"] = name_data.split(" (")[0]
+                    prefix["master_crafted"] = True
+                else:
+                    prefix["name"] = data[y].find_all("td")[0].get_text()
+                    prefix["master_crafted"] = False
+                raw_data = data[y].find_all("td") # grabs all the data from this row of the web page table - each individual stat
+                # below strips off the tags and heads 
+                mods = [ z for z in re.findall(r">(.*?)<",str(raw_data[2:])) if (z and ((z != ", ") or (z != ", ")))]
+                assert len(mods)%2 == 0 #checks there is a evenm number of names to values
+                stop = int(len(mods)/2) #used to determine the demark between names and values
                 key_results = mods[:stop]
                 values_results = mods[stop:]
-                assert len(key_results) == len(values_results)
-                mod_keys = []
+                assert len(key_results) == len(values_results) #check we have the same number of names and values
+                mod_keys = [] 
                 mod_values = []
-                for x in values_results:
-                    #print(x) 
+                all_stats = []  # all stats of each prefix
+                for x in values_results: #for each stat in this prefeix
                     these_values = []  
                     # the values cover a range
                     if "to" in x:
@@ -528,19 +484,116 @@ def fetch_prefix_stats(): #layout is different - implicit mods are on the same l
                         these_values.append(min_value)
                         these_values.append(max_value)
                         mod_values.append(these_values)
-                    number_of_mods = len(these_values)
                 for x in range(0,stop):
                     test_stat = {}
                     test_stat["implicit_mod_key_"+str(x)] = key_results[x]
                     test_stat["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
                     test_stat["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-                    all_the_stats.add((key_results[x], mod_values[x][0], mod_values[x][1])) #use tuples as ordered and hashable
+                    all_stats.append(test_stat)
+                    stats.add((key_results[x], mod_values[x][0], mod_values[x][1])) #use tuples as ordered and hashable
                     #all_the_stats.update(test_stat)
+                prefix["stats"] = all_stats
                 y = y+1
-    print(all_the_stats)
-    WE HAVE ALL THE STATS NOW NEED TO WRITE THEM TO DB
+                prefixes.append(prefix)
+    write_prefix_types(prefix_types)
+    stat_names = set()
+    for stat in stats:
+        stat_names.add(stat[0])
+    write_stat_names(stat_names)
+    write_stats(stats)
+    write_prefix_names(prefixes)
+    write_prefixes(prefixes)
+    
+    
+
+def write_prefixes(the_list):
+    logger.debug("entering write_prefixes (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()   
+    for x in the_list:
+        #print(x)
+        currQ.execute("SELECT id FROM prefix_types WHERE type = (%s)", (x["type"],))
+        prefix_type = currQ.fetchone()[0]
+        currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
+        name_id = currQ.fetchone()[0]
+        for y in x["stats"]:
+            #print(y)
+            for keys, values in y.items():
+                #print(keys, values)
+                if "implicit_mod_key" in keys:
+                    #print(values)
+                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
+                    name_id = currQ.fetchone()[0]
+                if "min" in keys:
+                    minimum = values
+                if "max" in keys:
+                    maximum = values
+            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
+                          (name_id, minimum, maximum))
+            stat_id = currQ.fetchone()[0]
+            #print("data (%s)", (prefix_type, name_id, x["master_crafted"], stat_id))
+            try:
+                currQ.execute("INSERT INTO prefixes (type_id, name_id, i_level, crafted, stat) "
+                              "VALUES (%s, %s, %s, %s, %s)",
+                              (prefix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
+                connQ.commit()
+            except psycopg2.IntegrityError:
+                logger.debug("psql integrity error when commiting prefixes (%s)", x)
+                connQ.rollback() 
+        #print(prefix_type, name_id)
+
+      
+def write_prefix_names(the_set):
+    logger.debug("entering write_prefix_names (%s)", list)
+    names = set()
+    for x in the_set:
+        names.add(x["name"])
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    for x in names:
+        try:
+            currQ.execute("INSERT INTO prefix_names (name) "
+                        "VALUES (%s)",
+                       (x,))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.info("psql integrity error when commiting prefix names (%s)", x)
+            connQ.rollback() 
+    
+def write_stat_names(the_set):
+    logger.debug("entering write_stat_names (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    for x in the_set:
+        try:
+            currQ.execute("INSERT INTO stat_names (name) "
+                        "VALUES (%s)",
+                       (x,))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting stat names (%s)", x)
+            connQ.rollback()     
+    
+def write_stats(the_set):
+    logger.debug("entering write_stats (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    for x in the_set:
+        try:
+            # get id of the stat neame
+            currQ.execute("SELECT id FROM stat_names WHERE name = %s", 
+                          (x[0],))
+            stat_name = currQ.fetchone()
+            currQ.execute("INSERT INTO stats (name_id, min_value, max_value) "
+                        "VALUES (%s, %s, %s)",
+                        (stat_name, x[1], x[2]))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting stats  (%s)", x)
+            connQ.rollback()  
     
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
+    logger.debug("entering fetch_suffixes (%s)", list)
     suffix_types = []
     resp = s.get(url_suffixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
@@ -565,15 +618,18 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
                 item_data.append(raw_data)
                 parse_suffixes(item_data)
                 x = x+1
-    write_suffix_types(suffix_types)     
+    write_suffix_types(suffix_types)
  
-#fetch_prefixes_types()
-#fetch_prefixes()
-fetch_prefix_stats()
+
+
+
+fetch_prefixes()
 print(get_prefix_types("Armour"))
 #fetch_suffixes()
 #fetch_weapons()
 #fetch_clothes()
 #fetch_jewelry()
+
+logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 
 
