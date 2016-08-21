@@ -55,6 +55,11 @@ CREATE TABLE prefixes(
 	unique (type_id, name_id, i_level, crafted, stat)
 	);
 
+CREATE TABLE sufix_names(
+	id SERIAL PRIMARY KEY NOT NULL,
+	name CHAR VARYING(50) NOT NULL
+	);
+
 
 DROP TABLE weapon_types;
 DROP TABLE clothing_types;

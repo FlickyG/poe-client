@@ -236,92 +236,6 @@ def parse_jewelry(item_data):
         item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
         item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
       
-
-def parse_prefixes(item_data):
-    #item_data [[<td class="name">Electrocuting</td>, <td>74</td>, <td>Spell Minimum Added Lightning Damage<br/>Spell Maximum Added Lightning Damage</td>, <td>5 to 15<br/>189 to 200</td>]]
-    #top of while loop
-    #item_data [[<td class="name">Catalysing</td>, <td>4</td>, <td>Weapon Elemental Damage +%</td>, <td>5 to 10</td>]]
-    item = {}
-    if '(Master Crafted)' in item_data[0][0].get_text():
-        item["name"] = item_data[0][0].get_text().split("(Master Crafted)")[0]
-        item['master_crafted'] = True
-    else:
-        item["name"] = item_data[0][0].get_text()
-        item['master_crafted'] = False
-    item["name"] = item_data[0][0].get_text()
-    item["level"] = item_data[0][1].get_text()
-    mods = [ x for x in re.findall(r">(.*?)<",str(item_data[0][2:])) if (x and ((x != ", ") or (x != ", ")))]
-    assert len(mods)%2 == 0
-    stop = int(len(mods)/2) #NEED TO ROUN THIS UP
-    #print("stop", stop, mods)
-    key_results = mods[:stop]
-    values_results = mods[stop:]
-    assert len(key_results) == len(values_results)
-    mod_keys = []
-    mod_values = []
-    for x in values_results:
-        these_values = []  
-        # the values cover a range
-        if "to" in x:
-            min_value = x.split()[0]
-            max_value = x.split()[2]
-            these_values.append(min_value)
-            these_values.append(max_value)
-            mod_values.append(these_values)
-        else: # if there is a single number and no 'to' 
-            min_value = x
-            max_value = x
-            these_values.append(min_value)
-            these_values.append(max_value)
-            mod_values.append(these_values)
-        number_of_mods = len(these_values)
-        #print("number_of_mods", number_of_mods, mod_values) #NOT GETTING THE SECOND SET
-    for x in range(0,stop):   
-        item["implicit_mod_key_"+str(x)] = key_results[x]
-        item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
-        item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-    return(item)
-        
-def parse_suffixes(item_data):
-    #item_data [[<td class="name">Electrocuting</td>, <td>74</td>, <td>Spell Minimum Added Lightning Damage<br/>Spell Maximum Added Lightning Damage</td>, <td>5 to 15<br/>189 to 200</td>]]
-    #top of while loop
-    #item_data [[<td class="name">Catalysing</td>, <td>4</td>, <td>Weapon Elemental Damage +%</td>, <td>5 to 10</td>]]
-    item = {}
-    if '(Master Crafted)' in item_data[0][0].get_text():
-        item["name"] = item_data[0][0].get_text().split("(Master Crafted)")[0]
-        item['master_crafted'] = True
-    else:
-        item["name"] = item_data[0][0].get_text()
-        item['master_crafted'] = False
-    item["level"] = item_data[0][1].get_text()
-    mods = [ x for x in re.findall(r">(.*?)<",str(item_data[0][2:])) if (x and ((x != ", ") or (x != ", ")))]
-    assert len(mods)%2 == 0
-    stop = int(len(mods)/2)
-    key_results = mods[:stop]
-    values_results = mods[stop:]
-    assert len(key_results) == len(values_results)
-    mod_keys = []
-    mod_values = []
-    for x in values_results:
-        these_values = []  
-        # the values cover a range
-        if "to" in x:
-            min_value = x.split()[0]
-            max_value = x.split()[2]
-            these_values.append(min_value)
-            these_values.append(max_value)
-            mod_values.append(these_values)
-        else: # if there is a single number and no 'to' 
-            min_value = x
-            max_value = x
-            these_values.append(min_value)
-            these_values.append(max_value)
-            mod_values.append(these_values)
-        number_of_mods = len(these_values)-1
-        for x in range(0,number_of_mods):
-            item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
-            item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-
 def fetch_weapons():
     weapon_types = []
     resp = s.get(url_weap)
@@ -592,40 +506,91 @@ def write_stats(the_set):
             logger.debug("psql integrity error when commiting stats  (%s)", x)
             connQ.rollback()  
     
+
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
-    logger.debug("entering fetch_suffixes (%s)", list)
-    suffix_types = []
+    print("hello world")
+    logger.debug("entering fetch_refix_2 (%s)", list)
+    suffix_types = set()
+    stats = set()
+    suffixes = []
     resp = s.get(url_suffixes)
     soup = BeautifulSoup(resp.text, 'html.parser')
-    suffixes = soup.find_all("tr") 
-    suffixes[0].find_all("td", {"class": "name"})
-    for y in suffixes:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
-            #print (a[0].text)
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
     for item_type in all_items:
-        s_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        suffix_types.append(s_type)
+        p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        suffix_types.add(p_type)
+        #print("suffix type", p_type)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
-        for item_data in items: # for each clothing class
-            data = item_data.find_all("tr") #get the raw data
-            x = 1 #first two entries are table formatting aspects
-            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
+        for each_class in items: # for each suffix class
+            data = each_class.find_all("tr") #get the raw data for each line
+            y = 1 #first two entries are table formatting aspects
+            while y < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                suffix = {}
                 item_data = []
-                raw_data = data[x].find_all("td")
-                item_data.append(raw_data)
-                parse_suffixes(item_data)
-                x = x+1
+                suffix["type"] = p_type
+                suffix["i_level"] = data[y].find_all("td")[1].get_text()
+                name_data = data[y].find_all("td")[0].get_text()
+                if "(Master Crafted)" in name_data:
+                    suffix["name"] = name_data.split(" (")[0]
+                    suffix["master_crafted"] = True
+                else:
+                    suffix["name"] = data[y].find_all("td")[0].get_text()
+                    suffix["master_crafted"] = False
+                raw_data = data[y].find_all("td") # grabs all the data from this row of the web page table - each individual stat
+                # below strips off the tags and heads 
+                mods = [ z for z in re.findall(r">(.*?)<",str(raw_data[2:])) if (z and ((z != ", ") or (z != ", ")))]
+                assert len(mods)%2 == 0 #checks there is a evenm number of names to values
+                stop = int(len(mods)/2) #used to determine the demark between names and values
+                key_results = mods[:stop]
+                values_results = mods[stop:]
+                assert len(key_results) == len(values_results) #check we have the same number of names and values
+                mod_keys = [] 
+                mod_values = []
+                all_stats = []  # all stats of each suffix
+                for x in values_results: #for each stat in this prefeix
+                    these_values = []  
+                    # the values cover a range
+                    if "to" in x:
+                        min_value = x.split()[0]
+                        max_value = x.split()[2]
+                        these_values.append(min_value)
+                        these_values.append(max_value)
+                        mod_values.append(these_values)
+                    else: # if there is a single number and no 'to' 
+                        min_value = x
+                        max_value = x
+                        these_values.append(min_value)
+                        these_values.append(max_value)
+                        mod_values.append(these_values)
+                for x in range(0,stop):
+                    test_stat = {}
+                    test_stat["implicit_mod_key_"+str(x)] = key_results[x]
+                    test_stat["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
+                    test_stat["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
+                    all_stats.append(test_stat)
+                    stats.add((key_results[x], mod_values[x][0], mod_values[x][1])) #use tuples as ordered and hashable
+                    #all_the_stats.update(test_stat)
+                suffix["stats"] = all_stats
+                y = y+1
+                suffixes.append(suffix)
     write_suffix_types(suffix_types)
- 
+    stat_names = set()
+    for stat in stats:
+        stat_names.add(stat[0])
+    write_stat_names(stat_names)
+    write_stats(stats)
+    write_suffix_names(suffixes)
+    write_suffixes(suffixes)
 
+def write_suffix_names(stats):
+    pass
 
+def write_suffixes(list):
+    pass
 
-fetch_prefixes()
-print(get_prefix_types("Armour"))
-#fetch_suffixes()
+#fetch_prefixes()
+#print(get_prefix_types("Armour"))
+fetch_suffixes()
 #fetch_weapons()
 #fetch_clothes()
 #fetch_jewelry()
