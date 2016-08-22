@@ -64,7 +64,7 @@ CREATE TABLE jewelry_types(
 
 CREATE TABLE jewelry_names(
 	id serial PRIMARY KEY NOT NULL,
-	j_type SMALLINT NOT NULL,
+	j_type CHAR VARYING(50)  NOT NULL,
 	name CHAR VARYING(50) NOT NULL,
 	i_level SMALLINT NOT NULL,
 	large_url CHAR VARYING(800),

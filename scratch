@@ -110,4 +110,105 @@ http://www.pathofexile.com/character-window/get-items?character= [Charname] &acc
 #level=DEBUG
 #handlers=fileHandler
 #qualname = EVEMarkets
- 
+
+
+
+
+
+
+=== fetch item
+
+SELECT id FROM weapon_names WHERE name = "Harbinger Bow"
+24
+
+SELECT s_id from weapon_stats where w_id = 24;
+1169
+
+select * from stats where id = 1169;
+  id  | name_id | min_value | max_value 
+------+---------+-----------+-----------
+ 1169 |     164 |        30 |        50
+
+select * from stat_names where id = 164;
+ id  |              name               
+-----+---------------------------------
+ 164 | Local Critical Strike Chance +%
+
+
+============
+
+
+SELECT id FROM clothes_names WHERE name = 'Astral Plate';
+ id 
+----
+ 87
+SELECT s_id from clothes_stats where c_id = 87
+;
+ s_id 
+------
+ 1240
+ 1226
+
+select * from stats where id = 1240;
+  id  | name_id | min_value | max_value 
+------+---------+-----------+-----------
+ 1240 |     265 |        -5 |        -5
+
+select * from stats where id = 1226;
+  id  | name_id | min_value | max_value 
+------+---------+-----------+-----------
+ 1226 |     196 |         8 |        12
+
+select * from stat_names where id = 265;
+ id  |             name              
+-----+-------------------------------
+ 265 | From Armour Movement Speed +%
+
+
+select * from stat_names where id = 196;
+ id  |        name         
+-----+---------------------
+ 196 | Resist all Elements
+
+
+===============
+
+select stat_names.name from stat_names, stats where stats.id = 1240;
+
+
+select id from stat_names where name = "Critical Strike Chance +%"
+=
+select * from stats
+INNER JOIN stat_names ON stat_names.id = stats.name_id
+where stat_names.name = 'Critical Strike Chance +%';
+=
+select * from stats
+INNER JOIN stat_names ON stat_names.id = stats.name_id
+INNER JOIN weapon_stats ON weapon_stats.s_id = stats.id
+where stat_names.name = 'Critical Strike Chance +%';
+
+= DISPLAYS WEAPON NAME AND IMPLICIT NAME FOR GIVEN TYPE
+select weapon_names.name, stat_names.name from stats
+INNER JOIN stat_names ON stat_names.id = stats.name_id
+INNER JOIN weapon_stats ON weapon_stats.s_id = stats.id
+INNER JOIN weapon_names ON weapon_names.id = weapon_stats.w_id
+where stat_names.name LIKE '%Critical Strike Chance +%'
+ORDER BY weapon_names.name ASC;
+=DISPLAYS WEAPON NAME AND IMPLICIT NAME FOR GIVEN TYPE, and min max values, ordered
+select weapon_names.name, stat_names.name, stats.min_value, stats.max_value from stats
+INNER JOIN stat_names ON stat_names.id = stats.name_id
+INNER JOIN weapon_stats ON weapon_stats.s_id = stats.id
+INNER JOIN weapon_names ON weapon_names.id = weapon_stats.w_id
+where stat_names.name LIKE '%Critical Strike Chance +%'
+ORDER BY stats.min_value DESC;
+
+= DISPLAYS WEAPON NAME AND IMPLICIT NAME FOR GIVEN TYPE, and min max values, ordered, only for bows
+select weapon_names.name, stat_names.name, stats.min_value, stats.max_value from stats
+INNER JOIN stat_names ON stat_names.id = stats.name_id
+INNER JOIN weapon_stats ON weapon_stats.s_id = stats.id
+INNER JOIN weapon_names ON weapon_names.id = weapon_stats.w_id
+WHERE stat_names.name LIKE '%Critical Strike Chance +%'
+AND weapon_names.w_type = 'BOW'
+ORDER BY stats.min_value DESC;
+
+

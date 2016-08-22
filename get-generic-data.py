@@ -768,7 +768,6 @@ def fetch_clothes():
                 mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
                 #input("Press Enter to continue...")
                 if len(mods) > 0:
-                    print("mods", mods)
                     if "Dummy Stat Display Nothing" in mods:
                         mods.remove("Dummy Stat Display Nothing")
                     assert len(mods)%2 == 0 #checks there is a evenm number of names to values
@@ -893,61 +892,56 @@ def fetch_jewelry():
             while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
                 #print(data[x])
                 #input("Press Enter to continue...")
-                item_data = []
+                #item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
                 item["j_type"] = j_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
-                item["i_level"] = raw_data[2].get_text()
-                x = x+1
-                print("item_name", item["name"])                
-                mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
-                #input("Press Enter to continue...")
-                if len(mods) > 0:
-                    if "Dummy Stat Display Nothing" in mods:
-                        mods.remove("Dummy Stat Display Nothing")
-                    assert len(mods)%2 == 0 #checks there is a evenm number of names to values
-                    stop = int(len(mods)/2) #used to determine the demark between names and values
-                    key_results = mods[:stop]
-                    values_results = mods[stop:]
-                    assert len(key_results) == len(values_results) #check we have the same number of names and values
-                    mod_keys = [] 
-                    mod_values = []
-                    stats = []  # all stats of each suffix
-                    for z in values_results: #for each stat in this prefeix
+                item["i_level"] = raw_data[2].get_text()      
+                key_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[3])) if x]
+                value_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[4])) if x]
+                stats = []
+                mod_keys = key_results
+                mod_values = []
+                # find implicit values
+                if item["name"] == "Undying Flesh Talisman":
+                        mod_values = [['0','0'],['1', '1'],['1','1'],['0','0']]   
+                else:
+                    for y in value_results:
                         these_values = []  
                         # the values cover a range
-                        #print("z, stop", z, stop)
-                        if "to" in z:
-                            min_value = z.split()[0]
-                            max_value = z.split()[2]
+                        if "to" in y:
+                            min_value = y.split()[0]
+                            max_value = y.split()[2]
                             these_values.append(min_value)
                             these_values.append(max_value)
                             mod_values.append(these_values)
                         else: # if there is a single number and no 'to' 
-                            min_value = z
-                            max_value = z
+                            min_value = y
+                            max_value = y
                             these_values.append(min_value)
                             these_values.append(max_value)
                             mod_values.append(these_values)
-                    for a in range(0,stop):
-                        #print("key_results, mod_values, a", key_results, ",", mod_values, ",", a)
-                        test_stat = {}
-                        test_stat["implicit_mod_key_"+str(a)] = key_results[a]
-                        test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
-                        test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
-                        stats.append(test_stat)
-                        all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
-                    item["implicits"] = stats     
+                assert len(mod_keys) == len(mod_values) # sense check we're passing these correctly
+                number_of_mods = len(mod_keys)
+                for a in range(0,number_of_mods):
+                    test_stat = {}
+                    test_stat["implicit_mod_key_"+str(a)] = mod_keys[a]
+                    test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
+                    test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
+                    stats.append(test_stat)
+                    all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
+                item["implicits"] = stats
+                x = x+1
                 all_jewelry.append(item)
     stat_names = set()
     for stat in all_stats:
         stat_names.add(stat[0])
     write_stat_names(stat_names)
     write_stats(all_stats)
-    #write_jewelry_types(jewelry_types)
+    write_jewelry_types(jewelry_types)
     write_jewelry_names(all_jewelry)
     write_jewelry_stats(all_jewelry)
     
@@ -958,8 +952,8 @@ def write_jewelry_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, small_url)"
-                          "VALUES (%s, %s, %s, %s)",
+            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url)"
+                          "VALUES (%s, %s, %s, %s, %s)",
                           (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],))           
             connQ.commit()
         except psycopg2.IntegrityError:
@@ -994,9 +988,9 @@ def write_jewelry_stats(list):
                         max = values
                 currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
                               (stat_id, min, max,))
-                s_id = currQ.fetchone()
+                s_id = currQ.fetchone()[0]
                 try:
-                    currQ.execute("INSERT INTO jewelry_stats (c_id, s_id) VALUES (%s, %s)",
+                    currQ.execute("INSERT INTO jewelry_stats (j_id, s_id) VALUES (%s, %s)",
                         (w_id, s_id,))           
                     connQ.commit()
                 except psycopg2.IntegrityError:
@@ -1004,11 +998,11 @@ def write_jewelry_stats(list):
 
     
 
-#fetch_prefixes()
-#print(get_prefix_types("Armour"))
-#fetch_suffixes()
-#fetch_weapons()
-#fetch_clothes()
+fetch_prefixes()
+print(get_prefix_types("Armour"))
+fetch_suffixes()
+fetch_weapons()
+fetch_clothes()
 fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
