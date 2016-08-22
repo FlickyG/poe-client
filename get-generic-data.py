@@ -110,35 +110,6 @@ url_prefixes = "http://www.pathofexile.com/item-data/prefixmod"
 url_suffixes = "http://www.pathofexile.com/item-data/suffixmod"
 
 
-def parse_weapon(item_data):
-    item = {}
-    # standard parameters accross all items
-    item["large_url"] = item_data[0][0].find_all("img")[0]["data-large-image"]
-    item["small_url"] = item_data[0][0].find_all("img")[0]["src"]
-    item["name"] = item_data[0][1].get_text()
-    item["item_level"] = item_data[0][2].get_text()
-    #item["damage"] = item_data[0][3].get_text()
-    item["min_dmg"] = item_data[0][3].get_text().split()[0]
-    item["max_dmg"] = item_data[0][3].get_text().split()[2]
-    item["attacks_per_second"] = item_data[0][4].get_text()
-    item["dps"] = item_data[0][5].get_text()
-    item["req_str"] = item_data[0][6].get_text()
-    item["req_dex"] = item_data[0][7].get_text()
-    item["req_int"] = item_data[0][8].get_text()
-    # implicit aspects
-    try:
-        item_data[1][0].get_text()
-        item["implicit_mod"] = item_data[1][0].get_text()
-        #print (item["implicit_mod"])
-        item["min_implicit_value"] = item_data[1][1].get_text().split()[0]
-        if len(item_data[1][1].get_text().split()) > 1:
-            item["max_implicit_value"] = item_data[1][1].get_text().split()[2]
-        else:
-            item["max_implicit_value"] = item_data[1][1].get_text().split()[0]
-        return item
-    except IndexError:
-        pass   
-    
         
 def parse_clothing(item_data):
     item = {}
@@ -235,37 +206,9 @@ def parse_jewelry(item_data):
         item["implicit_mod_key_"+str(x)] = mod_keys[x]
         item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
         item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-      
-def fetch_weapons():
-    weapon_types = []
-    resp = s.get(url_weap)
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    #print all weapon names
-    weapons = soup.find_all("tr", {"class" : "even"}) 
-    weapons[0].find_all("td", {"class": "name"})
-    for y in weapons:
-        a = y.find_all("td", {"class": "name"})
-        #print (a[0].text) 
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
-    for item_type in all_items:
-        w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        weapon_types.append(w_type)
-        #write_weapon_types(weapon_types)
-        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
-        for item_data in items: # for each weaspon class
-            data = item_data.find_all("tr") #get the raw data
-            x = 2 #first two entries are table formatting aspects
-            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
-                item_data = []
-                raw_data = data[x].find_all("td")
-                item_data.append(raw_data)
-                #urls = raw_data[0].find_all("img")
-                x = x+1
-                implicits = data[x].find_all("td")
-                item_data.append(implicits)
-                item = parse_weapon(item_data)
-                x = x+1
-    write_weapon_types(weapon_types)
+    
+
+
 
 def fetch_clothes():
     clothing_types = []
@@ -582,16 +525,183 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     write_suffix_names(suffixes)
     write_suffixes(suffixes)
 
-def write_suffix_names(stats):
-    pass
+def write_suffix_names(the_set):
+    logger.debug("entering write_sufffix_names (%s)", list)
+    names = set()
+    for x in the_set:
+        names.add(x["name"])
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    for x in names:
+        try:
+            currQ.execute("INSERT INTO suffix_names (name) "
+                        "VALUES (%s)",
+                       (x,))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.info("psql integrity error when commiting suffix names (%s)", x)
+            connQ.rollback() 
 
-def write_suffixes(list):
-    pass
+def write_suffixes(the_list):
+    logger.debug("entering write_suffixes (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()   
+    for x in the_list:
+        #print(x)
+        currQ.execute("SELECT id FROM suffix_types WHERE type = (%s)", (x["type"],))
+        suffix_type = currQ.fetchone()[0]
+        currQ.execute("SELECT id FROM suffix_names WHERE name = (%s)", (x["name"],))
+        name_id = currQ.fetchone()[0]
+        for y in x["stats"]:
+            #print(y)
+            for keys, values in y.items():
+                #print(keys, values)
+                if "implicit_mod_key" in keys:
+                    #print(values)
+                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
+                    name_id = currQ.fetchone()[0]
+                if "min" in keys:
+                    minimum = values
+                if "max" in keys:
+                    maximum = values
+            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
+                          (name_id, minimum, maximum))
+            stat_id = currQ.fetchone()[0]
+            #print("data (%s)", (suffix_type, name_id, x["master_crafted"], stat_id))
+            try:
+                currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat) "
+                              "VALUES (%s, %s, %s, %s, %s)",
+                              (suffix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
+                connQ.commit()
+            except psycopg2.IntegrityError:
+                logger.debug("psql integrity error when commiting suffixes (%s)", x)
+                connQ.rollback() 
+
+def parse_weapon(item_data):
+    item = {}
+    # standard parameters accross all items
+    item["large_url"] = item_data[0][0].find_all("img")[0]["data-large-image"]
+    item["small_url"] = item_data[0][0].find_all("img")[0]["src"]
+    item["name"] = item_data[0][1].get_text()
+    item["item_level"] = item_data[0][2].get_text()
+    #item["damage"] = item_data[0][3].get_text()
+    item["min_dmg"] = item_data[0][3].get_text().split()[0]
+    item["max_dmg"] = item_data[0][3].get_text().split()[2]
+    item["attacks_per_second"] = item_data[0][4].get_text()
+    item["dps"] = item_data[0][5].get_text()
+    item["req_str"] = item_data[0][6].get_text()
+    item["req_dex"] = item_data[0][7].get_text()
+    item["req_int"] = item_data[0][8].get_text()
+    # implicit aspects
+    try:
+        item_data[1][0].get_text()
+        item["implicit_mod"] = item_data[1][0].get_text()
+        #print (item["implicit_mod"])
+        item["min_implicit_value"] = item_data[1][1].get_text().split()[0]
+        if len(item_data[1][1].get_text().split()) > 1:
+            item["max_implicit_value"] = item_data[1][1].get_text().split()[2]
+        else:
+            item["max_implicit_value"] = item_data[1][1].get_text().split()[0]
+        return item
+    except IndexError:
+        pass   
+        
+    
+def fetch_weapons():
+    weapon_types = []
+    all_stats = set()
+    all_weapons = []
+    resp = s.get(url_weap)
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    #print all weapon names
+    weapons = soup.find_all("tr", {"class" : "even"}) 
+    weapons[0].find_all("td", {"class": "name"})
+    for y in weapons:
+        a = y.find_all("td", {"class": "name"})
+        #print (a[0].text) 
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
+    for item_type in all_items:
+        w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        weapon_types.append(w_type)
+        #write_weapon_types(weapon_types)
+        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        for item_data in items: # for each weaspon class
+            data = item_data.find_all("tr") #get the raw data
+            x = 2 #first two entries are table formatting aspects
+            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                item_data = []
+                item = {}
+                raw_data = data[x].find_all("td")
+                item["weapon_type"] = w_type
+                item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
+                item["small_url"] = raw_data[0].find_all("img")[0]["src"]
+                item["name"] = raw_data[1].get_text()
+                item["item_level"] = raw_data[2].get_text()
+                #item["damage"] = raw_data[3].get_text()
+                item["min_dmg"] = raw_data[3].get_text().split()[0]
+                item["max_dmg"] = raw_data[3].get_text().split()[2]
+                item["attacks_per_second"] = raw_data[4].get_text()
+                item["dps"] = raw_data[5].get_text()
+                item["req_str"] = raw_data[6].get_text()
+                item["req_dex"] = raw_data[7].get_text()
+                item["req_int"] = raw_data[8].get_text()
+                #urls = raw_data[0].find_all("img")
+                #print("x, item", x, item)
+                x = x+1                
+                #implicits = data[x].find_all("td")
+                #print("x, implicits ", x, implicits)
+                mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
+                #input("Press Enter to continue...")
+                if len(mods) > 0:
+                    assert len(mods)%2 == 0 #checks there is a evenm number of names to values
+                    stop = int(len(mods)/2) #used to determine the demark between names and values
+                    key_results = mods[:stop]
+                    values_results = mods[stop:]
+                    assert len(key_results) == len(values_results) #check we have the same number of names and values
+                    mod_keys = [] 
+                    mod_values = []
+                    stats = []  # all stats of each suffix
+                    for z in values_results: #for each stat in this prefeix
+                        these_values = []  
+                        # the values cover a range
+                        if "to" in z:
+                            min_value = z.split()[0]
+                            max_value = z.split()[2]
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                        else: # if there is a single number and no 'to' 
+                            min_value = z
+                            max_value = z
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                        for a in range(0,stop):
+                            test_stat = {}
+                            test_stat["implicit_mod_key_"+str(a)] = key_results[a]
+                            test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
+                            test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
+                            stats.append(test_stat)
+                            all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
+                    item["implicits"] = stats     
+                all_weapons.append(item)
+                x = x+1
+    print(all_stats)
+    stat_names = set()
+    for stat in all_stats:
+        stat_names.add(stat[0])
+    write_stat_names(stat_names)
+    write_stats(all_stats)
+    write_weapon_types(weapon_types)
+    write_weapon_names(all_weapons)
+    write_weapon_stats(all_weapons)
+    NEED THESE LAST TWO FUNCTIONS
+    
 
 #fetch_prefixes()
 #print(get_prefix_types("Armour"))
-fetch_suffixes()
-#fetch_weapons()
+#fetch_suffixes()
+fetch_weapons()
 #fetch_clothes()
 #fetch_jewelry()
 

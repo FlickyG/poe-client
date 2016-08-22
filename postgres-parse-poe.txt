@@ -42,7 +42,7 @@ CREATE TABLE stats(
 	
 CREATE TABLE prefix_names(
 	id SERIAL PRIMARY KEY NOT NULL,
-	name CHAR VARYING(50) NOT NULL
+	name CHAR VARYING(50) UNIQUE NOT NULL
 	);
 
 CREATE TABLE prefixes(
@@ -55,12 +55,21 @@ CREATE TABLE prefixes(
 	unique (type_id, name_id, i_level, crafted, stat)
 	);
 
-CREATE TABLE sufix_names(
+CREATE TABLE suffix_names(
 	id SERIAL PRIMARY KEY NOT NULL,
-	name CHAR VARYING(50) NOT NULL
+	name CHAR VARYING(50) UNIQUE NOT NULL
 	);
 
-
+CREATE TABLE suffixes(
+	id SERIAL PRIMARY KEY NOT NULL,
+	type_id INT NOT NULL,
+	name_id INT NOT NULL,
+	i_level INT NOT NULL,
+	crafted boolean NOT NULL,
+	stat INT NOT NULL,
+	unique (type_id, name_id, i_level, crafted, stat)
+	);
+	
 DROP TABLE weapon_types;
 DROP TABLE clothing_types;
 DROP TABLE jewelry_types;
@@ -70,6 +79,8 @@ DROP TABLE stat_names;
 DROP TABLE stats;
 DROP TABLE prefix_names;
 DROP TABLE prefixes;
+DROP TABLE suffix_names;
+DROP TABLE suffixes;
 
 ############################################
 ############################################
