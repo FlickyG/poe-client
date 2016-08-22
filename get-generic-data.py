@@ -8,6 +8,7 @@ import psycopg2
 import logging, logging.config
 import sys #for excepotion handling and printing
 import datetime, time #to analyuse how long things take
+from xml.dom import minidom
 
 
 logging.config.fileConfig('poe_tools_logging.conf')
@@ -120,9 +121,9 @@ def parse_clothing(item_data):
     item["armour"] = item_data[0][3].get_text()
     item["evasion_rating"] = item_data[0][4].get_text()
     item["energy_shield"] = item_data[0][5].get_text()
-    item["required_str"] = item_data[0][6].get_text()
-    item["req_dex"] = item_data[0][6].get_text()
-    item["req_int"] = item_data[0][6].get_text()
+    item["req_str"] = item_data[0][6].get_text()
+    item["req_dex"] = item_data[0][7].get_text()
+    item["req_int"] = item_data[0][8].get_text()
     # generate a list of dictionaries for the mods
     try:
         # find implcit type, which is the keys
@@ -576,37 +577,8 @@ def write_suffixes(the_list):
             except psycopg2.IntegrityError:
                 logger.debug("psql integrity error when commiting suffixes (%s)", x)
                 connQ.rollback() 
-
-def parse_weapon(item_data):
-    item = {}
-    # standard parameters accross all items
-    item["large_url"] = item_data[0][0].find_all("img")[0]["data-large-image"]
-    item["small_url"] = item_data[0][0].find_all("img")[0]["src"]
-    item["name"] = item_data[0][1].get_text()
-    item["item_level"] = item_data[0][2].get_text()
-    #item["damage"] = item_data[0][3].get_text()
-    item["min_dmg"] = item_data[0][3].get_text().split()[0]
-    item["max_dmg"] = item_data[0][3].get_text().split()[2]
-    item["attacks_per_second"] = item_data[0][4].get_text()
-    item["dps"] = item_data[0][5].get_text()
-    item["req_str"] = item_data[0][6].get_text()
-    item["req_dex"] = item_data[0][7].get_text()
-    item["req_int"] = item_data[0][8].get_text()
-    # implicit aspects
-    try:
-        item_data[1][0].get_text()
-        item["implicit_mod"] = item_data[1][0].get_text()
-        #print (item["implicit_mod"])
-        item["min_implicit_value"] = item_data[1][1].get_text().split()[0]
-        if len(item_data[1][1].get_text().split()) > 1:
-            item["max_implicit_value"] = item_data[1][1].get_text().split()[2]
-        else:
-            item["max_implicit_value"] = item_data[1][1].get_text().split()[0]
-        return item
-    except IndexError:
-        pass   
-        
-    
+     
+   
 def fetch_weapons():
     weapon_types = []
     all_stats = set()
@@ -632,15 +604,15 @@ def fetch_weapons():
                 item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
-                item["weapon_type"] = w_type
+                item["w_type"] = w_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
-                item["item_level"] = raw_data[2].get_text()
+                item["i_level"] = raw_data[2].get_text()
                 #item["damage"] = raw_data[3].get_text()
                 item["min_dmg"] = raw_data[3].get_text().split()[0]
                 item["max_dmg"] = raw_data[3].get_text().split()[2]
-                item["attacks_per_second"] = raw_data[4].get_text()
+                item["aps"] = raw_data[4].get_text()
                 item["dps"] = raw_data[5].get_text()
                 item["req_str"] = raw_data[6].get_text()
                 item["req_dex"] = raw_data[7].get_text()
@@ -676,17 +648,16 @@ def fetch_weapons():
                             these_values.append(min_value)
                             these_values.append(max_value)
                             mod_values.append(these_values)
-                        for a in range(0,stop):
-                            test_stat = {}
-                            test_stat["implicit_mod_key_"+str(a)] = key_results[a]
-                            test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
-                            test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
-                            stats.append(test_stat)
-                            all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
+                    for a in range(0,stop):
+                        test_stat = {}
+                        test_stat["implicit_mod_key_"+str(a)] = key_results[a]
+                        test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
+                        test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
+                        stats.append(test_stat)
+                        all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
                     item["implicits"] = stats     
                 all_weapons.append(item)
                 x = x+1
-    print(all_stats)
     stat_names = set()
     for stat in all_stats:
         stat_names.add(stat[0])
@@ -695,15 +666,350 @@ def fetch_weapons():
     write_weapon_types(weapon_types)
     write_weapon_names(all_weapons)
     write_weapon_stats(all_weapons)
-    NEED THESE LAST TWO FUNCTIONS
+    
+def write_weapon_names(list):
+    logger.debug("entering write_weapon_names (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        try:
+            pass
+            currQ.execute("INSERT INTO weapon_names (name, w_type, i_level, min_dmg, max_dmg,"
+                          "aps, dps, req_str, req_dex, req_int, large_url, small_url)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          (x["name"], x["w_type"], x["i_level"], x["min_dmg"], x["max_dmg"],
+                           x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
+                           x["small_url"],))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting weapon names (%s)", x)
+            connQ.rollback() 
+
+def write_weapon_stats(list):
+    logger.debug("entering write_weapon_stats (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        currQ.execute("SELECT id FROM weapon_names WHERE name = %s", (x["name"],))
+        w_id = currQ.fetchone()
+        if "implicits" in x:
+            for y in x["implicits"]:
+                for keys, values in y.items():
+                    if "implicit_mod_key" in keys:
+                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
+                                  (values,))
+                        stat_id = currQ.fetchone()[0]
+                for keys, values in y.items():   
+                    if "min" in keys:
+                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        min = currQ.fetchone()[0]
+                        min = values
+                for keys, values in y.items():   
+                    if "max" in keys:
+                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        max = currQ.fetchone()[0]
+                        max = values
+                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
+                              (stat_id, min, max,))
+                s_id = currQ.fetchone()
+                try:
+                    currQ.execute("INSERT INTO weapon_stats (w_id, s_id) VALUES (%s, %s)",
+                        (w_id, s_id,))           
+                    connQ.commit()
+                except psycopg2.IntegrityError:
+                    logger.debug("psql integrity error when commiting weapon stats (%s)", x)
+   
+def fetch_clothes():
+    clothes_types = []
+    all_stats = set()
+    all_clothes = []
+    resp = s.get(url_clothes)
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    #print all clothes names
+    clothes = soup.find_all("tr", {"class" : "even"}) 
+    clothes[0].find_all("td", {"class": "name"})
+    for y in clothes:
+        a = y.find_all("td", {"class": "name"})
+        #print (a[0].text) 
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
+    for item_type in all_items:
+        c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        clothes_types.append(c_type)
+        #write_clothes_types(clothes_types)
+        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        for item_data in items: # for each weaspon class
+            data = item_data.find_all("tr") #get the raw data
+            x = 2 #first two entries are table formatting aspects
+            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                #print(data[x])
+                #input("Press Enter to continue...")
+                item_data = []
+                item = {}
+                raw_data = data[x].find_all("td")
+                item["c_type"] = c_type
+                item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
+                item["small_url"] = raw_data[0].find_all("img")[0]["src"]
+                item["name"] = raw_data[1].get_text()
+                item["i_level"] = raw_data[2].get_text()
+                #item["damage"] = raw_data[3].get_text()
+                item["armour"] = raw_data[3].get_text()
+                item["evasion"] = raw_data[3].get_text()
+                item["energy_shield"] = raw_data[4].get_text()
+                item["req_str"] = raw_data[5].get_text()
+                item["req_dex"] = raw_data[6].get_text()
+                item["req_int"] = raw_data[7].get_text()
+                #urls = raw_data[0].find_all("img")
+                #print("x, item", x, item)
+                x = x+1                
+                #implicits = data[x].find_all("td")
+                #print("x, implicits ", x, implicits)
+                mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
+                #input("Press Enter to continue...")
+                if len(mods) > 0:
+                    print("mods", mods)
+                    if "Dummy Stat Display Nothing" in mods:
+                        mods.remove("Dummy Stat Display Nothing")
+                    assert len(mods)%2 == 0 #checks there is a evenm number of names to values
+                    stop = int(len(mods)/2) #used to determine the demark between names and values
+                    key_results = mods[:stop]
+                    values_results = mods[stop:]
+                    assert len(key_results) == len(values_results) #check we have the same number of names and values
+                    mod_keys = [] 
+                    mod_values = []
+                    stats = []  # all stats of each suffix
+                    for z in values_results: #for each stat in this prefeix
+                        these_values = []  
+                        # the values cover a range
+                        #print("z, stop", z, stop)
+                        if "to" in z:
+                            min_value = z.split()[0]
+                            max_value = z.split()[2]
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                        else: # if there is a single number and no 'to' 
+                            min_value = z
+                            max_value = z
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                    for a in range(0,stop):
+                        #print("key_results, mod_values, a", key_results, ",", mod_values, ",", a)
+                        test_stat = {}
+                        test_stat["implicit_mod_key_"+str(a)] = key_results[a]
+                        test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
+                        test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
+                        stats.append(test_stat)
+                        all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
+                    item["implicits"] = stats     
+                all_clothes.append(item)
+                x = x+1
+    stat_names = set()
+    for stat in all_stats:
+        stat_names.add(stat[0])
+    write_stat_names(stat_names)
+    write_stats(all_stats)
+    #write_clothes_types(clothes_types)
+    write_clothes_names(all_clothes)
+    write_clothes_stats(all_clothes)
+    
+def write_clothes_names(list):
+    logger.debug("entering write_clothes_names (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        try:
+            pass
+            currQ.execute("INSERT INTO clothes_names (name, c_type, i_level, armour, evasion,"
+                          "energy_shield, req_str, req_dex, req_int, large_url, small_url)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          (x["name"], x["c_type"], x["i_level"], x["armour"], x["evasion"],
+                           x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
+                           x["small_url"],))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting clothes names (%s)", x)
+            connQ.rollback() 
+
+def write_clothes_stats(list):
+    logger.debug("entering write_clothes_stats (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        currQ.execute("SELECT id FROM clothes_names WHERE name = %s", (x["name"],))
+        w_id = currQ.fetchone()
+        if "implicits" in x:
+            for y in x["implicits"]:
+                for keys, values in y.items():
+                    if "implicit_mod_key" in keys:
+                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
+                                  (values,))
+                        stat_id = currQ.fetchone()[0]
+                for keys, values in y.items():   
+                    if "min" in keys:
+                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        min = currQ.fetchone()[0]
+                        min = values
+                for keys, values in y.items():   
+                    if "max" in keys:
+                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        max = currQ.fetchone()[0]
+                        max = values
+                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
+                              (stat_id, min, max,))
+                s_id = currQ.fetchone()
+                try:
+                    currQ.execute("INSERT INTO clothes_stats (c_id, s_id) VALUES (%s, %s)",
+                        (w_id, s_id,))           
+                    connQ.commit()
+                except psycopg2.IntegrityError:
+                    logger.debug("psql integrity error when commiting clothes stats (%s)", x)
+
+def fetch_jewelry():
+    jewelry_types = []
+    all_stats = set()
+    all_jewelry = []
+    resp = s.get(url_jewelry)
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    #print all jewelry names
+    jewelry = soup.find_all("tr", {"class" : "even"}) 
+    jewelry[0].find_all("td", {"class": "name"})
+    for y in jewelry:
+        a = y.find_all("td", {"class": "name"})
+        #print (a[0].text) 
+    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
+    for item_type in all_items:
+        j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
+        jewelry_types.append(j_type)
+        #write_jewelry_types(jewelry_types)
+        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        for item_data in items: # for each weaspon class
+            data = item_data.find_all("tr") #get the raw data
+            x = 2 #first two entries are table formatting aspects
+            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
+                #print(data[x])
+                #input("Press Enter to continue...")
+                item_data = []
+                item = {}
+                raw_data = data[x].find_all("td")
+                item["j_type"] = j_type
+                item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
+                item["small_url"] = raw_data[0].find_all("img")[0]["src"]
+                item["name"] = raw_data[1].get_text()
+                item["i_level"] = raw_data[2].get_text()
+                x = x+1
+                print("item_name", item["name"])                
+                mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
+                #input("Press Enter to continue...")
+                if len(mods) > 0:
+                    if "Dummy Stat Display Nothing" in mods:
+                        mods.remove("Dummy Stat Display Nothing")
+                    assert len(mods)%2 == 0 #checks there is a evenm number of names to values
+                    stop = int(len(mods)/2) #used to determine the demark between names and values
+                    key_results = mods[:stop]
+                    values_results = mods[stop:]
+                    assert len(key_results) == len(values_results) #check we have the same number of names and values
+                    mod_keys = [] 
+                    mod_values = []
+                    stats = []  # all stats of each suffix
+                    for z in values_results: #for each stat in this prefeix
+                        these_values = []  
+                        # the values cover a range
+                        #print("z, stop", z, stop)
+                        if "to" in z:
+                            min_value = z.split()[0]
+                            max_value = z.split()[2]
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                        else: # if there is a single number and no 'to' 
+                            min_value = z
+                            max_value = z
+                            these_values.append(min_value)
+                            these_values.append(max_value)
+                            mod_values.append(these_values)
+                    for a in range(0,stop):
+                        #print("key_results, mod_values, a", key_results, ",", mod_values, ",", a)
+                        test_stat = {}
+                        test_stat["implicit_mod_key_"+str(a)] = key_results[a]
+                        test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
+                        test_stat["implicit_mod_values_"+str(a)+"_max"] = mod_values[a][1]
+                        stats.append(test_stat)
+                        all_stats.add((key_results[a], mod_values[a][0], mod_values[a][1])) #use tuples as ordered and hashable
+                    item["implicits"] = stats     
+                all_jewelry.append(item)
+    stat_names = set()
+    for stat in all_stats:
+        stat_names.add(stat[0])
+    write_stat_names(stat_names)
+    write_stats(all_stats)
+    #write_jewelry_types(jewelry_types)
+    write_jewelry_names(all_jewelry)
+    write_jewelry_stats(all_jewelry)
+    
+def write_jewelry_names(list):
+    logger.debug("entering write_jewelry_names (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        try:
+            pass
+            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, small_url)"
+                          "VALUES (%s, %s, %s, %s)",
+                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting jewelry names (%s)", x)
+            connQ.rollback() 
+
+def write_jewelry_stats(list):
+    logger.debug("entering write_jewelry_stats (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()  
+    for x in list:
+        currQ.execute("SELECT id FROM jewelry_names WHERE name = %s", (x["name"],))
+        w_id = currQ.fetchone()
+        if "implicits" in x:
+            for y in x["implicits"]:
+                for keys, values in y.items():
+                    if "implicit_mod_key" in keys:
+                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
+                                  (values,))
+                        stat_id = currQ.fetchone()[0]
+                for keys, values in y.items():   
+                    if "min" in keys:
+                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        min = currQ.fetchone()[0]
+                        min = values
+                for keys, values in y.items():   
+                    if "max" in keys:
+                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
+                                  (stat_id,))
+                        max = currQ.fetchone()[0]
+                        max = values
+                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
+                              (stat_id, min, max,))
+                s_id = currQ.fetchone()
+                try:
+                    currQ.execute("INSERT INTO jewelry_stats (c_id, s_id) VALUES (%s, %s)",
+                        (w_id, s_id,))           
+                    connQ.commit()
+                except psycopg2.IntegrityError:
+                    logger.debug("psql integrity error when commiting jewelry stats (%s)", x)
+
     
 
 #fetch_prefixes()
 #print(get_prefix_types("Armour"))
 #fetch_suffixes()
-fetch_weapons()
+#fetch_weapons()
 #fetch_clothes()
-#fetch_jewelry()
+fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 

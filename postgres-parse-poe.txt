@@ -7,16 +7,75 @@ CREATE TABLE weapon_types(
 	id SERIAL PRIMARY KEY NOT NULL,
 	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
+
+CREATE TABLE weapon_names(
+	id serial PRIMARY KEY NOT NULL,
+	name CHAR VARYING(50) UNIQUE NOT NULL,
+	w_type CHAR VARYING(30),
+	i_level SMALLINT NOT NULL,
+	min_dmg SMALLINT NOT NULL,
+	max_dmg SMALLINT NOT NULL,
+	aps FLOAT NOT NULL,
+	dps FLOAT NOT NULL,
+	req_str SMALLINT NOT NULL,
+	req_dex SMALLINT NOT NULL,
+	req_int SMALLINT NOT NULL,
+	large_url CHAR VARYING(800),
+	small_url CHAR VARYING(400)
+	);
+
+CREATE TABLE weapon_stats(
+	id SERIAL NOT NULL,
+	w_id INT NOT NULL,
+	s_id INT NOT NULL
+	);
 	
 CREATE TABLE clothing_types(
 	id SERIAL PRIMARY KEY NOT NULL,
 	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
-	
+
+CREATE TABLE clothes_names(
+	id serial PRIMARY KEY NOT NULL,
+	name CHAR VARYING(50) UNIQUE NOT NULL,
+	c_type CHAR VARYING(30),
+	i_level SMALLINT NOT NULL,
+	armour SMALLINT NOT NULL,
+	evasion SMALLINT NOT NULL,
+	energy_shield FLOAT NOT NULL,
+	req_str FLOAT NOT NULL,
+	req_dex SMALLINT NOT NULL,
+	req_int SMALLINT NOT NULL,
+	large_url CHAR VARYING(800),
+	small_url CHAR VARYING(400)
+	);
+
+CREATE TABLE clothes_stats(
+	id serial NOT NULL,
+	c_id SMALLINT NOT NULL,
+	s_id SMALLINT NOT NULL
+	);
+
+
 CREATE TABLE jewelry_types(
 	id SERIAL PRIMARY KEY NOT NULL,
 	type CHAR VARYING(50) NOT NULL UNIQUE
 	);
+
+CREATE TABLE jewelry_names(
+	id serial PRIMARY KEY NOT NULL,
+	j_type SMALLINT NOT NULL,
+	name CHAR VARYING(50) NOT NULL,
+	i_level SMALLINT NOT NULL,
+	large_url CHAR VARYING(800),
+	small_url CHAR VARYING(400)
+	);
+
+CREATE TABLE jewelry_stats(
+	id serial NOT NULL,
+	j_id SMALLINT NOT NULL,
+	s_id SMALLINT NOT NULL
+	);	
 	
 CREATE TABLE prefix_types(
 	id SERIAL PRIMARY KEY NOT NULL,
@@ -71,8 +130,17 @@ CREATE TABLE suffixes(
 	);
 	
 DROP TABLE weapon_types;
+DROP TABLE weapon_names; 
+DROP TABLE weapon_stats;
+
 DROP TABLE clothing_types;
+DROP TABLE clothes_names;
+DROP TABLE clothes_stats;
+
 DROP TABLE jewelry_types;
+DROP TABLE jewelry_names;
+DROP TABLE jewelry_stats;
+
 DROP TABLE prefix_types;
 DROP TABLE suffix_types;
 DROP TABLE stat_names;
