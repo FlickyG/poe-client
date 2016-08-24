@@ -1,4 +1,5 @@
 #!/bin/python3
+# stuff
 import sqlite3, requests, requests_cache, json
 import time, pprint
 from pip._vendor.distlib import database
@@ -11,7 +12,9 @@ CHARACTERS= []
 ACCOUNTS = []
 ACCOUNT_NAME = ""
 SESSID = []
-cookie = {'poesessid': '9aeed62a35385e4b672defc905ee405f'}
+
+cookie = {'poesessid': '784b821bec722e881a25493387d06110'}
+
 CHARACTERS = []
 
 class db_queries(object):
@@ -123,6 +126,7 @@ def get_stash_items(sessid, tabIndex, the_account):
     Returns the items in the required stash tab 
     '''
     league = "Standard"
+
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex,
@@ -139,6 +143,7 @@ def get_tab_numbers_and_names(data):
       
 def get_tabs(sessid, the_account):
     TABS = []
+    print(sessid, the_account)
     for x in get_stash_items(sessid, 0, the_account)['tabs']:
         TABS.append(poe_tab(x, the_account.account_name))
     return TABS
@@ -179,7 +184,9 @@ requests_cache.clear()
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
-COOKIES = {'greenmasterflick': '9aeed62a35385e4b672defc905ee405f'}
+
+COOKIES = {'greenmasterflick': '784b821bec722e881a25493387d06110'}
+
 
 
 def scrape_data():
@@ -300,3 +307,13 @@ queries = db_queries()'''
     x = s.get(marketStatUrl, cookies = cookie)
     y = x.json()
     print (z.name, y)'''
+    
+=====
+get account details from data base
+fetch character names for each account and dump into data base
+fetch tab names and ids for each account and dump into data base
+for each tab, fetch items in tab
+for each item, store in data base
+
+
+ 
