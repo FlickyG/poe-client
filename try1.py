@@ -312,12 +312,5 @@ queries = db_queries()'''
     y = x.json()
     print (z.name, y)'''
     
-=====
-get account details from data base
-fetch character names for each account and dump into data base
-fetch tab names and ids for each account and dump into data base
-for each tab, fetch items in tab
-for each item, store in data base
-
 
  

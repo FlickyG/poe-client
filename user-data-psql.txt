@@ -1,0 +1,21 @@
+CREATE DATABASE poe_user_data;
+GRANT ALL 
+
+
+
+CREATE TABLE accounts(
+id SERIAL NOT NULL,
+ggg_account_name CHAR VARYING(50) NOT NULL,
+gg_sessid CHAR(32)
+) 
+
+
+characters
+id
+account_id
+character
+char_lvl
+char_class
+
+
+
