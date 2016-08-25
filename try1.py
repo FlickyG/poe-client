@@ -1,4 +1,5 @@
 #!/bin/python3
+# stuff
 import sqlite3, requests, requests_cache, json
 import time, pprint
 from pip._vendor.distlib import database
@@ -12,7 +13,10 @@ ACCOUNTS = []
 ACCOUNT_NAME = ""
 SESSID = []
 
+
 cookie = {'poesessid': '9aeed62a35385e4b672defc905ee405f'}
+
+
 
 CHARACTERS = []
 
@@ -124,8 +128,8 @@ def get_stash_items(sessid, tabIndex, the_account):
     '''
     Returns the items in the required stash tab 
     '''
-
     league = "Standard"
+
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex,
@@ -183,6 +187,7 @@ requests_cache.clear()
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
+
 
 COOKIES = {'greenmasterflick': '9aeed62a35385e4b672defc905ee405f'}
 
