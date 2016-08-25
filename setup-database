@@ -1,0 +1,19 @@
+CREATE USER poetools WITH PASSWORD 'monkey';
+GRANT ALL PRIVILEGES ON DATABASE poe_data to poetools;
+
+
+psql --host=localhost --dbname=poe_data --username=poeTools
+
+sudo cp pg_hba.conf pg_hba.conf.bk
+sudo vi pg_hba.conf
+
+#change this line so the method is dm5 rather than peer
+# "local" is for Unix domain socket connections only
+local   all             all                                     md5
+
+# as postgres user
+GRANT ALL ON ALL TABLES IN SCHEMA public TO poetools;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO poetools;
+
+CREATE DATABASE poe_user_data OWNER adam;
+GRANT ALL PRIVILEGES ON DATABASE poe_user_data to poetools;
