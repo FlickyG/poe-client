@@ -212,3 +212,14 @@ AND weapon_names.w_type = 'BOW'
 ORDER BY stats.min_value DESC;
 
 
+===
+
+        marketStatUrl = "https://www.pathofexile.com/character-window/get-account-name"
+        #print("values", values)
+        resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
+        account_name = resp.json()
+        print("accounts Names!", account_name)
+        for key, value in account_name.items():
+            print("print account!", key, value)
+            ACCOUNTS.append(account(value))
+

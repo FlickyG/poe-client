@@ -11,7 +11,9 @@ CHARACTERS= []
 ACCOUNTS = []
 ACCOUNT_NAME = ""
 SESSID = []
-cookie = {'poesessid': '066f564deaf46a2c865427d5d8a9d77c'}
+
+cookie = {'poesessid': '9aeed62a35385e4b672defc905ee405f'}
+
 CHARACTERS = []
 
 class db_queries(object):
@@ -35,6 +37,7 @@ class poe_tab(object):
         self.name = data['n']
         self.owner = account_name
         self.colour = data['colour']
+    
 
 class poe_character(object):
     def __init__(self, character):
@@ -118,10 +121,15 @@ def  get_equiped_items(values, characters, account_name):
 #get stash items
 
 def get_stash_items(sessid, tabIndex, the_account):
+    '''
+    Returns the items in the required stash tab 
+    '''
+
     league = "Standard"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
-                    "accountName={acc}".format(lg = league, ind = tabIndex, acc = the_account.account_name))
+                    "accountName={acc}".format(lg = league, ind = tabIndex,
+                                               acc = the_account.account_name))
     resp = s.get(marketStatUrl, cookies = {'POESESSID': sessid})
     stash_items = resp.json()
     return stash_items
@@ -175,7 +183,9 @@ requests_cache.clear()
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
-COOKIES = {'greenmasterflick': '066f564deaf46a2c865427d5d8a9d77c'}
+
+COOKIES = {'greenmasterflick': '9aeed62a35385e4b672defc905ee405f'}
+
 
 
 def scrape_data():
@@ -192,6 +202,7 @@ def scrape_data():
 #get account name
 def scrape_all_data():
     for keys, values in COOKIES.items():
+        print(keys, values)
         marketStatUrl = "https://www.pathofexile.com/character-window/get-account-name"
         #print("values", values)
         resp = s.get(marketStatUrl, cookies = {'POESESSID': values})
@@ -239,7 +250,7 @@ scrape_data()
 x = get_tabs(COOKIES[ACCOUNTS[0].account_name], ACCOUNTS[0])
 for y in x:
     print (y.id, "|", y.name)
-some_items = items_in_tab(41)
+some_items = items_in_tab(17)
 for items in some_items:
     if 'descrText' in items:
         # currecy, gems, cards
