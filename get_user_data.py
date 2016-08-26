@@ -6,9 +6,11 @@ from pip._vendor.distlib import database
 ## for sql
 import psycopg2
 import logging
+from xml.dom.pulldom import CHARACTERS
 
 #this needs to be replaced with the value passed by the django login screen
 USER = "adam"
+SESSID = "9b13e230c385143be89a5a9419e27bdf"
 
 url_characters = "www.pathofexile.com/character-window/get-characters"
 
@@ -41,7 +43,12 @@ s.hooks = {'response': make_throttle_hook(0.1)}
 url_characters = "www.pathofexile.com/character-window/get-characters"
 
 #get account details from data base
+marketStatUrl = "https://www.pathofexile.com/character-window/get-characters"
+characters = s.get(marketStatUrl, cookies = {'POESESSID': SESSID}).json
+print(characters)
 
+for character in characters:
+    print(character)
 
 
 
