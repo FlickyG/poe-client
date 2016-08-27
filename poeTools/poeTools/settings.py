@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'poeTools.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'poe_user_data',
+        'NAME': 'poe_data',
         'USER': 'poetools',
         'PASSWORD': 'monkey',
         'HOST': 'localhost',
