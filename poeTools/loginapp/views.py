@@ -2,7 +2,6 @@
 #log/views.py
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
 # Create your views here.
 # this login required decorator is to not allow to any  
