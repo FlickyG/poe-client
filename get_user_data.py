@@ -10,7 +10,7 @@ from xml.dom.pulldom import CHARACTERS
 
 #this needs to be replaced with the value passed by the django login screen
 USER = "adam"
-SESSID = "9b13e230c385143be89a5a9419e27bdf"
+SESSID = "4f81b66c24e87dda9dded625035ee4e5"
 
 url_characters = "www.pathofexile.com/character-window/get-characters"
 
