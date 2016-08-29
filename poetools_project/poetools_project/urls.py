@@ -15,10 +15,27 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.conf import settings # New Import
+from django.conf.urls.static import static # New Import
+#from django.conf.urls.defaults import patterns
+from django.views.static import serve #to add media url for debug mode
+
 
 
 urlpatterns = [
     url(r'^$', include('rango.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^rango/', include('rango.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# UNDERNEATH your urlpatterns definition, add the following two lines:
+if settings.DEBUG:
+    print("DEBUG IS SET TRUE", settings.MEDIA_URL)
+    urlpatterns.append(
+        url(r'^media/(?P<path>.*)$', serve,  {'document_root': settings.MEDIA_ROOT}),
+        )
+    '''
+        url((r'^media/(?P<path>.*)', 'serve', {'document_root': settings.MEDIA_ROOT})),
+        ]
+        )
+    '''
