@@ -12,9 +12,15 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+SETTINGS_DIR = os.path.dirname(__file__)
+PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
+PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+#tutorial secti9on 5
+DATABASE_PATH = os.path.join(PROJECT_PATH, 'rango.db')
 
 #I added this
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
@@ -38,6 +44,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -135,7 +142,8 @@ print("static path", STATIC_PATH, STATICFILES_DIRS)
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Absolute path to the media directory
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media') # Absolute path to the media directory
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Absolute path to the media directory
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
@@ -143,3 +151,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DATABASE_PATH,
+    }
+}
+

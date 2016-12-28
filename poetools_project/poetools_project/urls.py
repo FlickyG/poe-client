@@ -19,12 +19,11 @@ from django.conf import settings # New Import
 from django.conf.urls.static import static # New Import
 #from django.conf.urls.defaults import patterns
 from django.views.static import serve #to add media url for debug mode
-
-
+admin.autodiscover() #tutorial section 5
 
 urlpatterns = [
     url(r'^$', include('rango.urls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^rango/', include('rango.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
