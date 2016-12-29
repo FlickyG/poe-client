@@ -16,6 +16,8 @@ SETTINGS_DIR = os.path.dirname(__file__)
 PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
 PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 
+LOGIN_URL = '/rango/login/' #section 9
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
