@@ -92,11 +92,13 @@ def add_page(request, category_name_slug):
     try:
         cat = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
-                cat = None
+        cat = None
 
     if request.method == 'POST':
         form = PageForm(request.POST)
+        print("hello adam")
         if form.is_valid():
+            print("form is valid")
             if cat:
                 page = form.save(commit=False)
                 page.category = cat
@@ -106,6 +108,7 @@ def add_page(request, category_name_slug):
                 print("hello adam")
                 return category(request, category_name_slug)
         else:
+            print("form has errors")
             print(form.errors)
     else:
         form = PageForm()
