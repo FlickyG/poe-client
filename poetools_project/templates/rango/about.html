@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-    <head>
-        <title>Rango</title>
-    </head>
+{% load staticfiles %}
 
-    <body>
-        <h1>Rango says...</h1>
+{% block title %}{Rango says...}{% endblock %}
+
+{% block body_block %}
+        <h1>About Rango . . . </h1>
         This is the about pafe!<strong>{{ boldmessage }}</strong><br />
         <a href="/rango/">About</a><br />
         <strong>{{MEDIA_URL}}</strong><br />
         <img src="{{MEDIA_URL}}download.png"><br />
-    </body>
-
-</html>
+{% endblock %}
