@@ -6,7 +6,8 @@
 {% block title %}Add Page{% endblock %}
     
 {% block body_block %}
-    	<form id="page_form" method="post" action="/rango/add_page/">
+    	<form id="page_form" method="post" action="/rango/category/{{ category_name_slug }}/add_page/"> 
+    	<!-- previous line passes the action variable to the URL given --> 
     	<h1>Add Page</h1>
     	{% csrf_token %}
     	{% for hidden in form.hidden_fields %}
