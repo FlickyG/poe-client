@@ -8,7 +8,7 @@
 {% block body_block %}
         <h1>About Rango . . . </h1>
         This is the about pafe!<strong>{{ boldmessage }}</strong><br />
-        <a href="/rango/">About</a><br />
+        <a href="{% url 'about' %}">About</a><br />
         <strong>{{MEDIA_URL}}</strong><br />
         <img src="{{MEDIA_URL}}download.png"><br />
 {% endblock %}

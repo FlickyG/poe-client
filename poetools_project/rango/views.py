@@ -29,7 +29,7 @@ def index(request):
 
 def about(request):
     context_dict = {'helloimage': 'download.png', 'boldmessage': datetime.datetime.now()}
-    return render(request, 'rango/about.html', context_dict)
+    return render(request, 'rango/about.html', {})
 
 def hello_world(request):
     return HttpResponse("Adam says hello world!")
