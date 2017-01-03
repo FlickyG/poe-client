@@ -211,6 +211,12 @@ WHERE stat_names.name LIKE '%Critical Strike Chance +%'
 AND weapon_names.w_type = 'BOW'
 ORDER BY stats.min_value DESC;
 
+= diusplays all weapons with a given stat id
+select * from weapon_names
+join weapon_stats on (weapon_names.id = weapon_stats.w_id)
+where  weapon_stats.s_id = 1199;
+
+
 
 ===
 

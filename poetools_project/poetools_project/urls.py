@@ -19,13 +19,25 @@ from django.conf import settings # New Import
 from django.conf.urls.static import static # New Import
 #from django.conf.urls.defaults import patterns
 from django.views.static import serve #to add media url for debug mode
+from registration.backends.simple.views import RegistrationView # section 12
+
 admin.autodiscover() #tutorial section 5
+
+# Create a new class that redirects the user to the index page, if successful at logging
+# sectoin 12
+class MyRegistrationView(RegistrationView):
+    def get_success_url(self, request, user):
+        print ("register complete!")
+        return '/rango/'
+
 
 urlpatterns = [
     url(r'^$', include('rango.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^rango/', include('rango.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'), #section 12
+]
 
 # UNDERNEATH your urlpatterns definition, add the following two lines:
 if settings.DEBUG:
