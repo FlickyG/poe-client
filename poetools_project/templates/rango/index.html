@@ -21,7 +21,7 @@
 		{% else %}
 			<h1>Rango says... hello!</h1>
 			{% for category in categories %}
-                <li><a href="{% url category category.slug %}">{{ category.name }}</a></li>
+                <li><a href="{% url 'category' category.slug %}">{{ category.name }}</a></li>
             {% endfor %}
 		{% endif %}
 {% endblock %}
