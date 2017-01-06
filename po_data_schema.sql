@@ -2,26 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.0
+-- Dumped by pg_dump version 9.5.0
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
+SET row_security = off;
 
 SET search_path = public, pg_catalog;
 
@@ -30,7 +20,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: accounts; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: accounts; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE accounts (
@@ -40,7 +30,7 @@ CREATE TABLE accounts (
 );
 
 
-ALTER TABLE public.accounts OWNER TO poetools;
+ALTER TABLE accounts OWNER TO poetools;
 
 --
 -- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -54,7 +44,7 @@ CREATE SEQUENCE accounts_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounts_id_seq OWNER TO poetools;
+ALTER TABLE accounts_id_seq OWNER TO poetools;
 
 --
 -- Name: accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -64,7 +54,7 @@ ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
 
 
 --
--- Name: auth_group; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_group (
@@ -73,7 +63,7 @@ CREATE TABLE auth_group (
 );
 
 
-ALTER TABLE public.auth_group OWNER TO poetools;
+ALTER TABLE auth_group OWNER TO poetools;
 
 --
 -- Name: auth_group_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -87,7 +77,7 @@ CREATE SEQUENCE auth_group_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_group_id_seq OWNER TO poetools;
+ALTER TABLE auth_group_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -97,7 +87,7 @@ ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
 
 
 --
--- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_group_permissions (
@@ -107,7 +97,7 @@ CREATE TABLE auth_group_permissions (
 );
 
 
-ALTER TABLE public.auth_group_permissions OWNER TO poetools;
+ALTER TABLE auth_group_permissions OWNER TO poetools;
 
 --
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -121,7 +111,7 @@ CREATE SEQUENCE auth_group_permissions_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_group_permissions_id_seq OWNER TO poetools;
+ALTER TABLE auth_group_permissions_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -131,7 +121,7 @@ ALTER SEQUENCE auth_group_permissions_id_seq OWNED BY auth_group_permissions.id;
 
 
 --
--- Name: auth_permission; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_permission; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_permission (
@@ -142,7 +132,7 @@ CREATE TABLE auth_permission (
 );
 
 
-ALTER TABLE public.auth_permission OWNER TO poetools;
+ALTER TABLE auth_permission OWNER TO poetools;
 
 --
 -- Name: auth_permission_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -156,7 +146,7 @@ CREATE SEQUENCE auth_permission_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_permission_id_seq OWNER TO poetools;
+ALTER TABLE auth_permission_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -166,7 +156,7 @@ ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
 
 
 --
--- Name: auth_user; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_user (
@@ -184,10 +174,10 @@ CREATE TABLE auth_user (
 );
 
 
-ALTER TABLE public.auth_user OWNER TO poetools;
+ALTER TABLE auth_user OWNER TO poetools;
 
 --
--- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_user_groups (
@@ -197,7 +187,7 @@ CREATE TABLE auth_user_groups (
 );
 
 
-ALTER TABLE public.auth_user_groups OWNER TO poetools;
+ALTER TABLE auth_user_groups OWNER TO poetools;
 
 --
 -- Name: auth_user_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -211,7 +201,7 @@ CREATE SEQUENCE auth_user_groups_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_user_groups_id_seq OWNER TO poetools;
+ALTER TABLE auth_user_groups_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_user_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -232,7 +222,7 @@ CREATE SEQUENCE auth_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_user_id_seq OWNER TO poetools;
+ALTER TABLE auth_user_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -242,7 +232,7 @@ ALTER SEQUENCE auth_user_id_seq OWNED BY auth_user.id;
 
 
 --
--- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE auth_user_user_permissions (
@@ -252,7 +242,7 @@ CREATE TABLE auth_user_user_permissions (
 );
 
 
-ALTER TABLE public.auth_user_user_permissions OWNER TO poetools;
+ALTER TABLE auth_user_user_permissions OWNER TO poetools;
 
 --
 -- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -266,7 +256,7 @@ CREATE SEQUENCE auth_user_user_permissions_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_user_user_permissions_id_seq OWNER TO poetools;
+ALTER TABLE auth_user_user_permissions_id_seq OWNER TO poetools;
 
 --
 -- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -276,7 +266,7 @@ ALTER SEQUENCE auth_user_user_permissions_id_seq OWNED BY auth_user_user_permiss
 
 
 --
--- Name: char_types; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: char_types; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE char_types (
@@ -285,7 +275,7 @@ CREATE TABLE char_types (
 );
 
 
-ALTER TABLE public.char_types OWNER TO poetools;
+ALTER TABLE char_types OWNER TO poetools;
 
 --
 -- Name: char_types_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -299,7 +289,7 @@ CREATE SEQUENCE char_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.char_types_id_seq OWNER TO poetools;
+ALTER TABLE char_types_id_seq OWNER TO poetools;
 
 --
 -- Name: char_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -309,7 +299,7 @@ ALTER SEQUENCE char_types_id_seq OWNED BY char_types.id;
 
 
 --
--- Name: characters; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: characters; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE characters (
@@ -324,7 +314,7 @@ CREATE TABLE characters (
 );
 
 
-ALTER TABLE public.characters OWNER TO poetools;
+ALTER TABLE characters OWNER TO poetools;
 
 --
 -- Name: characters_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -338,7 +328,7 @@ CREATE SEQUENCE characters_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.characters_id_seq OWNER TO poetools;
+ALTER TABLE characters_id_seq OWNER TO poetools;
 
 --
 -- Name: characters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -348,7 +338,7 @@ ALTER SEQUENCE characters_id_seq OWNED BY characters.id;
 
 
 --
--- Name: clothes_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothes_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE clothes_names (
@@ -367,7 +357,7 @@ CREATE TABLE clothes_names (
 );
 
 
-ALTER TABLE public.clothes_names OWNER TO adam;
+ALTER TABLE clothes_names OWNER TO adam;
 
 --
 -- Name: clothes_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -381,7 +371,7 @@ CREATE SEQUENCE clothes_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.clothes_names_id_seq OWNER TO adam;
+ALTER TABLE clothes_names_id_seq OWNER TO adam;
 
 --
 -- Name: clothes_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -391,7 +381,7 @@ ALTER SEQUENCE clothes_names_id_seq OWNED BY clothes_names.id;
 
 
 --
--- Name: clothes_stats; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothes_stats; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE clothes_stats (
@@ -401,7 +391,7 @@ CREATE TABLE clothes_stats (
 );
 
 
-ALTER TABLE public.clothes_stats OWNER TO adam;
+ALTER TABLE clothes_stats OWNER TO adam;
 
 --
 -- Name: clothes_stats_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -415,7 +405,7 @@ CREATE SEQUENCE clothes_stats_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.clothes_stats_id_seq OWNER TO adam;
+ALTER TABLE clothes_stats_id_seq OWNER TO adam;
 
 --
 -- Name: clothes_stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -425,7 +415,7 @@ ALTER SEQUENCE clothes_stats_id_seq OWNED BY clothes_stats.id;
 
 
 --
--- Name: clothing_types; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothing_types; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE clothing_types (
@@ -434,7 +424,7 @@ CREATE TABLE clothing_types (
 );
 
 
-ALTER TABLE public.clothing_types OWNER TO adam;
+ALTER TABLE clothing_types OWNER TO adam;
 
 --
 -- Name: clothing_types_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -448,7 +438,7 @@ CREATE SEQUENCE clothing_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.clothing_types_id_seq OWNER TO adam;
+ALTER TABLE clothing_types_id_seq OWNER TO adam;
 
 --
 -- Name: clothing_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -458,7 +448,7 @@ ALTER SEQUENCE clothing_types_id_seq OWNED BY clothing_types.id;
 
 
 --
--- Name: django_admin_log; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_admin_log; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE django_admin_log (
@@ -474,7 +464,7 @@ CREATE TABLE django_admin_log (
 );
 
 
-ALTER TABLE public.django_admin_log OWNER TO poetools;
+ALTER TABLE django_admin_log OWNER TO poetools;
 
 --
 -- Name: django_admin_log_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -488,7 +478,7 @@ CREATE SEQUENCE django_admin_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.django_admin_log_id_seq OWNER TO poetools;
+ALTER TABLE django_admin_log_id_seq OWNER TO poetools;
 
 --
 -- Name: django_admin_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -498,7 +488,7 @@ ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
 
 
 --
--- Name: django_content_type; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_content_type; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE django_content_type (
@@ -508,7 +498,7 @@ CREATE TABLE django_content_type (
 );
 
 
-ALTER TABLE public.django_content_type OWNER TO poetools;
+ALTER TABLE django_content_type OWNER TO poetools;
 
 --
 -- Name: django_content_type_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -522,7 +512,7 @@ CREATE SEQUENCE django_content_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.django_content_type_id_seq OWNER TO poetools;
+ALTER TABLE django_content_type_id_seq OWNER TO poetools;
 
 --
 -- Name: django_content_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -532,7 +522,7 @@ ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
 
 
 --
--- Name: django_migrations; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_migrations; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE django_migrations (
@@ -543,7 +533,7 @@ CREATE TABLE django_migrations (
 );
 
 
-ALTER TABLE public.django_migrations OWNER TO poetools;
+ALTER TABLE django_migrations OWNER TO poetools;
 
 --
 -- Name: django_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -557,7 +547,7 @@ CREATE SEQUENCE django_migrations_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.django_migrations_id_seq OWNER TO poetools;
+ALTER TABLE django_migrations_id_seq OWNER TO poetools;
 
 --
 -- Name: django_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -567,7 +557,7 @@ ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
 
 
 --
--- Name: django_session; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_session; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE django_session (
@@ -577,10 +567,10 @@ CREATE TABLE django_session (
 );
 
 
-ALTER TABLE public.django_session OWNER TO poetools;
+ALTER TABLE django_session OWNER TO poetools;
 
 --
--- Name: jewelry_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE jewelry_names (
@@ -593,7 +583,7 @@ CREATE TABLE jewelry_names (
 );
 
 
-ALTER TABLE public.jewelry_names OWNER TO adam;
+ALTER TABLE jewelry_names OWNER TO adam;
 
 --
 -- Name: jewelry_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -607,7 +597,7 @@ CREATE SEQUENCE jewelry_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.jewelry_names_id_seq OWNER TO adam;
+ALTER TABLE jewelry_names_id_seq OWNER TO adam;
 
 --
 -- Name: jewelry_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -617,7 +607,7 @@ ALTER SEQUENCE jewelry_names_id_seq OWNED BY jewelry_names.id;
 
 
 --
--- Name: jewelry_stats; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_stats; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE jewelry_stats (
@@ -627,7 +617,7 @@ CREATE TABLE jewelry_stats (
 );
 
 
-ALTER TABLE public.jewelry_stats OWNER TO adam;
+ALTER TABLE jewelry_stats OWNER TO adam;
 
 --
 -- Name: jewelry_stats_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -641,7 +631,7 @@ CREATE SEQUENCE jewelry_stats_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.jewelry_stats_id_seq OWNER TO adam;
+ALTER TABLE jewelry_stats_id_seq OWNER TO adam;
 
 --
 -- Name: jewelry_stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -651,7 +641,7 @@ ALTER SEQUENCE jewelry_stats_id_seq OWNED BY jewelry_stats.id;
 
 
 --
--- Name: jewelry_types; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_types; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE jewelry_types (
@@ -660,7 +650,7 @@ CREATE TABLE jewelry_types (
 );
 
 
-ALTER TABLE public.jewelry_types OWNER TO adam;
+ALTER TABLE jewelry_types OWNER TO adam;
 
 --
 -- Name: jewelry_types_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -674,7 +664,7 @@ CREATE SEQUENCE jewelry_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.jewelry_types_id_seq OWNER TO adam;
+ALTER TABLE jewelry_types_id_seq OWNER TO adam;
 
 --
 -- Name: jewelry_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -684,7 +674,7 @@ ALTER SEQUENCE jewelry_types_id_seq OWNED BY jewelry_types.id;
 
 
 --
--- Name: loginapp_userprofile; Type: TABLE; Schema: public; Owner: poetools; Tablespace: 
+-- Name: loginapp_userprofile; Type: TABLE; Schema: public; Owner: poetools
 --
 
 CREATE TABLE loginapp_userprofile (
@@ -694,7 +684,7 @@ CREATE TABLE loginapp_userprofile (
 );
 
 
-ALTER TABLE public.loginapp_userprofile OWNER TO poetools;
+ALTER TABLE loginapp_userprofile OWNER TO poetools;
 
 --
 -- Name: loginapp_userprofile_id_seq; Type: SEQUENCE; Schema: public; Owner: poetools
@@ -708,7 +698,7 @@ CREATE SEQUENCE loginapp_userprofile_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.loginapp_userprofile_id_seq OWNER TO poetools;
+ALTER TABLE loginapp_userprofile_id_seq OWNER TO poetools;
 
 --
 -- Name: loginapp_userprofile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poetools
@@ -718,7 +708,7 @@ ALTER SEQUENCE loginapp_userprofile_id_seq OWNED BY loginapp_userprofile.id;
 
 
 --
--- Name: prefix_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE prefix_names (
@@ -727,7 +717,7 @@ CREATE TABLE prefix_names (
 );
 
 
-ALTER TABLE public.prefix_names OWNER TO adam;
+ALTER TABLE prefix_names OWNER TO adam;
 
 --
 -- Name: prefix_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -741,7 +731,7 @@ CREATE SEQUENCE prefix_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.prefix_names_id_seq OWNER TO adam;
+ALTER TABLE prefix_names_id_seq OWNER TO adam;
 
 --
 -- Name: prefix_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -751,7 +741,7 @@ ALTER SEQUENCE prefix_names_id_seq OWNED BY prefix_names.id;
 
 
 --
--- Name: prefix_types; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_types; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE prefix_types (
@@ -760,7 +750,7 @@ CREATE TABLE prefix_types (
 );
 
 
-ALTER TABLE public.prefix_types OWNER TO adam;
+ALTER TABLE prefix_types OWNER TO adam;
 
 --
 -- Name: prefix_types_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -774,7 +764,7 @@ CREATE SEQUENCE prefix_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.prefix_types_id_seq OWNER TO adam;
+ALTER TABLE prefix_types_id_seq OWNER TO adam;
 
 --
 -- Name: prefix_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -784,7 +774,7 @@ ALTER SEQUENCE prefix_types_id_seq OWNED BY prefix_types.id;
 
 
 --
--- Name: prefixes; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefixes; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE prefixes (
@@ -797,7 +787,7 @@ CREATE TABLE prefixes (
 );
 
 
-ALTER TABLE public.prefixes OWNER TO adam;
+ALTER TABLE prefixes OWNER TO adam;
 
 --
 -- Name: prefixes_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -811,7 +801,7 @@ CREATE SEQUENCE prefixes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.prefixes_id_seq OWNER TO adam;
+ALTER TABLE prefixes_id_seq OWNER TO adam;
 
 --
 -- Name: prefixes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -821,7 +811,7 @@ ALTER SEQUENCE prefixes_id_seq OWNED BY prefixes.id;
 
 
 --
--- Name: stat_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: stat_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE stat_names (
@@ -830,7 +820,7 @@ CREATE TABLE stat_names (
 );
 
 
-ALTER TABLE public.stat_names OWNER TO adam;
+ALTER TABLE stat_names OWNER TO adam;
 
 --
 -- Name: stat_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -844,7 +834,7 @@ CREATE SEQUENCE stat_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.stat_names_id_seq OWNER TO adam;
+ALTER TABLE stat_names_id_seq OWNER TO adam;
 
 --
 -- Name: stat_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -854,7 +844,7 @@ ALTER SEQUENCE stat_names_id_seq OWNED BY stat_names.id;
 
 
 --
--- Name: stats; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: stats; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE stats (
@@ -865,7 +855,7 @@ CREATE TABLE stats (
 );
 
 
-ALTER TABLE public.stats OWNER TO adam;
+ALTER TABLE stats OWNER TO adam;
 
 --
 -- Name: stats_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -879,7 +869,7 @@ CREATE SEQUENCE stats_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.stats_id_seq OWNER TO adam;
+ALTER TABLE stats_id_seq OWNER TO adam;
 
 --
 -- Name: stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -889,7 +879,7 @@ ALTER SEQUENCE stats_id_seq OWNED BY stats.id;
 
 
 --
--- Name: suffix_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE suffix_names (
@@ -898,7 +888,7 @@ CREATE TABLE suffix_names (
 );
 
 
-ALTER TABLE public.suffix_names OWNER TO adam;
+ALTER TABLE suffix_names OWNER TO adam;
 
 --
 -- Name: suffix_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -912,7 +902,7 @@ CREATE SEQUENCE suffix_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.suffix_names_id_seq OWNER TO adam;
+ALTER TABLE suffix_names_id_seq OWNER TO adam;
 
 --
 -- Name: suffix_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -922,7 +912,7 @@ ALTER SEQUENCE suffix_names_id_seq OWNED BY suffix_names.id;
 
 
 --
--- Name: suffix_types; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_types; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE suffix_types (
@@ -931,7 +921,7 @@ CREATE TABLE suffix_types (
 );
 
 
-ALTER TABLE public.suffix_types OWNER TO adam;
+ALTER TABLE suffix_types OWNER TO adam;
 
 --
 -- Name: suffix_types_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -945,7 +935,7 @@ CREATE SEQUENCE suffix_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.suffix_types_id_seq OWNER TO adam;
+ALTER TABLE suffix_types_id_seq OWNER TO adam;
 
 --
 -- Name: suffix_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -955,7 +945,7 @@ ALTER SEQUENCE suffix_types_id_seq OWNED BY suffix_types.id;
 
 
 --
--- Name: suffixes; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffixes; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE suffixes (
@@ -968,7 +958,7 @@ CREATE TABLE suffixes (
 );
 
 
-ALTER TABLE public.suffixes OWNER TO adam;
+ALTER TABLE suffixes OWNER TO adam;
 
 --
 -- Name: suffixes_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -982,7 +972,7 @@ CREATE SEQUENCE suffixes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.suffixes_id_seq OWNER TO adam;
+ALTER TABLE suffixes_id_seq OWNER TO adam;
 
 --
 -- Name: suffixes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -992,7 +982,7 @@ ALTER SEQUENCE suffixes_id_seq OWNED BY suffixes.id;
 
 
 --
--- Name: weapon_names; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_names; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE weapon_names (
@@ -1012,7 +1002,7 @@ CREATE TABLE weapon_names (
 );
 
 
-ALTER TABLE public.weapon_names OWNER TO adam;
+ALTER TABLE weapon_names OWNER TO adam;
 
 --
 -- Name: weapon_names_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -1026,7 +1016,7 @@ CREATE SEQUENCE weapon_names_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.weapon_names_id_seq OWNER TO adam;
+ALTER TABLE weapon_names_id_seq OWNER TO adam;
 
 --
 -- Name: weapon_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -1036,7 +1026,7 @@ ALTER SEQUENCE weapon_names_id_seq OWNED BY weapon_names.id;
 
 
 --
--- Name: weapon_stats; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_stats; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE weapon_stats (
@@ -1046,7 +1036,7 @@ CREATE TABLE weapon_stats (
 );
 
 
-ALTER TABLE public.weapon_stats OWNER TO adam;
+ALTER TABLE weapon_stats OWNER TO adam;
 
 --
 -- Name: weapon_stats_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -1060,7 +1050,7 @@ CREATE SEQUENCE weapon_stats_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.weapon_stats_id_seq OWNER TO adam;
+ALTER TABLE weapon_stats_id_seq OWNER TO adam;
 
 --
 -- Name: weapon_stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -1070,7 +1060,7 @@ ALTER SEQUENCE weapon_stats_id_seq OWNED BY weapon_stats.id;
 
 
 --
--- Name: weapon_types; Type: TABLE; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_types; Type: TABLE; Schema: public; Owner: adam
 --
 
 CREATE TABLE weapon_types (
@@ -1079,7 +1069,7 @@ CREATE TABLE weapon_types (
 );
 
 
-ALTER TABLE public.weapon_types OWNER TO adam;
+ALTER TABLE weapon_types OWNER TO adam;
 
 --
 -- Name: weapon_types_id_seq; Type: SEQUENCE; Schema: public; Owner: adam
@@ -1093,7 +1083,7 @@ CREATE SEQUENCE weapon_types_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.weapon_types_id_seq OWNER TO adam;
+ALTER TABLE weapon_types_id_seq OWNER TO adam;
 
 --
 -- Name: weapon_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: adam
@@ -1313,7 +1303,7 @@ ALTER TABLE ONLY weapon_types ALTER COLUMN id SET DEFAULT nextval('weapon_types_
 
 
 --
--- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_group
@@ -1321,7 +1311,7 @@ ALTER TABLE ONLY auth_group
 
 
 --
--- Name: auth_group_permissions_group_id_0cd325b0_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_permissions_group_id_0cd325b0_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_group_permissions
@@ -1329,7 +1319,7 @@ ALTER TABLE ONLY auth_group_permissions
 
 
 --
--- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_group_permissions
@@ -1337,7 +1327,7 @@ ALTER TABLE ONLY auth_group_permissions
 
 
 --
--- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_group
@@ -1345,7 +1335,7 @@ ALTER TABLE ONLY auth_group
 
 
 --
--- Name: auth_permission_content_type_id_01ab375a_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_permission_content_type_id_01ab375a_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_permission
@@ -1353,7 +1343,7 @@ ALTER TABLE ONLY auth_permission
 
 
 --
--- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_permission
@@ -1361,7 +1351,7 @@ ALTER TABLE ONLY auth_permission
 
 
 --
--- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user_groups
@@ -1369,7 +1359,7 @@ ALTER TABLE ONLY auth_user_groups
 
 
 --
--- Name: auth_user_groups_user_id_94350c0c_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_groups_user_id_94350c0c_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user_groups
@@ -1377,7 +1367,7 @@ ALTER TABLE ONLY auth_user_groups
 
 
 --
--- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user
@@ -1385,7 +1375,7 @@ ALTER TABLE ONLY auth_user
 
 
 --
--- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user_user_permissions
@@ -1393,7 +1383,7 @@ ALTER TABLE ONLY auth_user_user_permissions
 
 
 --
--- Name: auth_user_user_permissions_user_id_14a6b632_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_user_permissions_user_id_14a6b632_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user_user_permissions
@@ -1401,7 +1391,7 @@ ALTER TABLE ONLY auth_user_user_permissions
 
 
 --
--- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY auth_user
@@ -1409,7 +1399,7 @@ ALTER TABLE ONLY auth_user
 
 
 --
--- Name: char_types_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: char_types_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY char_types
@@ -1417,7 +1407,7 @@ ALTER TABLE ONLY char_types
 
 
 --
--- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY characters
@@ -1425,7 +1415,7 @@ ALTER TABLE ONLY characters
 
 
 --
--- Name: clothes_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothes_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY clothes_names
@@ -1433,7 +1423,7 @@ ALTER TABLE ONLY clothes_names
 
 
 --
--- Name: clothes_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothes_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY clothes_names
@@ -1441,7 +1431,7 @@ ALTER TABLE ONLY clothes_names
 
 
 --
--- Name: clothing_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothing_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY clothing_types
@@ -1449,7 +1439,7 @@ ALTER TABLE ONLY clothing_types
 
 
 --
--- Name: clothing_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: clothing_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY clothing_types
@@ -1457,7 +1447,7 @@ ALTER TABLE ONLY clothing_types
 
 
 --
--- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY django_admin_log
@@ -1465,7 +1455,7 @@ ALTER TABLE ONLY django_admin_log
 
 
 --
--- Name: django_content_type_app_label_76bd3d3b_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_content_type_app_label_76bd3d3b_uniq; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY django_content_type
@@ -1473,7 +1463,7 @@ ALTER TABLE ONLY django_content_type
 
 
 --
--- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY django_content_type
@@ -1481,7 +1471,7 @@ ALTER TABLE ONLY django_content_type
 
 
 --
--- Name: django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY django_migrations
@@ -1489,7 +1479,7 @@ ALTER TABLE ONLY django_migrations
 
 
 --
--- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY django_session
@@ -1497,7 +1487,7 @@ ALTER TABLE ONLY django_session
 
 
 --
--- Name: jewelry_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY jewelry_names
@@ -1505,7 +1495,7 @@ ALTER TABLE ONLY jewelry_names
 
 
 --
--- Name: jewelry_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY jewelry_types
@@ -1513,7 +1503,7 @@ ALTER TABLE ONLY jewelry_types
 
 
 --
--- Name: jewelry_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: jewelry_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY jewelry_types
@@ -1521,7 +1511,7 @@ ALTER TABLE ONLY jewelry_types
 
 
 --
--- Name: loginapp_userprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: loginapp_userprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY loginapp_userprofile
@@ -1529,7 +1519,7 @@ ALTER TABLE ONLY loginapp_userprofile
 
 
 --
--- Name: loginapp_userprofile_user_id_key; Type: CONSTRAINT; Schema: public; Owner: poetools; Tablespace: 
+-- Name: loginapp_userprofile_user_id_key; Type: CONSTRAINT; Schema: public; Owner: poetools
 --
 
 ALTER TABLE ONLY loginapp_userprofile
@@ -1537,7 +1527,7 @@ ALTER TABLE ONLY loginapp_userprofile
 
 
 --
--- Name: prefix_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefix_names
@@ -1545,7 +1535,7 @@ ALTER TABLE ONLY prefix_names
 
 
 --
--- Name: prefix_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefix_names
@@ -1553,7 +1543,7 @@ ALTER TABLE ONLY prefix_names
 
 
 --
--- Name: prefix_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefix_types
@@ -1561,7 +1551,7 @@ ALTER TABLE ONLY prefix_types
 
 
 --
--- Name: prefix_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefix_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefix_types
@@ -1569,7 +1559,7 @@ ALTER TABLE ONLY prefix_types
 
 
 --
--- Name: prefixes_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefixes_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefixes
@@ -1577,7 +1567,7 @@ ALTER TABLE ONLY prefixes
 
 
 --
--- Name: prefixes_type_id_name_id_i_level_crafted_stat_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: prefixes_type_id_name_id_i_level_crafted_stat_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY prefixes
@@ -1585,7 +1575,7 @@ ALTER TABLE ONLY prefixes
 
 
 --
--- Name: stat_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: stat_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY stat_names
@@ -1593,7 +1583,7 @@ ALTER TABLE ONLY stat_names
 
 
 --
--- Name: stat_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: stat_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY stat_names
@@ -1601,7 +1591,7 @@ ALTER TABLE ONLY stat_names
 
 
 --
--- Name: stats_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: stats_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY stats
@@ -1609,7 +1599,7 @@ ALTER TABLE ONLY stats
 
 
 --
--- Name: suffix_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffix_names
@@ -1617,7 +1607,7 @@ ALTER TABLE ONLY suffix_names
 
 
 --
--- Name: suffix_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffix_names
@@ -1625,7 +1615,7 @@ ALTER TABLE ONLY suffix_names
 
 
 --
--- Name: suffix_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffix_types
@@ -1633,7 +1623,7 @@ ALTER TABLE ONLY suffix_types
 
 
 --
--- Name: suffix_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffix_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffix_types
@@ -1641,7 +1631,7 @@ ALTER TABLE ONLY suffix_types
 
 
 --
--- Name: suffixes_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffixes_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffixes
@@ -1649,7 +1639,7 @@ ALTER TABLE ONLY suffixes
 
 
 --
--- Name: suffixes_type_id_name_id_i_level_crafted_stat_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: suffixes_type_id_name_id_i_level_crafted_stat_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY suffixes
@@ -1657,7 +1647,7 @@ ALTER TABLE ONLY suffixes
 
 
 --
--- Name: weapon_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_names_name_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY weapon_names
@@ -1665,7 +1655,7 @@ ALTER TABLE ONLY weapon_names
 
 
 --
--- Name: weapon_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY weapon_names
@@ -1673,7 +1663,7 @@ ALTER TABLE ONLY weapon_names
 
 
 --
--- Name: weapon_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY weapon_types
@@ -1681,7 +1671,7 @@ ALTER TABLE ONLY weapon_types
 
 
 --
--- Name: weapon_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam; Tablespace: 
+-- Name: weapon_types_type_key; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY weapon_types
@@ -1689,91 +1679,91 @@ ALTER TABLE ONLY weapon_types
 
 
 --
--- Name: auth_group_name_a6ea08ec_like; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_name_a6ea08ec_like; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_group_name_a6ea08ec_like ON auth_group USING btree (name varchar_pattern_ops);
 
 
 --
--- Name: auth_group_permissions_0e939a4f; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_permissions_0e939a4f; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_group_permissions_0e939a4f ON auth_group_permissions USING btree (group_id);
 
 
 --
--- Name: auth_group_permissions_8373b171; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_group_permissions_8373b171; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_group_permissions_8373b171 ON auth_group_permissions USING btree (permission_id);
 
 
 --
--- Name: auth_permission_417f1b1c; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_permission_417f1b1c; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_permission_417f1b1c ON auth_permission USING btree (content_type_id);
 
 
 --
--- Name: auth_user_groups_0e939a4f; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_groups_0e939a4f; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_user_groups_0e939a4f ON auth_user_groups USING btree (group_id);
 
 
 --
--- Name: auth_user_groups_e8701ad4; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_groups_e8701ad4; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_user_groups_e8701ad4 ON auth_user_groups USING btree (user_id);
 
 
 --
--- Name: auth_user_user_permissions_8373b171; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_user_permissions_8373b171; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_user_user_permissions_8373b171 ON auth_user_user_permissions USING btree (permission_id);
 
 
 --
--- Name: auth_user_user_permissions_e8701ad4; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_user_permissions_e8701ad4; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_user_user_permissions_e8701ad4 ON auth_user_user_permissions USING btree (user_id);
 
 
 --
--- Name: auth_user_username_6821ab7c_like; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: auth_user_username_6821ab7c_like; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX auth_user_username_6821ab7c_like ON auth_user USING btree (username varchar_pattern_ops);
 
 
 --
--- Name: django_admin_log_417f1b1c; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_admin_log_417f1b1c; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX django_admin_log_417f1b1c ON django_admin_log USING btree (content_type_id);
 
 
 --
--- Name: django_admin_log_e8701ad4; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_admin_log_e8701ad4; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX django_admin_log_e8701ad4 ON django_admin_log USING btree (user_id);
 
 
 --
--- Name: django_session_de54fa62; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_session_de54fa62; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX django_session_de54fa62 ON django_session USING btree (expire_date);
 
 
 --
--- Name: django_session_session_key_c0390e0f_like; Type: INDEX; Schema: public; Owner: poetools; Tablespace: 
+-- Name: django_session_session_key_c0390e0f_like; Type: INDEX; Schema: public; Owner: poetools
 --
 
 CREATE INDEX django_session_session_key_c0390e0f_like ON django_session USING btree (session_key varchar_pattern_ops);
@@ -1857,6 +1847,38 @@ ALTER TABLE ONLY django_admin_log
 
 ALTER TABLE ONLY loginapp_userprofile
     ADD CONSTRAINT loginapp_userprofile_user_id_9299b13f_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: stats_name_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY stats
+    ADD CONSTRAINT stats_name_id_fkey FOREIGN KEY (name_id) REFERENCES stat_names(id);
+
+
+--
+-- Name: weapon_names_w_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY weapon_names
+    ADD CONSTRAINT weapon_names_w_type_fkey FOREIGN KEY (w_type) REFERENCES weapon_types(type);
+
+
+--
+-- Name: weapon_stats_s_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY weapon_stats
+    ADD CONSTRAINT weapon_stats_s_id_fkey FOREIGN KEY (s_id) REFERENCES stats(id);
+
+
+--
+-- Name: weapon_stats_w_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY weapon_stats
+    ADD CONSTRAINT weapon_stats_w_id_fkey FOREIGN KEY (w_id) REFERENCES weapon_names(id);
 
 
 --

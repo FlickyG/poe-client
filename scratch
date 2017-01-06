@@ -216,6 +216,12 @@ select * from weapon_names
 join weapon_stats on (weapon_names.id = weapon_stats.w_id)
 where  weapon_stats.s_id = 1199;
 
+= show relationships for given table
+SELECT conname,
+pg_catalog.pg_get_constraintdef(r.oid, true) as condef
+FROM pg_catalog.pg_constraint r
+WHERE r.conrelid = 'weapon_names' ::regclass
+;
 
 
 ===

@@ -208,9 +208,6 @@ def parse_jewelry(item_data):
         item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
         item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
     
-
-
-
 def fetch_clothes():
     clothing_types = []
     resp = s.get(url_clothes)
@@ -361,19 +358,18 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     write_stats(stats)
     write_prefix_names(prefixes)
     write_prefixes(prefixes)
-    
-    
 
 def write_prefixes(the_list):
     logger.debug("entering write_prefixes (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
     currQ = connQ.cursor()   
     for x in the_list:
-        #print(x)
+        print("x in list", x, x["name"])
         currQ.execute("SELECT id FROM prefix_types WHERE type = (%s)", (x["type"],))
         prefix_type = currQ.fetchone()[0]
         currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
+        print("£ name_id x[name]", name_id, x["name"])
         for y in x["stats"]:
             #print(y)
             for keys, values in y.items():
@@ -381,7 +377,7 @@ def write_prefixes(the_list):
                 if "implicit_mod_key" in keys:
                     #print(values)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    name_id = currQ.fetchone()[0]
+                    name_id = currQ.fetchone()[0]  HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
@@ -398,11 +394,11 @@ def write_prefixes(the_list):
             except psycopg2.IntegrityError:
                 logger.debug("psql integrity error when commiting prefixes (%s)", x)
                 connQ.rollback() 
-        #print(prefix_type, name_id)
+        #print("prefix_type, x[type], name_id, x[name]", prefix_type, x["type"], name_id, x["name"])
 
       
 def write_prefix_names(the_set):
-    logger.debug("entering write_prefix_names (%s)", list)
+    logger.debug("entering write_prefix_names (%s)", the_set)
     names = set()
     for x in the_set:
         names.add(x["name"])
@@ -1000,10 +996,10 @@ def write_jewelry_stats(list):
 
 fetch_prefixes()
 print(get_prefix_types("Armour"))
-fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_suffixes()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 
