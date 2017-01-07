@@ -223,6 +223,53 @@ FROM pg_catalog.pg_constraint r
 WHERE r.conrelid = 'weapon_names' ::regclass
 ;
 
+== List all tables
+(SELECT table_name
+FROM information_schema.tables
+WHERE table_type = 'BASE TABLE'
+AND table_schema = 'public'
+ORDER BY table_type, table_name);
+
+== basic for loop
+DO
+$do$
+BEGIN
+for i in 1..3 loop
+raise notice 'insert tbl1 done!';
+end loop;
+end
+$do$;
+
+
+== for each table
+do $$
+declare i record;
+BEGIN
+for i in
+SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_type, table_name
+loop
+raise notice 'insert tbl1 done!';
+end loop;
+end
+$$;
+
+
+== print relationships for each table
+do $$
+declare i record;
+declare x regclass;
+BEGIN
+for i in
+SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_type, table_name
+loop
+x = i ::regclass;
+end loop;
+end
+$$;
+
+
+
+
 
 ===
 
