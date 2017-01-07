@@ -377,7 +377,7 @@ def write_prefixes(the_list):
                 if "implicit_mod_key" in keys:
                     #print(values)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    name_id = currQ.fetchone()[0]  HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
+                    name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
@@ -996,10 +996,10 @@ def write_jewelry_stats(list):
 
 fetch_prefixes()
 print(get_prefix_types("Armour"))
-#fetch_suffixes()
-#fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_suffixes()
+fetch_weapons()
+fetch_clothes()
+fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 

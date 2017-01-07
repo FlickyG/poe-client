@@ -13,6 +13,20 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -783,7 +797,8 @@ CREATE TABLE prefixes (
     name_id integer NOT NULL,
     i_level integer NOT NULL,
     crafted boolean NOT NULL,
-    stat integer NOT NULL
+    stat integer NOT NULL,
+    stat_name_id integer
 );
 
 
@@ -1431,6 +1446,14 @@ ALTER TABLE ONLY clothes_names
 
 
 --
+-- Name: clothes_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY clothes_stats
+    ADD CONSTRAINT clothes_stats_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: clothing_types_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
@@ -1487,11 +1510,27 @@ ALTER TABLE ONLY django_session
 
 
 --
+-- Name: jewelry_names_id_key; Type: CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY jewelry_names
+    ADD CONSTRAINT jewelry_names_id_key UNIQUE (id);
+
+
+--
 -- Name: jewelry_names_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY jewelry_names
     ADD CONSTRAINT jewelry_names_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: jewelry_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY jewelry_stats
+    ADD CONSTRAINT jewelry_stats_pkey PRIMARY KEY (id);
 
 
 --
@@ -1660,6 +1699,14 @@ ALTER TABLE ONLY weapon_names
 
 ALTER TABLE ONLY weapon_names
     ADD CONSTRAINT weapon_names_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: weapon_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY weapon_stats
+    ADD CONSTRAINT weapon_stats_pkey PRIMARY KEY (id);
 
 
 --
