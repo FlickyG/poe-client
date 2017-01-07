@@ -364,12 +364,10 @@ def write_prefixes(the_list):
     connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
     currQ = connQ.cursor()   
     for x in the_list:
-        print("x in list", x, x["name"])
         currQ.execute("SELECT id FROM prefix_types WHERE type = (%s)", (x["type"],))
         prefix_type = currQ.fetchone()[0]
         currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
-        print("£ name_id x[name]", name_id, x["name"])
         for y in x["stats"]:
             #print(y)
             for keys, values in y.items():
@@ -591,8 +589,16 @@ def fetch_weapons():
     for item_type in all_items:
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         weapon_types.append(w_type)
-        #write_weapon_types(weapon_types)
+    write_weapon_types(weapon_types)
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
+    currQ = connQ.cursor()
+    currQ.execute("SELECT * FROM weapon_types")
+    w_id = currQ.fetchall()
+    weapon_types = dict((y, x) for x, y in w_id)
+    print(w_id)
+    for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        w_type = weapon_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
             x = 2 #first two entries are table formatting aspects
@@ -659,7 +665,6 @@ def fetch_weapons():
         stat_names.add(stat[0])
     write_stat_names(stat_names)
     write_stats(all_stats)
-    write_weapon_types(weapon_types)
     write_weapon_names(all_weapons)
     write_weapon_stats(all_weapons)
     
@@ -669,7 +674,6 @@ def write_weapon_names(list):
     currQ = connQ.cursor()  
     for x in list:
         try:
-            pass
             currQ.execute("INSERT INTO weapon_names (name, w_type, i_level, min_dmg, max_dmg,"
                           "aps, dps, req_str, req_dex, req_int, large_url, small_url)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -677,15 +681,17 @@ def write_weapon_names(list):
                            x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
                            x["small_url"],))           
             connQ.commit()
-        except psycopg2.IntegrityError:
+        except psycopg2.IntegrityError as e:
+            print ("e", e)
             logger.debug("psql integrity error when commiting weapon names (%s)", x)
             connQ.rollback() 
 
 def write_weapon_stats(list):
     logger.debug("entering write_weapon_stats (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
-    currQ = connQ.cursor()  
+    currQ = connQ.cursor()
     for x in list:
+        print("name", x["name"])
         currQ.execute("SELECT id FROM weapon_names WHERE name = %s", (x["name"],))
         w_id = currQ.fetchone()
         if "implicits" in x:
@@ -733,8 +739,16 @@ def fetch_clothes():
     for item_type in all_items:
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
+    write_clothing_types(clothes_types)
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
+    currQ = connQ.cursor()
+    currQ.execute("SELECT * FROM clothing_types")
+    c_id = currQ.fetchall()
+    clothing_types = dict((y, x) for x, y in c_id)
+    for item_type in all_items:
         #write_clothes_types(clothes_types)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        c_type = clothing_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
             x = 2 #first two entries are table formatting aspects
@@ -880,6 +894,14 @@ def fetch_jewelry():
     for item_type in all_items:
         j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         jewelry_types.append(j_type)
+    write_jewelry_types(jewelry_types)
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey'")
+    currQ = connQ.cursor()
+    currQ.execute("SELECT * FROM jewelry_types")
+    j_id = currQ.fetchall()
+    jewelry_types = dict((y, x) for x, y in j_id)
+    for item_type in all_items:
+        j_type = jewelry_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
         #write_jewelry_types(jewelry_types)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         for item_data in items: # for each weaspon class
@@ -994,9 +1016,9 @@ def write_jewelry_stats(list):
 
     
 
-fetch_prefixes()
+#fetch_prefixes()
 print(get_prefix_types("Armour"))
-fetch_suffixes()
+#fetch_suffixes()
 fetch_weapons()
 fetch_clothes()
 fetch_jewelry()

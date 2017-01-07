@@ -358,7 +358,6 @@ ALTER SEQUENCE characters_id_seq OWNED BY characters.id;
 CREATE TABLE clothes_names (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
-    c_type character varying(30),
     i_level smallint NOT NULL,
     armour smallint NOT NULL,
     evasion smallint NOT NULL,
@@ -367,7 +366,8 @@ CREATE TABLE clothes_names (
     req_dex smallint NOT NULL,
     req_int smallint NOT NULL,
     large_url character varying(800),
-    small_url character varying(400)
+    small_url character varying(400),
+    c_type smallint
 );
 
 
@@ -589,11 +589,11 @@ ALTER TABLE django_session OWNER TO poetools;
 
 CREATE TABLE jewelry_names (
     id integer NOT NULL,
-    j_type character varying(50) NOT NULL,
     name character varying(50) NOT NULL,
     i_level smallint NOT NULL,
     large_url character varying(800),
-    small_url character varying(400)
+    small_url character varying(400),
+    j_type smallint
 );
 
 
@@ -1002,7 +1002,6 @@ ALTER SEQUENCE suffixes_id_seq OWNED BY suffixes.id;
 CREATE TABLE weapon_names (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
-    w_type character varying(30),
     i_level smallint NOT NULL,
     min_dmg smallint NOT NULL,
     max_dmg smallint NOT NULL,
@@ -1012,7 +1011,8 @@ CREATE TABLE weapon_names (
     req_dex smallint NOT NULL,
     req_int smallint NOT NULL,
     large_url character varying(800),
-    small_url character varying(400)
+    small_url character varying(400),
+    w_type smallint
 );
 
 
@@ -1872,6 +1872,14 @@ ALTER TABLE ONLY auth_user_user_permissions
 
 
 --
+-- Name: clothes_names_c_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY clothes_names
+    ADD CONSTRAINT clothes_names_c_type_fkey FOREIGN KEY (c_type) REFERENCES clothing_types(id);
+
+
+--
 -- Name: django_admin_content_type_id_c4bce8eb_fk_django_content_type_id; Type: FK CONSTRAINT; Schema: public; Owner: poetools
 --
 
@@ -1885,6 +1893,14 @@ ALTER TABLE ONLY django_admin_log
 
 ALTER TABLE ONLY django_admin_log
     ADD CONSTRAINT django_admin_log_user_id_c564eba6_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: jewelry_names_j_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY jewelry_names
+    ADD CONSTRAINT jewelry_names_j_type_fkey FOREIGN KEY (j_type) REFERENCES jewelry_types(id);
 
 
 --
@@ -1940,7 +1956,7 @@ ALTER TABLE ONLY suffixes
 --
 
 ALTER TABLE ONLY weapon_names
-    ADD CONSTRAINT weapon_names_w_type_fkey FOREIGN KEY (w_type) REFERENCES weapon_types(type);
+    ADD CONSTRAINT weapon_names_w_type_fkey FOREIGN KEY (w_type) REFERENCES weapon_types(id);
 
 
 --
