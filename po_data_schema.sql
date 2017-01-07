@@ -797,8 +797,7 @@ CREATE TABLE prefixes (
     name_id integer NOT NULL,
     i_level integer NOT NULL,
     crafted boolean NOT NULL,
-    stat integer NOT NULL,
-    stat_name_id integer
+    stat_id integer NOT NULL
 );
 
 
@@ -969,7 +968,7 @@ CREATE TABLE suffixes (
     name_id integer NOT NULL,
     i_level integer NOT NULL,
     crafted boolean NOT NULL,
-    stat integer NOT NULL
+    stat_id integer NOT NULL
 );
 
 
@@ -1610,7 +1609,7 @@ ALTER TABLE ONLY prefixes
 --
 
 ALTER TABLE ONLY prefixes
-    ADD CONSTRAINT prefixes_type_id_name_id_i_level_crafted_stat_key UNIQUE (type_id, name_id, i_level, crafted, stat);
+    ADD CONSTRAINT prefixes_type_id_name_id_i_level_crafted_stat_key UNIQUE (type_id, name_id, i_level, crafted, stat_id);
 
 
 --
@@ -1682,7 +1681,7 @@ ALTER TABLE ONLY suffixes
 --
 
 ALTER TABLE ONLY suffixes
-    ADD CONSTRAINT suffixes_type_id_name_id_i_level_crafted_stat_key UNIQUE (type_id, name_id, i_level, crafted, stat);
+    ADD CONSTRAINT suffixes_type_id_name_id_i_level_crafted_stat_key UNIQUE (type_id, name_id, i_level, crafted, stat_id);
 
 
 --
@@ -1897,11 +1896,43 @@ ALTER TABLE ONLY loginapp_userprofile
 
 
 --
+-- Name: prefixes_name_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY prefixes
+    ADD CONSTRAINT prefixes_name_id_fkey FOREIGN KEY (name_id) REFERENCES prefix_names(id);
+
+
+--
+-- Name: prefixes_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY prefixes
+    ADD CONSTRAINT prefixes_type_id_fkey FOREIGN KEY (type_id) REFERENCES prefix_types(id);
+
+
+--
 -- Name: stats_name_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
 --
 
 ALTER TABLE ONLY stats
     ADD CONSTRAINT stats_name_id_fkey FOREIGN KEY (name_id) REFERENCES stat_names(id);
+
+
+--
+-- Name: suffixes_name_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY suffixes
+    ADD CONSTRAINT suffixes_name_id_fkey FOREIGN KEY (name_id) REFERENCES suffix_names(id);
+
+
+--
+-- Name: suffixes_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY suffixes
+    ADD CONSTRAINT suffixes_type_id_fkey FOREIGN KEY (type_id) REFERENCES suffix_types(id);
 
 
 --

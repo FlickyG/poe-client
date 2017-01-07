@@ -387,7 +387,7 @@ def write_prefixes(the_list):
             stat_id = currQ.fetchone()[0]
             #print("data (%s)", (prefix_type, name_id, x["master_crafted"], stat_id))
             try:
-                currQ.execute("INSERT INTO prefixes (type_id, name_id, i_level, crafted, stat) "
+                currQ.execute("INSERT INTO prefixes (type_id, name_id, i_level, crafted, stat_id) "
                               "VALUES (%s, %s, %s, %s, %s)",
                               (prefix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
                 connQ.commit()
@@ -566,7 +566,7 @@ def write_suffixes(the_list):
             stat_id = currQ.fetchone()[0]
             #print("data (%s)", (suffix_type, name_id, x["master_crafted"], stat_id))
             try:
-                currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat) "
+                currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat_id) "
                               "VALUES (%s, %s, %s, %s, %s)",
                               (suffix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
                 connQ.commit()
