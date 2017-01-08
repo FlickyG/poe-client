@@ -254,19 +254,25 @@ end
 $$;
 
 
-== print relationships for each table
-do $$
-declare i record;
-declare x regclass;
-BEGIN
-for i in
-SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_type, table_name
-loop
-x = i ::regclass;
-end loop;
-end
-$$;
+= all tables
 
+ clothes_names
+ clothes_stats
+ clothing_types
+ jewelry_names
+ jewelry_stats
+ jewelry_types
+ prefix_names
+ prefix_types
+ prefixes
+ stat_names
+ stats
+ suffix_names
+ suffix_types
+ suffixes
+ weapon_names
+ weapon_stats
+ weapon_types
 
 
 

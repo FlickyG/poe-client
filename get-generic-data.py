@@ -368,20 +368,21 @@ def write_prefixes(the_list):
         prefix_type = currQ.fetchone()[0]
         currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
+        #print("initial name", name_id)
         for y in x["stats"]:
             #print(y)
             for keys, values in y.items():
-                #print(keys, values)
                 if "implicit_mod_key" in keys:
-                    #print(values)
+                    print("values", values) 
+                    #print("keys", keys)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
+                    stat_name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
             currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (name_id, minimum, maximum))
+                          (stat_name_id, minimum, maximum))
             stat_id = currQ.fetchone()[0]
             #print("data (%s)", (prefix_type, name_id, x["master_crafted"], stat_id))
             try:
@@ -554,13 +555,13 @@ def write_suffixes(the_list):
                 if "implicit_mod_key" in keys:
                     #print(values)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    name_id = currQ.fetchone()[0]
+                    stat_name_id = currQ.fetchone()[0]
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
             currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (name_id, minimum, maximum))
+                          (stat_name_id, minimum, maximum))
             stat_id = currQ.fetchone()[0]
             #print("data (%s)", (suffix_type, name_id, x["master_crafted"], stat_id))
             try:
@@ -1016,12 +1017,12 @@ def write_jewelry_stats(list):
 
     
 
-#fetch_prefixes()
+fetch_prefixes()
 print(get_prefix_types("Armour"))
 #fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 

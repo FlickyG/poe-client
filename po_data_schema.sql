@@ -1920,6 +1920,14 @@ ALTER TABLE ONLY prefixes
 
 
 --
+-- Name: prefixes_stat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY prefixes
+    ADD CONSTRAINT prefixes_stat_id_fkey FOREIGN KEY (stat_id) REFERENCES stats(id);
+
+
+--
 -- Name: prefixes_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
 --
 
@@ -1941,6 +1949,14 @@ ALTER TABLE ONLY stats
 
 ALTER TABLE ONLY suffixes
     ADD CONSTRAINT suffixes_name_id_fkey FOREIGN KEY (name_id) REFERENCES suffix_names(id);
+
+
+--
+-- Name: suffixes_stat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: adam
+--
+
+ALTER TABLE ONLY suffixes
+    ADD CONSTRAINT suffixes_stat_id_fkey FOREIGN KEY (stat_id) REFERENCES stats(id);
 
 
 --
