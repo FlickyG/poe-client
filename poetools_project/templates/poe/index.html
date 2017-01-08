@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}{Index}{% endblock %}
+
+{% block body_block %}
+		{% if user.is_authenticated %}
+			<h1>Rango says... hello {{ user.username }}!</h1>
+			<a href="{% url 'add_category' %}">Add a New Category</a><br />
+	        {% if categories %}
+            <ul>
+                {% for category in categories %}
+                <li><a href="{% url 'category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+       		{% else %}
+            <strong>There are no categories present.</strong>
+            {% endif %}
+		{% else %}
+			<h1>Rango says... hello!</h1>
+			{% for category in categories %}
+                <li><a href="{% url 'category' category.slug %}">{{ category.name }}</a></li>
+            {% endfor %}
+		{% endif %}
+{% endblock %}
