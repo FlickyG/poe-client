@@ -1,6 +1,7 @@
 from django import forms
-from rango.models import Page, Category, UserProfile
+from poe.models import Page, Category, PoeUser
 from django.contrib.auth.models import User #section 9
+from registration.forms import RegistrationForm # to enable custom fields
 
 class CategoryForm(forms.ModelForm):
     name = forms.CharField(max_length=128, help_text="Please enter the category name.")
@@ -46,15 +47,12 @@ class PageForm(forms.ModelForm):
         exclude = ('category',)
         #or specify the fields to include (i.e. not include the category field)
         #fields = ('title', 'url', 'views')
-        
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-
+  
+class PoeRegistrationForm(RegistrationForm):
+    ggg_sessid = forms.CharField()
+    
     class Meta:
-        model = User
-        fields = ('username', 'email', 'password')
-
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ('website', 'picture')       
+        model = PoeUser
+        fields = ('ggg_sessid',)
+          
+      

@@ -14,7 +14,7 @@ ACCOUNT_NAME = ""
 SESSID = []
 
 
-cookie = {'poesessid': '4f81b66c24e87dda9dded625035ee4e5'}
+cookie = {'poesessid': '473b997f3d48dd7e2851cdff4a79de57'}
 
 
 
@@ -189,7 +189,7 @@ s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
 
 
-COOKIES = {'greenmasterflick': '4f81b66c24e87dda9dded625035ee4e5'}
+COOKIES = {'greenmasterflick': '473b997f3d48dd7e2851cdff4a79de57'}
 
 
 
@@ -253,13 +253,13 @@ def items_in_tab(tab_number):
 
 scrape_data()            
 x = get_tabs(COOKIES[ACCOUNTS[0].account_name], ACCOUNTS[0])
-for y in x:
-    print (y.id, "|", y.name)
+#for y in x:
+#    print (y.id, "|", y.name)
 some_items = items_in_tab(17)
 for items in some_items:
     if 'descrText' in items:
         # currecy, gems, cards
-        print(items['typeLine'])
+        pass #print(items['typeLine'])
 
 
 for items in some_items:
@@ -284,7 +284,7 @@ for items in some_items:
             #print ('flask', items['typeLine'])
             pass
         else:
-            print("else", items['typeLine'], items['name'])
+            pass #print("else", items['typeLine'], items['name'])
         #pprint.pprint(items)
             #print (items['typeLine'], items['ilvl'], items['name'])
 

@@ -1,6 +1,10 @@
 from django.db import models
+from django.db import utils 
 from django.template.defaultfilters import slugify #section 7.3
 from django.contrib.auth.models import User #section 9
+
+from django.db.models.signals import post_save #for custom user profile
+from django.dispatch import receiver #for custom user profile
 
 # Create your models here.
 class Category(models.Model):
@@ -24,20 +28,33 @@ class Page(models.Model):
     category = models.ForeignKey(Category)
     title = models.CharField(max_length=128)
     url = models.URLField()
-    views = models.IntegerField(default=0)
-
+    views = models.IntegerField(default =0)
 
     def __unicode__(self):
         return self.title
 
-class UserProfile(models.Model):
-    # This line is required. Links UserProfile to a User model instance.
+class PoeUser(models.Model):
     user = models.OneToOneField(User)
-
-    # The additional attributes we wish to include.
-    website = models.URLField(blank=True)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
-
-    # Override the __unicode__() method to return out something meaningful!
+    poe_sessid = models.CharField(max_length = 32, primary_key = True)
+        
     def __unicode__(self):
-        return self.user.username
+        return self.username
+    
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+        if created:
+            try:
+                print("ERROR0 ", "type(instance) ", type(instance), "=>", instance)
+                PoeUser.objects.create(user=instance)
+                print("instance.poeprofile.poe_sessid", instance.poeprofile.poe_sessid)
+            except utils.IntegrityError as e:
+                print ("ERROR2 poe_sessid ", instance.poeprofile.poe_sessid)
+            try:
+                instance.poeprofile.save()
+            except AttributeError as e:
+                print("ERROR3 ", "type(ssesid) ", type(instance), "=>", instance)
+                pass
+            except utils.IntegrityError as e:
+                #print (" poe_sessid ", instance.poeprofile.poe_sessid)
+                print("ERROR2 ", e, instance.poeprofile.poe_sessid) #ß, poe_sessid)
+
