@@ -33,8 +33,7 @@ class Page(models.Model):
     def __unicode__(self):
         return self.title
 
-class PoeUser(models.Model):
-    user = models.OneToOneField(User)
+class PoeUser(User):
     poe_sessid = models.CharField(max_length = 32, primary_key = True)
         
     def __unicode__(self):

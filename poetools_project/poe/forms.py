@@ -49,10 +49,9 @@ class PageForm(forms.ModelForm):
         #fields = ('title', 'url', 'views')
   
 class PoeRegistrationForm(RegistrationForm):
-    ggg_sessid = forms.CharField()
     
     class Meta:
         model = PoeUser
-        fields = ('ggg_sessid',)
+        fields = ("username", "poe_sessid",)
           
       
