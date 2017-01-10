@@ -39,21 +39,3 @@ class PoeUser(User):
     def __unicode__(self):
         return self.username
     
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-        if created:
-            try:
-                print("ERROR0 ", "type(instance) ", type(instance), "=>", instance)
-                PoeUser.objects.create(user=instance)
-                print("instance.poeprofile.poe_sessid", instance.poeprofile.poe_sessid)
-            except utils.IntegrityError as e:
-                print ("ERROR2 poe_sessid ", instance.poeprofile.poe_sessid)
-            try:
-                instance.poeprofile.save()
-            except AttributeError as e:
-                print("ERROR3 ", "type(ssesid) ", type(instance), "=>", instance)
-                pass
-            except utils.IntegrityError as e:
-                #print (" poe_sessid ", instance.poeprofile.poe_sessid)
-                print("ERROR2 ", e, instance.poeprofile.poe_sessid) #ß, poe_sessid)
-
