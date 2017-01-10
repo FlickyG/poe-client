@@ -159,9 +159,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 DATABASES = {
-    'default': {
+    'default2': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_PATH,
+    },
+    'default': {
+        'NAME': 'poe_data',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'adam',
+        'PASSWORD': 'monkey'
     }
 }
+
+#NEED TO FIX PSQL PERMISSIONS
 
