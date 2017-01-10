@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}About{% endblock %}
+
+{% block body_block %}
+        <h1>About Rango . . . </h1>
+        This is the about pafe!<strong>{{ boldmessage }}</strong><br />
+        <a href="{% url 'about' %}">About</a><br />
+        <strong>{{MEDIA_URL}}</strong><br />
+        <img src="{{MEDIA_URL}}download.png"><br />
+        Visits <strong>{{ visits }}</strong><br />
+        Last visited <strong>{{ last_visit }}</strong>
+{% endblock %}
