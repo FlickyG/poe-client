@@ -20,6 +20,7 @@ from django.conf.urls.static import static # New Import
 #from django.conf.urls.defaults import patterns
 from django.views.static import serve #to add media url for debug mode
 from registration.backends.simple.views import RegistrationView # section 12
+from poe.forms import PoeRegistrationForm
 
 admin.autodiscover() #tutorial section 5
 
@@ -35,8 +36,9 @@ class MyRegistrationView(RegistrationView):
 urlpatterns = [
     url(r'^$', include('rango.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^poe/', include('poe.urls')),
     url(r'^rango/', include('rango.urls')),
-    url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'), #section 12, imported urls need to be before default ones
+    url(r'^accounts/register/$', MyRegistrationView.as_view(form_class=PoeRegistrationForm), name='registration_register'), #section 12, imported urls need to be before default ones
     url(r'^accounts/', include('registration.backends.simple.urls')),
 ]
 
