@@ -172,5 +172,7 @@ DATABASES = {
     }
 }
 
+TEST_DATABASE_NAME = "poe_data"
+
 #NEED TO FIX PSQL PERMISSIONS
 

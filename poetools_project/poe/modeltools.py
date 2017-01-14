@@ -61,11 +61,14 @@ def get_suffix_names_from_stat_id(id):
     pn = poe.PrefixNames.objects.filter(id__in = p_list).values_list("name")
     return sorted(set([(i[0]) for i in pn]))
 
+
 d = get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
 stat_list = [int(i[0]) for i in d.values_list("id")]
 get_suffix_names_from_stat_id(stat_list)
 
+'''
 d = get_stat_ids_from_stat_name("Local Armour And Energy Shield +%")
 stat_list = [int(i[0]) for i in d.values_list("id")]
 get_suffix_names_from_stat_id(stat_list)
 
+'''

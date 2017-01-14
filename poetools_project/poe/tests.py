@@ -1,10 +1,10 @@
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse 
 from . import models
-from . import modeltools
+from . import modeltools as poe2
 # Create your tests here.
 
-class SimpleTestCase(TestCase):
+'''class SimpleTestCase(TestCase):
     def test_registration(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
@@ -38,10 +38,16 @@ class SimpleTestCase(TestCase):
         ####
         url = reverse('index')
         response = self.client.post(url)
-        
+'''
 class GenericDataTestCase(TestCase):
+    fixtures = ["dumpdata.yaml"]
     def test_suffix_names(self):
-        d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
-        stat_list = [int(i[0]) for i in d.values_list("id")]
-        modeltools.get_suffix_names_from_stat_id(stat_list)        
+        print("hello word")
+        crit = models.StatNames.objects.all() #get(name = "Weapon Elemental Damage +%").id
+        print("crit", crit)
+
+
+'''d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
+stat_list = [int(i[0]) for i in d.values_list("id")]
+modeltools.get_suffix_names_from_stat_id(stat_list)'''        
         

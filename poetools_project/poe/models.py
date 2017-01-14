@@ -53,7 +53,7 @@ class ClothesNames(models.Model):
     c_type = models.ForeignKey('ClothingTypes', models.DO_NOTHING, db_column='c_type', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'clothes_names'
 
 
@@ -62,7 +62,7 @@ class ClothesStats(models.Model):
     s_id = models.SmallIntegerField()
     
     class Meta:
-        managed = False
+        managed = True
         db_table = 'clothes_stats'
 
 
@@ -70,7 +70,7 @@ class ClothingTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'clothing_types'
 
 class JewelryNames(models.Model):
@@ -81,7 +81,7 @@ class JewelryNames(models.Model):
     j_type = models.ForeignKey('JewelryTypes', models.DO_NOTHING, db_column='j_type', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'jewelry_names'
 
 
@@ -90,7 +90,7 @@ class JewelryStats(models.Model):
     s_id = models.SmallIntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'jewelry_stats'
 
 
@@ -98,14 +98,14 @@ class JewelryTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'jewelry_types'
 
 class PrefixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'prefix_names'
 
 
@@ -113,7 +113,7 @@ class PrefixTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'prefix_types'
 
 class Prefixes(models.Model):
@@ -124,7 +124,7 @@ class Prefixes(models.Model):
     stat = models.ForeignKey('Stats', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'prefixes'
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
@@ -132,7 +132,7 @@ class StatNames(models.Model):
     name = models.CharField(unique=True, max_length=60)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'stat_names'
 
 class Stats(models.Model):
@@ -141,21 +141,21 @@ class Stats(models.Model):
     max_value = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'stats'
 
 class SuffixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'suffix_names'
 
 class SuffixTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'suffix_types'
 
 class Suffixes(models.Model):
@@ -166,7 +166,7 @@ class Suffixes(models.Model):
     stat = models.ForeignKey(Stats, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'suffixes'
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
@@ -185,7 +185,7 @@ class WeaponNames(models.Model):
     w_type = models.ForeignKey('WeaponTypes', models.DO_NOTHING, db_column='w_type', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'weapon_names'
 
 class WeaponStats(models.Model):
@@ -193,12 +193,12 @@ class WeaponStats(models.Model):
     s = models.ForeignKey(Stats, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'weapon_stats'
 
 class WeaponTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'weapon_types'
