@@ -6,6 +6,15 @@ CREATE USER poetools WITH PASSWORD 'monkey';
 GRANT ALL PRIVILEGES ON DATABASE poe_data to poetools;
 
 
+## setup django to work with psql database poe_data and user adam
+GRANT ALL PRIVILEGES ON DATABASE poe_data to adam;
+GRANT ALL ON ALL TABLES IN SCHEMA public to adam;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public to adam;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to adam;
+ALTER USER adam CREATEDB;
+
+
+
 psql --host=localhost --dbname=poe_data --username=poeTools
 
 sudo cp pg_hba.conf pg_hba.conf.bk

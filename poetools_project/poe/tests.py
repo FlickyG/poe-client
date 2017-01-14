@@ -1,6 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse 
 from . import models
+from . import modeltools
 # Create your tests here.
 
 class SimpleTestCase(TestCase):
@@ -37,4 +38,10 @@ class SimpleTestCase(TestCase):
         ####
         url = reverse('index')
         response = self.client.post(url)
+        
+class GenericDataTestCase(TestCase):
+    def test_suffix_names(self):
+        d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
+        stat_list = [int(i[0]) for i in d.values_list("id")]
+        modeltools.get_suffix_names_from_stat_id(stat_list)        
         
