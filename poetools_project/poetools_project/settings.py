@@ -168,7 +168,7 @@ DATABASES = {
         'NAME': 'poe_data',
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'adam',
-        'PASSWORD': 'monkey'
+        'PASSWORD': 'green' #monkey
     }
 }
 
