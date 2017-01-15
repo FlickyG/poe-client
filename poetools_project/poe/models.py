@@ -39,6 +39,10 @@ class PoeUser(User):
     def __unicode__(self):
         return self.username
     
+    class Meta:
+        managed = True
+        #app_label = "default"
+    
 class ClothesNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
     i_level = models.SmallIntegerField()
@@ -55,6 +59,7 @@ class ClothesNames(models.Model):
     class Meta:
         managed = True
         db_table = 'clothes_names'
+        app_label = "poe"
 
 
 class ClothesStats(models.Model):
@@ -64,6 +69,7 @@ class ClothesStats(models.Model):
     class Meta:
         managed = True
         db_table = 'clothes_stats'
+        app_label = "poe"
 
 
 class ClothingTypes(models.Model):
@@ -72,6 +78,7 @@ class ClothingTypes(models.Model):
     class Meta:
         managed = True
         db_table = 'clothing_types'
+        app_label = "poe"
 
 class JewelryNames(models.Model):
     name = models.CharField(max_length=50)
@@ -83,6 +90,7 @@ class JewelryNames(models.Model):
     class Meta:
         managed = True
         db_table = 'jewelry_names'
+        app_label = "poe"
 
 
 class JewelryStats(models.Model):
@@ -92,6 +100,7 @@ class JewelryStats(models.Model):
     class Meta:
         managed = True
         db_table = 'jewelry_stats'
+        app_label = "poe"
 
 
 class JewelryTypes(models.Model):
@@ -100,6 +109,7 @@ class JewelryTypes(models.Model):
     class Meta:
         managed = True
         db_table = 'jewelry_types'
+        app_label = "poe"
 
 class PrefixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
@@ -107,6 +117,7 @@ class PrefixNames(models.Model):
     class Meta:
         managed = True
         db_table = 'prefix_names'
+        app_label = "poe"
 
 
 class PrefixTypes(models.Model):
@@ -115,6 +126,7 @@ class PrefixTypes(models.Model):
     class Meta:
         managed = True
         db_table = 'prefix_types'
+        app_label = "poe"
 
 class Prefixes(models.Model):
     type = models.ForeignKey(PrefixTypes, models.DO_NOTHING)
@@ -126,6 +138,7 @@ class Prefixes(models.Model):
     class Meta:
         managed = True
         db_table = 'prefixes'
+        app_label = "poe"
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
 class StatNames(models.Model):
@@ -134,6 +147,7 @@ class StatNames(models.Model):
     class Meta:
         managed = True
         db_table = 'stat_names'
+        app_label = "poe"
 
 class Stats(models.Model):
     name = models.ForeignKey(StatNames, models.DO_NOTHING)
@@ -143,6 +157,7 @@ class Stats(models.Model):
     class Meta:
         managed = True
         db_table = 'stats'
+        app_label = "poe"
 
 class SuffixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
@@ -150,6 +165,7 @@ class SuffixNames(models.Model):
     class Meta:
         managed = True
         db_table = 'suffix_names'
+        app_label = "poe"
 
 class SuffixTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
@@ -157,6 +173,7 @@ class SuffixTypes(models.Model):
     class Meta:
         managed = True
         db_table = 'suffix_types'
+        app_label = "poe"
 
 class Suffixes(models.Model):
     type = models.ForeignKey(SuffixTypes, models.DO_NOTHING)
@@ -168,6 +185,7 @@ class Suffixes(models.Model):
     class Meta:
         managed = True
         db_table = 'suffixes'
+        app_label = "poe"
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
 class WeaponNames(models.Model):
@@ -187,6 +205,7 @@ class WeaponNames(models.Model):
     class Meta:
         managed = True
         db_table = 'weapon_names'
+        app_label = "poe"
 
 class WeaponStats(models.Model):
     w = models.ForeignKey(WeaponNames, models.DO_NOTHING)
@@ -195,6 +214,7 @@ class WeaponStats(models.Model):
     class Meta:
         managed = True
         db_table = 'weapon_stats'
+        app_label = "poe"
 
 class WeaponTypes(models.Model):
     type = models.CharField(unique=True, max_length=50)
@@ -202,3 +222,4 @@ class WeaponTypes(models.Model):
     class Meta:
         managed = True
         db_table = 'weapon_types'
+        app_label = "poe"

@@ -169,10 +169,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'adam',
         'PASSWORD': 'green' #monkey
-    }
+    },
 }
 
 TEST_DATABASE_NAME = "poe_data"
+
+#DATABASE_ROUTERS = ['poe.routers.PoeRouter']
 
 #NEED TO FIX PSQL PERMISSIONS
 

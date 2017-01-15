@@ -1,10 +1,10 @@
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse 
 from . import models
-from . import modeltools as poe2
+#from . import modeltools as poe2
 # Create your tests here.
 
-'''class SimpleTestCase(TestCase):
+class SimpleTestCase(TestCase):
     def test_registration(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
@@ -17,7 +17,7 @@ from . import modeltools as poe2
         self.assertEqual(response.status_code, 302) 
         models.PoeUser.objects.get(username = "mike2001")
         session = self.client.session
-        
+    
     def test_index_page(self):
         url = reverse("index")
         response = self.client.post(url)
@@ -38,16 +38,17 @@ from . import modeltools as poe2
         ####
         url = reverse('index')
         response = self.client.post(url)
-'''
+
+
 class GenericDataTestCase(TestCase):
     fixtures = ["dumpdata.yaml"]
     def test_suffix_names(self):
-        print("hello word")
+        print("GenericDataTestCase")
         crit = models.StatNames.objects.all() #get(name = "Weapon Elemental Damage +%").id
-        print("crit", crit)
+        #print("crit", crit)
 
-
-'''d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
+'''
+d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
 stat_list = [int(i[0]) for i in d.values_list("id")]
 modeltools.get_suffix_names_from_stat_id(stat_list)'''        
         

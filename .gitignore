@@ -13,6 +13,7 @@ rango.db
 
 #migrations
 poetools_project/rango/migrations/*
+poetools_project/poe/migrations/*
 
 #pycache
 *__pycache__
