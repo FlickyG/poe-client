@@ -41,7 +41,7 @@ class PoeUser(User):
     
     class Meta:
         managed = True
-        #app_label = "default"
+        app_label = "poe"
     
 class ClothesNames(models.Model):
     name = models.CharField(unique=True, max_length=50)

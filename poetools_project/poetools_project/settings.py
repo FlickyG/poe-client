@@ -160,11 +160,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 DATABASES = {
-    'default2': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_PATH,
     },
-    'default': {
+    'poe_db': {
         'NAME': 'poe_data',
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'adam',
@@ -174,7 +174,7 @@ DATABASES = {
 
 TEST_DATABASE_NAME = "poe_data"
 
-#DATABASE_ROUTERS = ['poe.routers.PoeRouter']
+DATABASE_ROUTERS = ['poe.routers.PoeRouter']
 
 #NEED TO FIX PSQL PERMISSIONS
 

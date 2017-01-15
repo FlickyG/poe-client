@@ -21,8 +21,9 @@ class PoeRouter(object):
         
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         print("app label ", app_label, model_name, db)
-        if app_label == 'poe':
+        return True
+        '''if app_label == 'poe':
             print(db == 'poe_db')
             return db == 'poe_db'
         if not app_label == 'poe':
-            return None
+            return None'''
