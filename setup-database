@@ -8,9 +8,9 @@ GRANT ALL PRIVILEGES ON DATABASE poe_data to poetools;
 
 ## setup django to work with psql database poe_data and user adam
 GRANT ALL PRIVILEGES ON DATABASE poe_data to adam;
-GRANT ALL ON ALL TABLES IN SCHEMA public to adam;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public to adam;
-GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to adam;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to adam;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to adam;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public to adam;
 ALTER USER adam CREATEDB;
 
 ## SEE role permissions on table
@@ -19,6 +19,12 @@ from information_schema.tables t
 join pg_catalog.pg_class c on (t.table_name = c.relname)
 join pg_catalog.pg_user u on (c.relowner = u.usesysid)
 where t.table_schema='public';
+
+# add name column to table to resolve issue during initial migration 
+ALTER TABLE django_content_type ADD COLUMN name character varying(50) NOT NULL DEFAULT 'someName';
+
+# dump data
+python manage.py dumpdata poe --format=yaml --indent=4 > poe/dumpdata.yaml
 
 ## set owner on table 
 ALTER TABLE loginapp_userprofile OWNER TO adam;
