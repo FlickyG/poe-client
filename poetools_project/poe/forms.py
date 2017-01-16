@@ -46,8 +46,11 @@ class PageForm(forms.ModelForm):
         # we can either exclude the category field from the form,
         exclude = ('category',)
         #or specify the fields to include (i.e. not include the category field)
-        #fields = ('title', 'url', 'views')
-  
+        #fields = ('title', 'url', 'views'
+        
+       
+        
+
 class PoeRegistrationForm(RegistrationForm):
     
     class Meta:

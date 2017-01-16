@@ -1,12 +1,12 @@
 from django.shortcuts import render
 
-from rango.models import Category #sectio9n 7.1
+from poe.models import Category #sectio9n 7.1
 
-from rango.models import Page #section 7.3
+from poe.models import Page #section 7.3
 
-from rango.forms import CategoryForm #section 8
+from poe.forms import CategoryForm #section 8
 
-from rango.forms import UserForm, UserProfileForm #sectio9n 9
+#from poe.forms import UserForm, UserProfileForm #sectio9n 9
 from django.contrib.auth import authenticate, login #sectio9n 9
 from django.http import HttpResponseRedirect, HttpResponse #sectio9n 9
 from django.contrib.auth.decorators import login_required #section 9
@@ -17,7 +17,7 @@ from django.http import HttpResponse
 import datetime
 #from datetime import datetime
 
-from rango.forms import PageForm
+from poe.forms import PageForm
 
 def index(request):
 
@@ -52,7 +52,7 @@ def index(request):
     context_dict['visits'] = visits
 
 
-    response = render(request,'rango/index.html', context_dict)
+    response = render(request,'poe/index.html', context_dict)
 
     return response
 
@@ -69,7 +69,7 @@ def about(request):
     context_dict['visits'] = count
     context_dict['last_visit'] = request.session.get('last_visit')
     # remember to include the visit data
-    return render(request, 'rango/about.html', context_dict)
+    return render(request, 'poe/about.html', context_dict)
 
 
 def hello_world(request):
@@ -105,7 +105,7 @@ def category(request, category_name_slug):
         pass
 
     # Go render the response and return it to the client.
-    return render(request, 'rango/category.html', context_dict)
+    return render(request, 'poe/category.html', context_dict)
 
 #section 8
 def add_category(request):
@@ -130,7 +130,7 @@ def add_category(request):
 
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'poe/add_category.html', {'form': form})
 
 
 
@@ -163,7 +163,7 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form':form, 'category': cat,'category_name_slug': category_name_slug}
 
-    return render(request, 'rango/add_page.html', context_dict)
+    return render(request, 'poe/add_page.html', context_dict)
 
 
 

@@ -30,14 +30,14 @@ class MyRegistrationView(RegistrationView):
     print ("register view")
     def get_success_url(self, user):
         print ("register complete!")
-        return '/rango/'
+        return '/poe/'
 
 
 urlpatterns = [
-    url(r'^$', include('rango.urls')),
+    #url(r'^$', include('rango.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^poe/', include('poe.urls')),
-    url(r'^rango/', include('rango.urls')),
+    #url(r'^rango/', include('rango.urls')),
     url(r'^accounts/register/$', MyRegistrationView.as_view(form_class=PoeRegistrationForm), name='registration_register'), #section 12, imported urls need to be before default ones
     url(r'^accounts/', include('registration.backends.simple.urls')),
 ]
