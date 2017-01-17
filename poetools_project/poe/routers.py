@@ -2,10 +2,10 @@
 
 class PoeRouter(object): 
     def db_for_read(self, model, **hints):
-        print("M", model._meta.app_label, model._meta.model_name)
         if model._meta.model_name == 'poeuser':
             return 'default'
         elif model._meta.app_label == 'poe':
+            print('db_for_read = poe_db', model._meta.model_name)            
             return 'poe_db'
         #if model._meta.app_label == 'poe_auth':
         #    print("app label ", model._meta.app_label)
@@ -24,7 +24,6 @@ class PoeRouter(object):
             return None
         
     def allow_migrate(self, db, app_label, model_name=None, **hints):
-        print("M2", db, app_label, model_name)
         if model_name != 'poeuser' and app_label == 'poe':
             return 'poe_db' == db
         else:

@@ -10,3 +10,5 @@ python manage.py makemigrations poe
 #python manage.py migrate poe --database default
 python manage.py migrate --database poe_db
 python manage.py migrate --database default
+
+#python manage.py loaddata --database=poe_db poe/fixtures/dumpdata.yaml

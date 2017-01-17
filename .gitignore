@@ -23,3 +23,6 @@ poetools_project/poe/migrations/*
 
 #logs
 test-log.log
+
+#system files
+*.swp

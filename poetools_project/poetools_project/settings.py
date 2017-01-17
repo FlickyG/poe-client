@@ -39,7 +39,7 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 TEMPLATE_DIRS = (
     TEMPLATE_PATH,
 )
-print("template path", TEMPLATE_PATH, TEMPLATE_DIRS)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -145,7 +145,7 @@ STATIC_URL = '/static/' # You may find this is already defined as such.
 STATICFILES_DIRS = (
     STATIC_PATH,
 )
-print("static path", STATIC_PATH, STATICFILES_DIRS)
+
 
 
 MEDIA_URL = '/media/'

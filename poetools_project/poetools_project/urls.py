@@ -23,14 +23,12 @@ from registration.backends.simple.views import RegistrationView # section 12
 from poe.forms import PoeRegistrationForm
 
 admin.autodiscover() #tutorial section 5
-
+#rango
 # Create a new class that redirects the user to the index page, if successful at logging
 # sectoin 12
 class MyRegistrationView(RegistrationView):
-    print ("register view")
     def get_success_url(self, user):
-        print ("register complete!")
-        return '/poe/'
+        return '/poe'
 
 
 urlpatterns = [
@@ -44,7 +42,6 @@ urlpatterns = [
 
 # UNDERNEATH your urlpatterns definition, add the following two lines:
 if settings.DEBUG:
-    print("DEBUG IS SET TRUE", settings.MEDIA_URL)
     urlpatterns.append(
         url(r'^media/(?P<path>.*)$', serve,  {'document_root': settings.MEDIA_ROOT}),
         )

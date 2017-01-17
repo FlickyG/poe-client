@@ -41,11 +41,41 @@ class SimpleTestCase(TestCase):
 
 
 class GenericDataTestCase(TestCase):
-    fixtures = ["dumpdata.yaml"]
+    print("GenericDataTestCase")
+    multi_db = True
+    fixtures = ["poe/fixtures/dumpdata.yaml",]
+
     def test_suffix_names(self):
         print("GenericDataTestCase")
         crit = models.StatNames.objects.all() #get(name = "Weapon Elemental Damage +%").id
-        #print("crit", crit)
+        print("crit", crit)
+
+    def test_length_prefix_types(self):
+        #length of prefix_types =  33
+        data = models.PrefixTypes.objects.all()
+        self.assertEqual(len(data), 33)
+    
+    def test_length_stat_names(self):
+        #length of stat_name =  150
+        data = models.StatNames.objects.all()
+        self.assertEqual(len(data), 150)
+    
+    def test_length_stats(self):
+        #length of stats =  934
+        data = models.Stats.objects.all()
+        self.assertEqual(len(data), 934)
+      
+    def test_length_prefix_names(self):
+        #length of prefix names 302
+        data = models.PrefixNames.objects.all()
+        self.assertEqual(len(data), 302)
+   
+    def test_length_prefixes(self):
+        #length of prefixes 753
+        #length of z once the inner stat dictionary of the higher list is known
+        data = models.Prefixes.objects.all()
+        self.assertEqual(len(data), 1035)
+
 
 '''
 d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
