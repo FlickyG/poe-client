@@ -61,6 +61,14 @@ def get_suffix_names_from_stat_id(id):
     pn = poe.PrefixNames.objects.filter(id__in = p_list).values_list("name")
     return sorted(set([(i[0]) for i in pn]))
 
+def get_suffix_names_from_stat_id(id):
+    # accepts list of indexes from the stat table
+    # returns unique list of names of the prefixes that match the stat ids 
+    p = poe.Prefixes.objects.filter(stat__id__in = id)
+    p_list = [int(i[0]) for i in p.values_list("name_id")]
+    pn = poe.PrefixNames.objects.filter(id__in = p_list).values_list("name")
+    return sorted(set([(i[0]) for i in pn]))
+
 
 d = get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
 stat_list = [int(i[0]) for i in d.values_list("id")]

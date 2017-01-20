@@ -1028,10 +1028,10 @@ def write_jewelry_stats(list):
 
 fetch_prefixes()
 print(get_prefix_types("Armour"))
-#fetch_suffixes()
-#fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_suffixes()
+fetch_weapons()
+fetch_clothes()
+fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 
