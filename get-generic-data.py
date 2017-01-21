@@ -18,6 +18,38 @@ start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
+def write_category_types():
+    logger.debug("entering write_category_types ",)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    list = ['Weapons', 'Clothes', 'Jewelry']
+    for x in list:
+        try:
+            currQ.execute("INSERT INTO category_types (name) "
+                        "VALUES (%s)",
+             [x])           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting catagory types type (%s)", x)
+            connQ.rollback()
+            
+def get_category_type(string):
+    logger.debug("entering write_category_types ",)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    #print("string", string)
+    #print("SELECT * FROM category_types WHERE name = {0}".format(string))
+    try:
+        currQ.execute("SELECT * FROM category_types WHERE name = '{0}'".format(string))
+        a = currQ.fetchone()[0] #one()[0]
+        print("string2", string, "a", str(a))
+        return(a)
+    except:
+        print("entering exception case in get_category_types", sys.exc_info()[0])
+        #print("exception string in get_category_types", string)
+    currQ.close()
+    
+
 def write_weapon_types(list):
     logger.debug("entering write_weapon_types (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
@@ -31,6 +63,37 @@ def write_weapon_types(list):
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting weapons types type (%s)", x)
             connQ.rollback()
+            
+def write_item_types(the_type, list):
+    logger.debug("entering write_item_types (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    print("the_type, list", the_type, list)
+    for x in list:
+        try:
+            #print("name", x)
+            currQ.execute("INSERT INTO item_types (name, t_id_id) "
+                        "VALUES (%s, %s)",
+             (x, the_type, ))           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
+            print("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
+            connQ.rollback()
+            
+def get_item_type_id(item):
+    logger.debug("entering write_item_type_id (%s)", list)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    print("get_item_type_id", item)
+    #for x in list:
+    try:
+        currQ.mogrify("SELECT id FROM item_types WHERE name = '{0}' ".
+            format(item))           
+        a = currQ.fetchone()
+        print("a", a)
+    except psycopg2.IntegrityError:
+        logger.debug("psql integrity error when getting item type ID type (%s)" % item)
 
 def write_clothing_types(list):
     logger.debug("entering write_clothing_types (%s)", list)
@@ -418,6 +481,7 @@ def write_prefix_names(the_set):
                         "VALUES (%s)",
                        (x,))           
             connQ.commit()
+            logger.info("psql integrity success when commiting prefix names (%s)", x)
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting prefix names (%s)", x)
             connQ.rollback() 
@@ -600,15 +664,22 @@ def fetch_weapons():
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         weapon_types.append(w_type)
     write_weapon_types(weapon_types)
+    print("weapon_types", weapon_types)
+    # write weapon types to item_types table, look up the category_type
+    type = get_category_type("Weapons")
+    print("type2", type)
+    write_item_types(type, weapon_types)
+    # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT * FROM weapon_types")
     w_id = currQ.fetchall()
     weapon_types = dict((y, x) for x, y in w_id)
-    print(w_id)
+    #print(w_id)
     for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         w_type = weapon_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
+        print("w_type", w_type)
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
             x = 2 #first two entries are table formatting aspects
@@ -629,7 +700,8 @@ def fetch_weapons():
                 item["req_str"] = raw_data[6].get_text()
                 item["req_dex"] = raw_data[7].get_text()
                 item["req_int"] = raw_data[8].get_text()
-                #urls = raw_data[0].find_all("img")
+                #need the index from the item type table
+                item["i_type_id"] = w_type
                 #print("x, item", x, item)
                 x = x+1                
                 #implicits = data[x].find_all("td")
@@ -685,11 +757,11 @@ def write_weapon_names(list):
     for x in list:
         try:
             currQ.execute("INSERT INTO weapon_names (name, w_type, i_level, min_dmg, max_dmg,"
-                          "aps, dps, req_str, req_dex, req_int, large_url, small_url)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, i_type_id)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["w_type"], x["i_level"], x["min_dmg"], x["max_dmg"],
                            x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],))           
+                           x["small_url"], x["i_type_id"]))           
             connQ.commit()
         except psycopg2.IntegrityError as e:
             print ("e", e)
@@ -701,8 +773,10 @@ def write_weapon_stats(list):
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in list:
-        print("name", x["name"])
-        currQ.execute("SELECT id FROM weapon_names WHERE name = %s", (x["name"],))
+        #print("name", x["name"])
+        query = currQ.execute("""SELECT id FROM weapon_names WHERE name = %s""", (x["name"],))
+        #print("query")
+        #currQ.execute(query)
         w_id = currQ.fetchone()
         if "implicits" in x:
             for y in x["implicits"]:
@@ -750,6 +824,11 @@ def fetch_clothes():
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
     write_clothing_types(clothes_types)
+    #write clothes types
+    type = get_category_type("Clothes")
+    print("type2", type)
+    write_item_types(type, clothes_types)   
+    # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT * FROM clothing_types")
@@ -780,6 +859,7 @@ def fetch_clothes():
                 item["req_str"] = raw_data[5].get_text()
                 item["req_dex"] = raw_data[6].get_text()
                 item["req_int"] = raw_data[7].get_text()
+                item["i_type_id"] = c_type
                 #urls = raw_data[0].find_all("img")
                 #print("x, item", x, item)
                 x = x+1                
@@ -842,11 +922,11 @@ def write_clothes_names(list):
         try:
             pass
             currQ.execute("INSERT INTO clothes_names (name, c_type, i_level, armour, evasion,"
-                          "energy_shield, req_str, req_dex, req_int, large_url, small_url)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, i_type_id)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["c_type"], x["i_level"], x["armour"], x["evasion"],
                            x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],))           
+                           x["small_url"],x["i_type_id"]))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting clothes names (%s)", x)
@@ -905,6 +985,9 @@ def fetch_jewelry():
         j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         jewelry_types.append(j_type)
     write_jewelry_types(jewelry_types)
+    # write item types
+    type = get_category_type("Jewelry")
+    write_item_types(type, jewelry_types)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT * FROM jewelry_types")
@@ -927,7 +1010,8 @@ def fetch_jewelry():
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
-                item["i_level"] = raw_data[2].get_text()      
+                item["i_level"] = raw_data[2].get_text()     
+                item["i_type_id"] = j_type 
                 key_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[3])) if x]
                 value_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[4])) if x]
                 stats = []
@@ -980,9 +1064,9 @@ def write_jewelry_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url)"
-                          "VALUES (%s, %s, %s, %s, %s)",
-                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],))           
+            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url, i_type_id)"
+                          "VALUES (%s, %s, %s, %s, %s, %s)",
+                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],x["i_type_id"],))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting jewelry names (%s)", x)
@@ -1026,8 +1110,9 @@ def write_jewelry_stats(list):
 
     
 
+write_category_types()
+
 fetch_prefixes()
-print(get_prefix_types("Armour"))
 fetch_suffixes()
 fetch_weapons()
 fetch_clothes()
