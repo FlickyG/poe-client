@@ -420,20 +420,18 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     stat_names = set()
     for stat in stats:
         stat_names.add(stat[0])
-    print("length of stat_name = ", len(stat_names))
     write_stat_names(stat_names)
-    print("lenfth of stats = ", len(stats))
     write_stats(stats)
     names = set()
     for x in prefixes:
         names.add(x["name"])
     print("length of prefix names", len(names))
     write_prefix_names(names)
-    print("length of prefixes", len(prefixes))
     write_prefixes(prefixes)
 
+
 def write_prefixes(the_list):
-    logger.debug("entering write_prefixes (%s)", list)
+    logger.debug("entering write_prefixes (%s)", the_list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()  
     z = 0 #  to count number of database entries
@@ -464,12 +462,12 @@ def write_prefixes(the_list):
                               "VALUES (%s, %s, %s, %s, %s)",
                               (prefix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
                 connQ.commit()
-            except psycopg2.IntegrityError:
+            except psycopg2.IntegrityError:     
                 z = z - 1 #  remove duplicates
-                logger.info("psql integrity error when commiting prefixes (%s)", x)
+                #logger.info("psql integrity error when commiting prefixes (%s)", x)
                 connQ.rollback() 
         #print("prefix_type, x[type], name_id, x[name]", prefix_type, x["type"], name_id, x["name"])
-    print("z ", z)
+    print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
     logger.debug("entering write_prefix_names (%s)", the_set)
@@ -481,7 +479,6 @@ def write_prefix_names(the_set):
                         "VALUES (%s)",
                        (x,))           
             connQ.commit()
-            logger.info("psql integrity success when commiting prefix names (%s)", x)
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting prefix names (%s)", x)
             connQ.rollback() 
@@ -589,16 +586,23 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     stat_names = set()
     for stat in stats:
         stat_names.add(stat[0])
+    ####
+    print("length of suffix_types = ", len(suffix_types))
+    write_suffix_types(suffix_types)
+    stat_names = set()
+    for stat in stats:
+        stat_names.add(stat[0])
     write_stat_names(stat_names)
     write_stats(stats)
-    write_suffix_names(suffixes)
+    names = set()
+    for x in suffixes:
+        names.add(x["name"])
+    print("length of suffix names", len(names))
+    write_suffix_names(names)
     write_suffixes(suffixes)
 
-def write_suffix_names(the_set):
+def write_suffix_names(names):
     logger.debug("entering write_sufffix_names (%s)", list)
-    names = set()
-    for x in the_set:
-        names.add(x["name"])
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in names:
@@ -614,7 +618,8 @@ def write_suffix_names(the_set):
 def write_suffixes(the_list):
     logger.debug("entering write_suffixes (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()   
+    currQ = connQ.cursor()
+    z = 0
     for x in the_list:
         #print(x)
         currQ.execute("SELECT id FROM suffix_types WHERE type = (%s)", (x["type"],))
@@ -638,13 +643,16 @@ def write_suffixes(the_list):
             stat_id = currQ.fetchone()[0]
             #print("data (%s)", (suffix_type, name_id, x["master_crafted"], stat_id))
             try:
+                z = z + 1
                 currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat_id) "
                               "VALUES (%s, %s, %s, %s, %s)",
                               (suffix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
                 connQ.commit()
             except psycopg2.IntegrityError:
+                z = z - 1
                 logger.debug("psql integrity error when commiting suffixes (%s)", x)
-                connQ.rollback() 
+                connQ.rollback()
+    print("length of suffixes written to datase ", z) 
      
    
 def fetch_weapons():
@@ -1114,9 +1122,9 @@ write_category_types()
 
 fetch_prefixes()
 fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 

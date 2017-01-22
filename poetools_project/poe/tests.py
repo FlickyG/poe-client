@@ -49,12 +49,40 @@ class GenericDataTestCase(TestCase):
         print("GenericDataTestCase")
         crit = models.StatNames.objects.all() #get(name = "Weapon Elemental Damage +%").id
         print("crit", crit)
-
+### Prefixes
     def test_length_prefix_types(self):
         #length of prefix_types =  33
         data = models.PrefixTypes.objects.all()
         self.assertEqual(len(data), 33)
-    
+        
+    def test_length_prefix_names(self):
+        #length of prefix names 302
+        data = models.PrefixNames.objects.all()
+        self.assertEqual(len(data), 302)
+   
+    def test_length_prefixes(self):
+        #length of prefixes 1035
+        #length of z once the inner stat dictionary of the higher list is known
+        data = models.Prefixes.objects.all()
+        self.assertEqual(len(data), 1035)
+## Suffixes      
+    def test_length_suffix_types(self):
+        #length of suffix_types =  24
+        data = models.SuffixTypes.objects.all()
+        self.assertEqual(len(data), 24)
+        
+    def test_length_suffix_names(self):
+        #length of suffix names 247
+        data = models.SuffixNames.objects.all()
+        self.assertEqual(len(data), 247)
+   
+    def test_length_suffixes(self):
+        #length of suffixes 420
+        #length of z once the inner stat dictionary of the higher list is known
+        data = models.Suffixes.objects.all()
+        self.assertEqual(len(data), 420)
+  
+'''
     def test_length_stat_names(self):
         #length of stat_name =  150
         data = models.StatNames.objects.all()
@@ -64,17 +92,8 @@ class GenericDataTestCase(TestCase):
         #length of stats =  934
         data = models.Stats.objects.all()
         self.assertEqual(len(data), 934)
-      
-    def test_length_prefix_names(self):
-        #length of prefix names 302
-        data = models.PrefixNames.objects.all()
-        self.assertEqual(len(data), 302)
-   
-    def test_length_prefixes(self):
-        #length of prefixes 753
-        #length of z once the inner stat dictionary of the higher list is known
-        data = models.Prefixes.objects.all()
-        self.assertEqual(len(data), 1035)
+'''
+
 
 
 '''
