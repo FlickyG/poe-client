@@ -81,7 +81,20 @@ class GenericDataTestCase(TestCase):
         #length of z once the inner stat dictionary of the higher list is known
         data = models.Suffixes.objects.all()
         self.assertEqual(len(data), 420)
-  
+
+## Stats
+    def test_length_stats(self):
+        #length of stats  1342
+        #length of z once the inner stat dictionary of the higher list is known
+        data = models.Stats.objects.all()
+        self.assertEqual(len(data), 1342)
+        
+    def test_length_stat_names(self):
+        #length of stat_names 229
+        #length of z once the inner stat dictionary of the higher list is known
+        data = models.StatNames.objects.all()
+        self.assertEqual(len(data), 229)
+
 '''
     def test_length_stat_names(self):
         #length of stat_name =  150

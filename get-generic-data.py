@@ -11,6 +11,8 @@ import datetime, time #to analyuse how long things take
 from xml.dom import minidom
 import numpy as np  # for a set from a list of dicts
 
+STATS = 0
+STAT_NAMES = 0
 
 logging.config.fileConfig('poe_tools_logging.conf')
 logger = logging.getLogger(__name__)
@@ -484,25 +486,30 @@ def write_prefix_names(the_set):
             connQ.rollback() 
     
 def write_stat_names(the_set):
+    global STAT_NAMES
     logger.debug("entering write_stat_names (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
+            STAT_NAMES = STAT_NAMES + 1
             currQ.execute("INSERT INTO stat_names (name) "
                         "VALUES (%s)",
                        (x,))           
             connQ.commit()
         except psycopg2.IntegrityError:
+            STAT_NAMES = STAT_NAMES - 1
             logger.debug("psql integrity error when commiting stat names (%s)", x)
             connQ.rollback()     
     
 def write_stats(the_set):
+    global STATS
     logger.debug("entering write_stats (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
+            STATS = STATS + 1
             # get id of the stat neame
             currQ.execute("SELECT id FROM stat_names WHERE name = %s", 
                           (x[0],))
@@ -512,6 +519,7 @@ def write_stats(the_set):
                         (stat_name, x[1], x[2]))           
             connQ.commit()
         except psycopg2.IntegrityError:
+            STATS = STATS - 1
             logger.debug("psql integrity error when commiting stats  (%s)", x)
             connQ.rollback()  
     
@@ -1125,6 +1133,9 @@ fetch_suffixes()
 #fetch_weapons()
 #fetch_clothes()
 #fetch_jewelry()
+
+print("number of stats written to database", STATS)
+print("number of stat_names written to database", STAT_NAMES)
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 
