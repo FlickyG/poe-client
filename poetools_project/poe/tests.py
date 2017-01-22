@@ -82,18 +82,51 @@ class GenericDataTestCase(TestCase):
         data = models.Suffixes.objects.all()
         self.assertEqual(len(data), 420)
 
+## weapons
+    def test_length_weapon_names(self):
+        #length of weapon names 307
+        data = models.WeaponNames.objects.all()
+        self.assertEqual(len(data), 307)
+
+    def test_length_weapon_stats(self):
+        #length of weapon stats 250
+        data = models.WeaponStats.objects.all()
+        self.assertEqual(len(data), 250)
+
+## clothes
+    def test_length_clothes_names(self):
+        #length of clothes names 362
+        data = models.ClothesNames.objects.all()
+        self.assertEqual(len(data), 362)
+
+    def test_length_clothes_stats(self):
+        #length of clothesweapon stats 244
+        data = models.ClothesStats.objects.all()
+        self.assertEqual(len(data), 244)
+
+## jewelry
+    def test_length_jewelry_names(self):
+        #length of jewelry names 74
+        data = models.JewelryNames.objects.all()
+        self.assertEqual(len(data), 74)
+
+    def test_length_jewelry_stats(self):
+        #length of jewelry stats 111
+        data = models.JewelryStats.objects.all()
+        self.assertEqual(len(data), 111)
+
 ## Stats
     def test_length_stats(self):
-        #length of stats  1342
+        #length of stats  1530
         #length of z once the inner stat dictionary of the higher list is known
         data = models.Stats.objects.all()
-        self.assertEqual(len(data), 1342)
+        self.assertEqual(len(data), 1530)
         
     def test_length_stat_names(self):
-        #length of stat_names 229
+        #length of stat_names 266
         #length of z once the inner stat dictionary of the higher list is known
         data = models.StatNames.objects.all()
-        self.assertEqual(len(data), 229)
+        self.assertEqual(len(data), 266)
 
 '''
     def test_length_stat_names(self):

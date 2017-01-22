@@ -223,6 +223,17 @@ FROM pg_catalog.pg_constraint r
 WHERE r.conrelid = 'weapon_names' ::regclass
 ;
 
+== show duplicate rows
+select
+min_value, max_value, name_id
+from
+stats
+group by
+min_value, max_value, name_id
+having
+count(*) > 6;
+
+
 == List all tables
 (SELECT table_name
 FROM information_schema.tables
