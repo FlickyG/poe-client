@@ -11,4 +11,8 @@ python /home/adam/workspace1/poe-client/poetools_project/manage.py makemigration
 python /home/adam/workspace1/poe-client/poetools_project/manage.py migrate --database poe_db
 python /home/adam/workspace1/poe-client/poetools_project/manage.py migrate --database default
 
+python /Users/adam.green/Documents/workspace/poe-client/poetools_project/manage.py migrate --database poe_db
+python /Users/adam.green/Documents/workspace/poe-client/poetools_project/manage.py migrate --database default
+
+
 #python manage.py loaddata --database=poe_db poe/fixtures/dumpdata.yaml

@@ -40,7 +40,7 @@ class SimpleTestCase(TestCase):
         response = self.client.post(url)
 
 
-class GenericDataTestCase(TestCase):
+class GenericDataTableLengths(TestCase):
     print("GenericDataTestCase")
     multi_db = True
     fixtures = ["poe/fixtures/dumpdata.yaml",]
@@ -48,7 +48,7 @@ class GenericDataTestCase(TestCase):
     def test_suffix_names(self):
         print("GenericDataTestCase")
         crit = models.StatNames.objects.all() #get(name = "Weapon Elemental Damage +%").id
-        print("crit", crit)
+
 ### Prefixes
     def test_length_prefix_types(self):
         #length of prefix_types =  33
@@ -128,20 +128,41 @@ class GenericDataTestCase(TestCase):
         data = models.StatNames.objects.all()
         self.assertEqual(len(data), 266)
 
-'''
-    def test_length_stat_names(self):
-        #length of stat_name =  150
-        data = models.StatNames.objects.all()
-        self.assertEqual(len(data), 150)
+class GenericDataTablecontents(TestCase):
+    print("GenericDataTablecontents")
+    multi_db = True
+    fixtures = ["poe/fixtures/dumpdata.yaml",]
     
-    def test_length_stats(self):
-        #length of stats =  934
-        data = models.Stats.objects.all()
-        self.assertEqual(len(data), 934)
-'''
+    def test_category_type(self):
+        data = models.CategoryTypes.objects.all()
+        names = []
+        print("category_types", data)
+        for x in data:
+            names.append(x.name)
+        names.sort()
+        self.assertListEqual(names, ['Clothes', 'Jewelry', 'Weapons'])
 
-
-
+    def test_item_types(self):
+        data = models.ItemTypes.objects.all()
+        print("item_types", data)
+        names = []
+        for x in data:
+            print ("x.name", x.name)
+            names.append(x.name)
+        names.sort()
+        self.assertListEqual(names, [
+            'Amulet', 'Belt', 'Body Armour', 'Boots', 'Bow', 'Claw', 'Dagger', 
+            'Gloves', 'Helmet', 'One Hand Axe', 'One Hand Mace', 
+            'One Hand Sword', 'Ring', 'Sceptre', 'Shield', 'Staff', 
+            'Thrusting One Hand Sword', 'Two Hand Axe', 'Two Hand Mace', 
+            'Two Hand Sword', 'Wand'])
+        
+        
+    
+    def test_assert_lists(self):
+        a = ["dave", "adam", "clive"]
+        a.sort()
+        self.assertListEqual(a, ["adam", "clive", "dave"])
 '''
 d = modeltools.get_stat_ids_from_stat_name("Weapon Elemental Damage +%")
 stat_list = [int(i[0]) for i in d.values_list("id")]

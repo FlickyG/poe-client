@@ -52,15 +52,6 @@ def get_weapons_from_stat_name(stat_name_string):
     weaps = poe.WeaponNames.objects.filter(id__in = b)
     return weaps
 
-
-def get_suffix_names_from_stat_id(id):
-    # accepts list of indexes from the stat table
-    # returns unique list of names of the prefixes that match the stat ids 
-    p = poe.Prefixes.objects.filter(stat__id__in = id)
-    p_list = [int(i[0]) for i in p.values_list("name_id")]
-    pn = poe.PrefixNames.objects.filter(id__in = p_list).values_list("name")
-    return sorted(set([(i[0]) for i in pn]))
-
 def get_suffix_names_from_stat_id(id):
     # accepts list of indexes from the stat table
     # returns unique list of names of the prefixes that match the stat ids 
@@ -80,3 +71,21 @@ stat_list = [int(i[0]) for i in d.values_list("id")]
 get_suffix_names_from_stat_id(stat_list)
 
 '''
+
+
+# get weapon id for a weapon with a name
+#weapon_id = poe.WeaponNames.objects.filter(name = "Death Bow")[0].id
+#8
+#get weapon stats for the Death Bow 
+#data = poe.WeaponStats.objects.select_related().filter(w_id__name = "Death Bow")[0].s_id
+# get stats for stat-id
+# mystats = poe.Stats.objects.select_related().filter(id = data)[0].name_id
+# get stat names from stat id
+# stat_name = poe.StatNames.objects.select_related().filter(id = mystats)
+
+data = poe.WeaponStats.objects.select_related().filter(w_id__name = "Nailed Fist")[0].s_id
+mystats = poe.Stats.objects.select_related().filter(id = data)[0].name_id
+stat_name = poe.StatNames.objects.select_related().filter(id = mystats)
+stat_name[0].name
+
+UserFollows.objects.filter(profile_id=12345).select_related(‌​'profile', 'following')

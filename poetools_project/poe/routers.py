@@ -4,8 +4,7 @@ class PoeRouter(object):
     def db_for_read(self, model, **hints):
         if model._meta.model_name == 'poeuser':
             return 'default'
-        elif model._meta.app_label == 'poe':
-            print('db_for_read = poe_db', model._meta.model_name)            
+        elif model._meta.app_label == 'poe':            
             return 'poe_db'
         #if model._meta.app_label == 'poe_auth':
         #    print("app label ", model._meta.app_label)
@@ -27,4 +26,4 @@ class PoeRouter(object):
         if model_name != 'poeuser' and app_label == 'poe':
             return 'poe_db' == db
         else:
-            return 'default' == db
+            return 'default' == db 
