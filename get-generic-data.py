@@ -27,7 +27,7 @@ def write_category_types():
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
-            currQ.execute("INSERT INTO category_types (name) "
+            currQ.execute("INSERT INTO category_type (name) "
                         "VALUES (%s)",
              [x])           
             connQ.commit()
@@ -42,7 +42,7 @@ def get_category_type(string):
     #print("string", string)
     #print("SELECT * FROM category_types WHERE name = {0}".format(string))
     try:
-        currQ.execute("SELECT * FROM category_types WHERE name = '{0}'".format(string))
+        currQ.execute("SELECT * FROM category_type WHERE name = '{0}'".format(string))
         a = currQ.fetchone()[0] #one()[0]
         print("string2", string, "a", str(a))
         return(a)
@@ -66,15 +66,15 @@ def write_weapon_types(list):
             logger.debug("psql integrity error when commiting weapons types type (%s)", x)
             connQ.rollback()
             
-def write_item_types(the_type, list):
-    logger.debug("entering write_item_types (%s)", list)
+def write_item_type(the_type, list):
+    logger.debug("entering write_item_type (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     print("the_type, list", the_type, list)
     for x in list:
         try:
             #print("name", x)
-            currQ.execute("INSERT INTO item_types (name, t_id_id) "
+            currQ.execute("INSERT INTO item_type (name, type_id) "
                         "VALUES (%s, %s)",
              (x, the_type, ))           
             connQ.commit()
@@ -90,7 +90,7 @@ def get_item_type_id(item):
     print("get_item_type_id", item)
     #for x in list:
     try:
-        currQ.mogrify("SELECT id FROM item_types WHERE name = '{0}' ".
+        currQ.mogrify("SELECT id FROM item_type WHERE name = '{0}' ".
             format(item))           
         a = currQ.fetchone()
         print("a", a)
@@ -274,73 +274,10 @@ def parse_jewelry(item_data):
         item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
         item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
  
-'''    
-def fetch_clothes():
-    clothing_types = []
-    resp = s.get(url_clothes)
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    clothes = soup.find_all("tr") 
-    clothes[0].find_all("td", {"class": "name"})
-    for y in clothes:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
-            #print (a[0].text)        
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
-    for item_type in all_items:
-        c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        #print("c_type", c_type)
-        clothing_types.append(c_type)
-        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
-        for item_data in items: # for each clothing class
-            data = item_data.find_all("tr") #get the raw data
-            x = 2 #first two entries are table formatting aspects
-            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
-                item_data = []
-                raw_data = data[x].find_all("td")
-                item_data.append(raw_data)
-                x = x+1
-                implicits = data[x].find_all("td")
-                item_data.append(implicits)
-                item = parse_clothing(item_data)
-                x = x+1
-                #input("Press Enter to continue...")
-    write_clothing_types(clothing_types)
-'''
-
-
-'''
-def fetch_jewelry(): #layout is different - implicit mods are on the same line
-    jewelry_types = []
-    resp = s.get(url_jewelry)
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    jewelry = soup.find_all("tr") 
-    jewelry[0].find_all("td", {"class": "name"})
-    for y in jewelry:
-        a = y.find_all("td", {"class": "name"})
-        if len(a) > 0:
-            pass
-            #print (a[0].text)   
-    all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
-    for item_type in all_items:
-        j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
-        jewelry_types.append(j_type)
-        items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
-        for item_data in items: # for each clothing class
-            data = item_data.find_all("tr") #get the raw data
-            x = 2 #first two entries are table formatting aspects
-            while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
-                item_data = []
-                raw_data = data[x].find_all("td")
-                item_data.append(raw_data)
-                parse_jewelry(item_data)
-                x = x+1
-    write_jewelry_types(jewelry_types)
-'''
 
 def get_prefix_types(key):
     prefix_types = {}
-    logger.debug("entering write_clothing_types (%s)", list)
+    logger.debug("entering get_prefix_types (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     try:
@@ -361,7 +298,11 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     prefix_types = set()
     stats = set()
     prefixes = []
-    resp = s.get(url_prefixes)
+    try:
+        resp = s.get(url_prefixes)
+    except:
+        print("unable to load URL, quitting")
+        sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
     for item_type in all_items:
@@ -535,7 +476,11 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     suffix_types = set()
     stats = set()
     suffixes = []
-    resp = s.get(url_suffixes)
+    try:
+        resp = s.get(url_suffixes)
+    except:
+        print("unable to load URL, quitting")
+        sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})
     for item_type in all_items:
@@ -672,7 +617,11 @@ def fetch_weapons():
     weapon_types = []
     all_stats = set()
     all_weapons = []
-    resp = s.get(url_weap)
+    try:
+        resp = s.get(url_weap)
+    except:
+        print("unable to load URL, quitting")
+        sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
     #print all weapon names
     weapons = soup.find_all("tr", {"class" : "even"}) 
@@ -684,17 +633,20 @@ def fetch_weapons():
     for item_type in all_items:
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         weapon_types.append(w_type)
-    write_weapon_types(weapon_types)
-    # write weapon types to item_types table, look up the category_type
+    #write_weapon_types(weapon_types)
+    # write weapon types to item_type table, look up the category_type
     type = get_category_type("Weapons")
-    write_item_types(type, weapon_types)
+    print("writing item types, type, weapon type", type, weapon_types)
+    write_item_type(type, weapon_types)
     # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
-    currQ.execute("SELECT * FROM weapon_types")
+    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
+                    "JOIN category_type on category_type.id = item_type.type_id "
+                    "WHERE category_type.name = 'Weapons'")
     w_id = currQ.fetchall()
     weapon_types = dict((y, x) for x, y in w_id)
-    #print(w_id)
+    print("weapon types", weapon_types)
     for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         w_type = weapon_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
@@ -705,7 +657,7 @@ def fetch_weapons():
                 item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
-                item["w_type"] = w_type
+                #item["w_type"] = w_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
@@ -719,7 +671,7 @@ def fetch_weapons():
                 item["req_dex"] = raw_data[7].get_text()
                 item["req_int"] = raw_data[8].get_text()
                 #need the index from the item type table
-                item["i_type_id"] = w_type
+                item["type_id"] = w_type
                 #print("x, item", x, item)
                 x = x+1                
                 #implicits = data[x].find_all("td")
@@ -777,12 +729,12 @@ def write_weapon_names(list):
     for x in list:
         try:
             z = z + 1
-            currQ.execute("INSERT INTO weapon_names (name, w_type, i_level, min_dmg, max_dmg,"
-                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, i_type_id)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["w_type"], x["i_level"], x["min_dmg"], x["max_dmg"],
+            currQ.execute("INSERT INTO weapon_names (name, i_level, min_dmg, max_dmg,"
+                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
                            x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"], x["i_type_id"]))           
+                           x["small_url"], x["type_id"]))           
             connQ.commit()
         except psycopg2.IntegrityError as e:
             z = z - 1
@@ -796,7 +748,7 @@ def write_weapon_stats(list):
     currQ = connQ.cursor()
     z = 0
     for x in list:
-        #print("name", x["name"])
+        print("name", x["name"])
         query = currQ.execute("""SELECT id FROM weapon_names WHERE name = %s""", (x["name"],))
         #print("query")
         #currQ.execute(query)
@@ -837,7 +789,11 @@ def fetch_clothes():
     clothes_types = []
     all_stats = set()
     all_clothes = []
-    resp = s.get(url_clothes)
+    try:
+        resp = s.get(url_clothes)
+    except:
+        print("unable to load URL, quitting")
+        sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
     #print all clothes names
     clothes = soup.find_all("tr", {"class" : "even"}) 
@@ -849,15 +805,17 @@ def fetch_clothes():
     for item_type in all_items:
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
-    write_clothing_types(clothes_types)
+    #write_clothing_types(clothes_types)
     #write clothes types
     type = get_category_type("Clothes")
     print("type2", type)
-    write_item_types(type, clothes_types)   
+    write_item_type(type, clothes_types)   
     # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
-    currQ.execute("SELECT * FROM clothing_types")
+    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
+                    "JOIN category_type on category_type.id = item_type.type_id "
+                    "WHERE category_type.name = 'Clothes'")
     c_id = currQ.fetchall()
     clothing_types = dict((y, x) for x, y in c_id)
     for item_type in all_items:
@@ -885,7 +843,7 @@ def fetch_clothes():
                 item["req_str"] = raw_data[5].get_text()
                 item["req_dex"] = raw_data[6].get_text()
                 item["req_int"] = raw_data[7].get_text()
-                item["i_type_id"] = c_type
+                item["type_id"] = c_type
                 #urls = raw_data[0].find_all("img")
                 #print("x, item", x, item)
                 x = x+1                
@@ -950,11 +908,11 @@ def write_clothes_names(list):
         try:
             pass
             currQ.execute("INSERT INTO clothes_names (name, c_type, i_level, armour, evasion,"
-                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, i_type_id)"
+                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["c_type"], x["i_level"], x["armour"], x["evasion"],
                            x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],x["i_type_id"]))           
+                           x["small_url"],x["type_id"]))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting clothes names (%s)", x)
@@ -1004,7 +962,11 @@ def fetch_jewelry():
     jewelry_types = []
     all_stats = set()
     all_jewelry = []
-    resp = s.get(url_jewelry)
+    try:
+        resp = s.get(url_jewelry)
+    except:
+        print("unable to load URL, quitting")
+        sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
     #print all jewelry names
     jewelry = soup.find_all("tr", {"class" : "even"}) 
@@ -1019,7 +981,7 @@ def fetch_jewelry():
     write_jewelry_types(jewelry_types)
     # write item types
     type = get_category_type("Jewelry")
-    write_item_types(type, jewelry_types)
+    write_item_type(type, jewelry_types)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT * FROM jewelry_types")
@@ -1043,7 +1005,7 @@ def fetch_jewelry():
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
                 item["i_level"] = raw_data[2].get_text()     
-                item["i_type_id"] = j_type 
+                item["type_id"] = j_type 
                 key_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[3])) if x]
                 value_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[4])) if x]
                 stats = []
@@ -1098,9 +1060,9 @@ def write_jewelry_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url, i_type_id)"
+            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url, type_id)"
                           "VALUES (%s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],x["i_type_id"],))           
+                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],x["type_id"],))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting jewelry names (%s)", x)
@@ -1153,8 +1115,8 @@ write_category_types()
 fetch_prefixes()
 fetch_suffixes()
 fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_clothes()
+#fetch_jewelry()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)

@@ -42,21 +42,21 @@ class PoeUser(User):
         managed = True
         #app_label = "poe_auth"
 
-class CategoryTypes(models.Model):
+class CategoryType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
 
     class Meta:
         managed = True
-        db_table = 'category_types'
+        db_table = 'category_type'
         app_label = "poe" 
     
-class ItemTypes(models.Model):
+class ItemType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
-    t_id = models.ForeignKey(CategoryTypes)
+    type = models.ForeignKey(CategoryType)
 
     class Meta:
         managed = True
-        db_table = 'item_types'
+        db_table = 'item_type'
         app_label = "poe" 
 
 
@@ -73,7 +73,7 @@ class ClothesNames(models.Model):
     large_url = models.CharField(max_length=800, blank=True, null=True)
     small_url = models.CharField(max_length=400, blank=True, null=True)
     c_type = models.ForeignKey('ClothingTypes', models.DO_NOTHING, db_column='c_type', blank=True, null=True)
-    i_type = models.ForeignKey(ItemTypes)
+    i_type = models.ForeignKey(ItemType)
 
     class Meta:
         managed = True
@@ -105,7 +105,7 @@ class JewelryNames(models.Model):
     large_url = models.CharField(max_length=800, blank=True, null=True)
     small_url = models.CharField(max_length=400, blank=True, null=True)
     j_type = models.ForeignKey('JewelryTypes', models.DO_NOTHING, db_column='j_type', blank=True, null=True)
-    i_type = models.ForeignKey(ItemTypes)
+    i_type = models.ForeignKey(ItemType)
 
     class Meta:
         managed = True
@@ -220,8 +220,8 @@ class WeaponNames(models.Model):
     req_int = models.SmallIntegerField()
     large_url = models.CharField(max_length=800, blank=True, null=True)
     small_url = models.CharField(max_length=400, blank=True, null=True)
-    w_type = models.ForeignKey('WeaponTypes', models.DO_NOTHING, db_column='w_type', blank=True, null=True)
-    i_type = models.ForeignKey(ItemTypes)
+    #w_type = models.ForeignKey('ItemType', models.DO_NOTHING, db_column='w_type', blank=True, null=True)
+    type = models.ForeignKey(ItemType)
 
     class Meta:
         managed = True
