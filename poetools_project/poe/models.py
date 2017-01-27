@@ -60,25 +60,6 @@ class ItemType(models.Model):
         app_label = "poe" 
 
 
-class ClothesStats(models.Model):
-    c_id = models.SmallIntegerField()
-    s_id = models.SmallIntegerField()
-    
-    class Meta:
-        managed = True
-        db_table = 'clothes_stats'
-        app_label = "poe"
-
-class JewelryStats(models.Model):
-    j_id = models.SmallIntegerField()
-    s_id = models.SmallIntegerField()
-
-    class Meta:
-        managed = True
-        db_table = 'jewelry_stats'
-        app_label = "poe"
-
-
 
 class PrefixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
@@ -157,17 +138,8 @@ class Suffixes(models.Model):
         app_label = "poe"
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
-class WeaponStats(models.Model):
-    w = models.ForeignKey(WeaponNames, models.DO_NOTHING)
-    s = models.ForeignKey(Stats, models.DO_NOTHING)
-
-    class Meta:
-        managed = True
-        db_table = 'weapon_stats'
-        app_label = "poe"
-        
-        
-        
+   
+            
 ####
 ####
 
@@ -194,3 +166,11 @@ class ItemName(models.Model):
         db_table = 'item_name'
         app_label = "poe"
 
+class ItemStat(models.Model):
+    i = models.ForeignKey(ItemName, models.DO_NOTHING)
+    s = models.ForeignKey(Stats, models.DO_NOTHING)
+    
+    class Meta:
+        managed = True
+        db_table = 'item_stat'
+        app_label = "poe"
