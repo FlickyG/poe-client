@@ -975,7 +975,10 @@ def fetch_jewelry():
     write_stats(all_stats)
     #write_jewelry_types(jewelry_types)
     write_jewelry_names(all_jewelry)
-    print("jewerly names written to database", len(all_jewelry))
+    jew_names = set()
+    for x in all_jewelry:
+        jew_names.add(x["name"]) 
+    print("jewerly names written to database", len(jew_names))
     #write_jewelry_stats(all_jewelry)
     print("jewelry stats written to data base", write_jewelry_stats(all_jewelry))
     

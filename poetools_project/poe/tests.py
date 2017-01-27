@@ -85,35 +85,41 @@ class GenericDataTableLengths(TestCase):
 ## weapons
     def test_length_weapon_names(self):
         #length of weapon names 307
-        data = models.WeaponNames.objects.all()
-        self.assertEqual(len(data), 307)
+        data = models.ItemName.objects.select_related()
+        length = len(data.filter(type_id__type_id__name = "Weapons"))
+        self.assertEqual(length, 307)
 
     def test_length_weapon_stats(self):
         #length of weapon stats 250
-        data = models.WeaponStats.objects.all()
-        self.assertEqual(len(data), 250)
+        data = models.ItemStat.objects.select_related()
+        length = len(data.filter(i_id__type_id__type_id__name = "Weapons"))
+        self.assertEqual(length, 250)
 
 ## clothes
     def test_length_clothes_names(self):
         #length of clothes names 362
-        data = models.ClothesNames.objects.all()
-        self.assertEqual(len(data), 362)
+        data = models.ItemName.objects.select_related()
+        length = len(data.filter(type_id__type_id__name = "Clothes"))
+        self.assertEqual(length, 362)
 
     def test_length_clothes_stats(self):
         #length of clothesweapon stats 244
-        data = models.ClothesStats.objects.all()
-        self.assertEqual(len(data), 244)
+        data = models.ItemStat.objects.select_related()
+        length = len(data.filter(i_id__type_id__type_id__name = "Clothes"))
+        self.assertEqual(length, 244)
 
 ## jewelry
     def test_length_jewelry_names(self):
         #length of jewelry names 74
-        data = models.JewelryNames.objects.all()
-        self.assertEqual(len(data), 74)
+        data = models.ItemName.objects.select_related()
+        length = len(data.filter(type_id__type_id__name = "Jewelry"))
+        self.assertEqual(length, 65 )
 
     def test_length_jewelry_stats(self):
         #length of jewelry stats 111
-        data = models.JewelryStats.objects.all()
-        self.assertEqual(len(data), 111)
+        data = models.ItemStat.objects.select_related()
+        length = len(data.filter(i_id__type_id__type_id__name = "Jewelry"))
+        self.assertEqual(length, 111)
 
 ## Stats
     def test_length_stats(self):
@@ -136,7 +142,6 @@ class GenericDataTablecontents(TestCase):
     def test_category_type(self):
         data = models.CategoryType.objects.all()
         names = []
-        print("category_type", data)
         for x in data:
             names.append(x.name)
         names.sort()
@@ -144,10 +149,8 @@ class GenericDataTablecontents(TestCase):
 
     def test_item_types(self):
         data = models.ItemType.objects.all()
-        print("item_type", data)
         names = []
         for x in data:
-            print ("x.name", x.name)
             names.append(x.name)
         names.sort()
         self.assertListEqual(names, [
