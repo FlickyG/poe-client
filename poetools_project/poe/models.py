@@ -72,8 +72,8 @@ class ClothesNames(models.Model):
     req_int = models.SmallIntegerField()
     large_url = models.CharField(max_length=800, blank=True, null=True)
     small_url = models.CharField(max_length=400, blank=True, null=True)
-    c_type = models.ForeignKey('ClothingTypes', models.DO_NOTHING, db_column='c_type', blank=True, null=True)
-    i_type = models.ForeignKey(ItemType)
+    #c_type = models.ForeignKey('ClothingTypes', models.DO_NOTHING, db_column='c_type', blank=True, null=True)
+    type = models.ForeignKey(ItemType)
 
     class Meta:
         managed = True
@@ -104,8 +104,8 @@ class JewelryNames(models.Model):
     i_level = models.SmallIntegerField()
     large_url = models.CharField(max_length=800, blank=True, null=True)
     small_url = models.CharField(max_length=400, blank=True, null=True)
-    j_type = models.ForeignKey('JewelryTypes', models.DO_NOTHING, db_column='j_type', blank=True, null=True)
-    i_type = models.ForeignKey(ItemType)
+    #j_type = models.ForeignKey('JewelryTypes', models.DO_NOTHING, db_column='j_type', blank=True, null=True)
+    type = models.ForeignKey(ItemType)
 
     class Meta:
         managed = True

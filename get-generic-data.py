@@ -831,7 +831,7 @@ def fetch_clothes():
                 item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
-                item["c_type"] = c_type
+                #item["c_type"] = c_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
@@ -907,10 +907,10 @@ def write_clothes_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO clothes_names (name, c_type, i_level, armour, evasion,"
+            currQ.execute("INSERT INTO clothes_names (name, i_level, armour, evasion,"
                           "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["c_type"], x["i_level"], x["armour"], x["evasion"],
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          (x["name"], x["i_level"], x["armour"], x["evasion"],
                            x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
                            x["small_url"],x["type_id"]))           
             connQ.commit()
@@ -984,7 +984,9 @@ def fetch_jewelry():
     write_item_type(type, jewelry_types)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
-    currQ.execute("SELECT * FROM jewelry_types")
+    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
+                    "JOIN category_type on category_type.id = item_type.type_id "
+                    "WHERE category_type.name = 'Jewelry'")
     j_id = currQ.fetchall()
     jewelry_types = dict((y, x) for x, y in j_id)
     for item_type in all_items:
@@ -1000,7 +1002,7 @@ def fetch_jewelry():
                 #item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
-                item["j_type"] = j_type
+                #item["j_type"] = j_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
@@ -1060,9 +1062,11 @@ def write_jewelry_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO jewelry_names (name, j_type, i_level, large_url, small_url, type_id)"
-                          "VALUES (%s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["j_type"], x["i_level"], x["large_url"],x["small_url"],x["type_id"],))           
+            currQ.execute("INSERT INTO jewelry_names (name, i_level, large_url, "
+                                "small_url, type_id)"
+                          "VALUES (%s, %s, %s, %s, %s)",
+                          (x["name"], x["i_level"], x["large_url"],
+                                x["small_url"],x["type_id"],))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting jewelry names (%s)", x)
@@ -1115,8 +1119,8 @@ write_category_types()
 fetch_prefixes()
 fetch_suffixes()
 fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_clothes()
+fetch_jewelry()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
