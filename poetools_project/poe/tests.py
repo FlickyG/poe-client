@@ -134,17 +134,17 @@ class GenericDataTablecontents(TestCase):
     fixtures = ["poe/fixtures/dumpdata.yaml",]
     
     def test_category_type(self):
-        data = models.CategoryTypes.objects.all()
+        data = models.CategoryType.objects.all()
         names = []
-        print("category_types", data)
+        print("category_type", data)
         for x in data:
             names.append(x.name)
         names.sort()
         self.assertListEqual(names, ['Clothes', 'Jewelry', 'Weapons'])
 
     def test_item_types(self):
-        data = models.ItemTypes.objects.all()
-        print("item_types", data)
+        data = models.ItemType.objects.all()
+        print("item_type", data)
         names = []
         for x in data:
             print ("x.name", x.name)

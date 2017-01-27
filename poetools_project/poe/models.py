@@ -91,14 +91,6 @@ class ClothesStats(models.Model):
         app_label = "poe"
 
 
-class ClothingTypes(models.Model):
-    type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = True
-        db_table = 'clothing_types'
-        app_label = "poe"
-
 class JewelryNames(models.Model):
     name = models.CharField(max_length=50)
     i_level = models.SmallIntegerField()
@@ -123,13 +115,6 @@ class JewelryStats(models.Model):
         app_label = "poe"
 
 
-class JewelryTypes(models.Model):
-    type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = True
-        db_table = 'jewelry_types'
-        app_label = "poe"
 
 class PrefixNames(models.Model):
     name = models.CharField(unique=True, max_length=50)
@@ -235,12 +220,4 @@ class WeaponStats(models.Model):
     class Meta:
         managed = True
         db_table = 'weapon_stats'
-        app_label = "poe"
-
-class WeaponTypes(models.Model):
-    type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = True
-        db_table = 'weapon_types'
         app_label = "poe"

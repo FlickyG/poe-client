@@ -50,21 +50,7 @@ def get_category_type(string):
         print("entering exception case in get_category_types", sys.exc_info()[0])
         #print("exception string in get_category_types", string)
     currQ.close()
-    
 
-def write_weapon_types(list):
-    logger.debug("entering write_weapon_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    for x in list:
-        try:
-            currQ.execute("INSERT INTO weapon_types (type) "
-                        "VALUES (%s)",
-             [x])           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting weapons types type (%s)", x)
-            connQ.rollback()
             
 def write_item_type(the_type, list):
     logger.debug("entering write_item_type (%s)", list)
@@ -97,33 +83,7 @@ def get_item_type_id(item):
     except psycopg2.IntegrityError:
         logger.debug("psql integrity error when getting item type ID type (%s)" % item)
 
-def write_clothing_types(list):
-    logger.debug("entering write_clothing_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    for x in list:
-        try:
-            currQ.execute("INSERT INTO clothing_types (type) "
-                        "VALUES (%s)",
-             [x])           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting clothing types type (%s)", x)
-            connQ.rollback()  
     
-def write_jewelry_types(list):
-    logger.debug("entering write_jewelry_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    for x in list:
-        try:
-            currQ.execute("INSERT INTO jewelry_types (type) "
-                        "VALUES (%s)",
-             [x])           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting jewelry types type (%s)", x)
-            connQ.rollback()
     
 def write_prefix_types(list):
     logger.debug("entering write_prefix_types (%s)", list)
@@ -805,7 +765,6 @@ def fetch_clothes():
     for item_type in all_items:
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
-    #write_clothing_types(clothes_types)
     #write clothes types
     type = get_category_type("Clothes")
     print("type2", type)
@@ -905,6 +864,7 @@ def write_clothes_names(list):
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()  
     for x in list:
+        print("werite weapons names x  = ", x)
         try:
             pass
             currQ.execute("INSERT INTO clothes_names (name, i_level, armour, evasion,"
@@ -914,6 +874,7 @@ def write_clothes_names(list):
                            x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
                            x["small_url"],x["type_id"]))           
             connQ.commit()
+            print("successfully writen clothes names")
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting clothes names (%s)", x)
             connQ.rollback() 
@@ -978,7 +939,7 @@ def fetch_jewelry():
     for item_type in all_items:
         j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         jewelry_types.append(j_type)
-    write_jewelry_types(jewelry_types)
+    #write_jewelry_types(jewelry_types)
     # write item types
     type = get_category_type("Jewelry")
     write_item_type(type, jewelry_types)
@@ -1049,7 +1010,7 @@ def fetch_jewelry():
         stat_names.add(stat[0])
     write_stat_names(stat_names)
     write_stats(all_stats)
-    write_jewelry_types(jewelry_types)
+    #write_jewelry_types(jewelry_types)
     write_jewelry_names(all_jewelry)
     print("jewerly names written to database", len(all_jewelry))
     #write_jewelry_stats(all_jewelry)
