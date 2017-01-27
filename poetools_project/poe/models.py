@@ -60,27 +60,6 @@ class ItemType(models.Model):
         app_label = "poe" 
 
 
-
-class ClothesNames(models.Model):
-    name = models.CharField(unique=True, max_length=50)
-    i_level = models.SmallIntegerField()
-    armour = models.SmallIntegerField()
-    evasion = models.SmallIntegerField()
-    energy_shield = models.FloatField()
-    req_str = models.FloatField()
-    req_dex = models.SmallIntegerField()
-    req_int = models.SmallIntegerField()
-    large_url = models.CharField(max_length=800, blank=True, null=True)
-    small_url = models.CharField(max_length=400, blank=True, null=True)
-    #c_type = models.ForeignKey('ClothingTypes', models.DO_NOTHING, db_column='c_type', blank=True, null=True)
-    type = models.ForeignKey(ItemType)
-
-    class Meta:
-        managed = True
-        db_table = 'clothes_names'
-        app_label = "poe"
-
-
 class ClothesStats(models.Model):
     c_id = models.SmallIntegerField()
     s_id = models.SmallIntegerField()
@@ -89,21 +68,6 @@ class ClothesStats(models.Model):
         managed = True
         db_table = 'clothes_stats'
         app_label = "poe"
-
-
-class JewelryNames(models.Model):
-    name = models.CharField(max_length=50)
-    i_level = models.SmallIntegerField()
-    large_url = models.CharField(max_length=800, blank=True, null=True)
-    small_url = models.CharField(max_length=400, blank=True, null=True)
-    #j_type = models.ForeignKey('JewelryTypes', models.DO_NOTHING, db_column='j_type', blank=True, null=True)
-    type = models.ForeignKey(ItemType)
-
-    class Meta:
-        managed = True
-        db_table = 'jewelry_names'
-        app_label = "poe"
-
 
 class JewelryStats(models.Model):
     j_id = models.SmallIntegerField()
@@ -193,26 +157,6 @@ class Suffixes(models.Model):
         app_label = "poe"
         unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
-class WeaponNames(models.Model):
-    name = models.CharField(unique=True, max_length=50)
-    i_level = models.SmallIntegerField()
-    min_dmg = models.SmallIntegerField()
-    max_dmg = models.SmallIntegerField()
-    aps = models.FloatField()
-    dps = models.FloatField()
-    req_str = models.SmallIntegerField()
-    req_dex = models.SmallIntegerField()
-    req_int = models.SmallIntegerField()
-    large_url = models.CharField(max_length=800, blank=True, null=True)
-    small_url = models.CharField(max_length=400, blank=True, null=True)
-    #w_type = models.ForeignKey('ItemType', models.DO_NOTHING, db_column='w_type', blank=True, null=True)
-    type = models.ForeignKey(ItemType)
-
-    class Meta:
-        managed = True
-        db_table = 'weapon_names'
-        app_label = "poe"
-
 class WeaponStats(models.Model):
     w = models.ForeignKey(WeaponNames, models.DO_NOTHING)
     s = models.ForeignKey(Stats, models.DO_NOTHING)
@@ -221,3 +165,32 @@ class WeaponStats(models.Model):
         managed = True
         db_table = 'weapon_stats'
         app_label = "poe"
+        
+        
+        
+####
+####
+
+
+class ItemName(models.Model):
+    name = models.CharField(unique=True, max_length=50)
+    i_level = models.SmallIntegerField()
+    min_dmg = models.SmallIntegerField(blank=True, null=True)
+    max_dmg = models.SmallIntegerField(blank=True, null=True)
+    aps = models.FloatField(blank=True, null=True)
+    dps = models.FloatField(blank=True, null=True)
+    req_str = models.SmallIntegerField(blank=True, null=True)
+    req_dex = models.SmallIntegerField(blank=True, null=True)
+    req_int = models.SmallIntegerField(blank=True, null=True)
+    large_url = models.CharField(max_length=800, blank=True)
+    small_url = models.CharField(max_length=400, blank=True)
+    armour = models.SmallIntegerField(blank=True, null=True)
+    evasion = models.SmallIntegerField(blank=True, null=True)
+    energy_shield = models.FloatField(blank=True, null=True)
+    type = models.ForeignKey(ItemType)
+    
+    class Meta:
+        managed = True
+        db_table = 'item_name'
+        app_label = "poe"
+

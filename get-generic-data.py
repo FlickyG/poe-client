@@ -120,7 +120,6 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
     def hook(response, **kwargs):
         if not getattr(response, 'from_cache', False):
-            #print ('sleeping')
             time.sleep(timeout)
         return response
     return hook
@@ -243,7 +242,6 @@ def get_prefix_types(key):
     try:
         currQ.execute("SELECT * FROM prefix_types")
         a = currQ.fetchall()
-        print("he")
         temp_prefixes = []
         for x in a:
             temp_prefixes.append(x[::-1])
@@ -268,7 +266,6 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     for item_type in all_items:
         p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         prefix_types.add(p_type)
-        #print("prefix type", p_type)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         for each_class in items: # for each prefix class
             data = each_class.find_all("tr") #get the raw data for each line
@@ -348,12 +345,9 @@ def write_prefixes(the_list):
         prefix_type = currQ.fetchone()[0]
         currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
-        #print("initial name", name_id)
         for y in x["stats"]:
-            #print(y)
             for keys, values in y.items():
                 if "implicit_mod_key" in keys:
-                    #print("keys", keys)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
                     stat_name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
@@ -363,7 +357,6 @@ def write_prefixes(the_list):
             currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
                           (stat_name_id, minimum, maximum))
             stat_id = currQ.fetchone()[0]
-            #print("data (%s)", (prefix_type, name_id, x["master_crafted"], stat_id))
             try:
                 z = z + 1 #  to count number of database entries
                 currQ.execute("INSERT INTO prefixes (type_id, name_id, i_level, crafted, stat_id) "
@@ -374,7 +367,6 @@ def write_prefixes(the_list):
                 z = z - 1 #  remove duplicates
                 #logger.info("psql integrity error when commiting prefixes (%s)", x)
                 connQ.rollback() 
-        #print("prefix_type, x[type], name_id, x[name]", prefix_type, x["type"], name_id, x["name"])
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
@@ -431,7 +423,6 @@ def write_stats(the_set):
     
 
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
-    print("hello world")
     logger.debug("entering fetch_refix_2 (%s)", list)
     suffix_types = set()
     stats = set()
@@ -446,7 +437,6 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     for item_type in all_items:
         p_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         suffix_types.add(p_type)
-        #print("suffix type", p_type)
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
         for each_class in items: # for each suffix class
             data = each_class.find_all("tr") #get the raw data for each line
@@ -539,17 +529,13 @@ def write_suffixes(the_list):
     currQ = connQ.cursor()
     z = 0
     for x in the_list:
-        #print(x)
         currQ.execute("SELECT id FROM suffix_types WHERE type = (%s)", (x["type"],))
         suffix_type = currQ.fetchone()[0]
         currQ.execute("SELECT id FROM suffix_names WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
-            #print(y)
             for keys, values in y.items():
-                #print(keys, values)
                 if "implicit_mod_key" in keys:
-                    #print(values)
                     currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
                     stat_name_id = currQ.fetchone()[0]
                 if "min" in keys:
@@ -559,7 +545,6 @@ def write_suffixes(the_list):
             currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
                           (stat_name_id, minimum, maximum))
             stat_id = currQ.fetchone()[0]
-            #print("data (%s)", (suffix_type, name_id, x["master_crafted"], stat_id))
             try:
                 z = z + 1
                 currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat_id) "
@@ -583,12 +568,10 @@ def fetch_weapons():
         print("unable to load URL, quitting")
         sys.exit()
     soup = BeautifulSoup(resp.text, 'html.parser')
-    #print all weapon names
     weapons = soup.find_all("tr", {"class" : "even"}) 
     weapons[0].find_all("td", {"class": "name"})
     for y in weapons:
-        a = y.find_all("td", {"class": "name"})
-        #print (a[0].text) 
+        a = y.find_all("td", {"class": "name"}) 
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
     for item_type in all_items:
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
@@ -632,10 +615,7 @@ def fetch_weapons():
                 item["req_int"] = raw_data[8].get_text()
                 #need the index from the item type table
                 item["type_id"] = w_type
-                #print("x, item", x, item)
                 x = x+1                
-                #implicits = data[x].find_all("td")
-                #print("x, implicits ", x, implicits)
                 mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
                 #input("Press Enter to continue...")
                 if len(mods) > 0:
@@ -689,7 +669,7 @@ def write_weapon_names(list):
     for x in list:
         try:
             z = z + 1
-            currQ.execute("INSERT INTO weapon_names (name, i_level, min_dmg, max_dmg,"
+            currQ.execute("INSERT INTO item_name (name, i_level, min_dmg, max_dmg,"
                           "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
@@ -708,8 +688,7 @@ def write_weapon_stats(list):
     currQ = connQ.cursor()
     z = 0
     for x in list:
-        print("name", x["name"])
-        query = currQ.execute("""SELECT id FROM weapon_names WHERE name = %s""", (x["name"],))
+        query = currQ.execute("""SELECT id FROM item_name WHERE name = %s""", (x["name"],))
         #print("query")
         #currQ.execute(query)
         w_id = currQ.fetchone()
@@ -759,15 +738,13 @@ def fetch_clothes():
     clothes = soup.find_all("tr", {"class" : "even"}) 
     clothes[0].find_all("td", {"class": "name"})
     for y in clothes:
-        a = y.find_all("td", {"class": "name"})
-        #print (a[0].text) 
+        a = y.find_all("td", {"class": "name"}) 
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
     for item_type in all_items:
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
     #write clothes types
     type = get_category_type("Clothes")
-    print("type2", type)
     write_item_type(type, clothes_types)   
     # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
@@ -785,7 +762,6 @@ def fetch_clothes():
             data = item_data.find_all("tr") #get the raw data
             x = 2 #first two entries are table formatting aspects
             while x < len(data): # need to collect two 'tr' entries for each item, so use while loop
-                #print(data[x])
                 #input("Press Enter to continue...")
                 item_data = []
                 item = {}
@@ -804,10 +780,8 @@ def fetch_clothes():
                 item["req_int"] = raw_data[7].get_text()
                 item["type_id"] = c_type
                 #urls = raw_data[0].find_all("img")
-                #print("x, item", x, item)
                 x = x+1                
                 #implicits = data[x].find_all("td")
-                #print("x, implicits ", x, implicits)
                 mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
                 #input("Press Enter to continue...")
                 if len(mods) > 0:
@@ -824,7 +798,6 @@ def fetch_clothes():
                     for z in values_results: #for each stat in this prefeix
                         these_values = []  
                         # the values cover a range
-                        #print("z, stop", z, stop)
                         if "to" in z:
                             min_value = z.split()[0]
                             max_value = z.split()[2]
@@ -838,7 +811,6 @@ def fetch_clothes():
                             these_values.append(max_value)
                             mod_values.append(these_values)
                     for a in range(0,stop):
-                        #print("key_results, mod_values, a", key_results, ",", mod_values, ",", a)
                         test_stat = {}
                         test_stat["implicit_mod_key_"+str(a)] = key_results[a]
                         test_stat["implicit_mod_values_"+str(a)+"_min"] = mod_values[a][0]
@@ -864,10 +836,9 @@ def write_clothes_names(list):
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()  
     for x in list:
-        print("werite weapons names x  = ", x)
         try:
             pass
-            currQ.execute("INSERT INTO clothes_names (name, i_level, armour, evasion,"
+            currQ.execute("INSERT INTO item_name (name, i_level, armour, evasion,"
                           "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["armour"], x["evasion"],
@@ -885,7 +856,7 @@ def write_clothes_stats(list):
     currQ = connQ.cursor()  
     z = 0
     for x in list:
-        currQ.execute("SELECT id FROM clothes_names WHERE name = %s", (x["name"],))
+        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
         w_id = currQ.fetchone()
         if "implicits" in x:
             for y in x["implicits"]:
@@ -933,8 +904,7 @@ def fetch_jewelry():
     jewelry = soup.find_all("tr", {"class" : "even"}) 
     jewelry[0].find_all("td", {"class": "name"})
     for y in jewelry:
-        a = y.find_all("td", {"class": "name"})
-        #print (a[0].text) 
+        a = y.find_all("td", {"class": "name"}) 
     all_items = soup.find_all("div", {"class": "layoutBox1 layoutBoxFull defaultTheme"})    
     for item_type in all_items:
         j_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
@@ -1023,7 +993,7 @@ def write_jewelry_names(list):
     for x in list:
         try:
             pass
-            currQ.execute("INSERT INTO jewelry_names (name, i_level, large_url, "
+            currQ.execute("INSERT INTO item_name (name, i_level, large_url, "
                                 "small_url, type_id)"
                           "VALUES (%s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["large_url"],
@@ -1039,7 +1009,7 @@ def write_jewelry_stats(list):
     currQ = connQ.cursor()
     z = 0 
     for x in list:
-        currQ.execute("SELECT id FROM jewelry_names WHERE name = %s", (x["name"],))
+        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
         w_id = currQ.fetchone()
         if "implicits" in x:
             for y in x["implicits"]:
