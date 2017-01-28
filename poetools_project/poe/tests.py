@@ -140,7 +140,7 @@ class GenericDataTablecontents(TestCase):
     fixtures = ["poe/fixtures/dumpdata.yaml",]
     
     def test_category_type(self):
-        data = models.CategoryType.objects.all()
+        data = models.ItemCategory.objects.all()
         names = []
         for x in data:
             names.append(x.name)

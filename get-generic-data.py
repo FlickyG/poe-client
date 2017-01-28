@@ -10,6 +10,7 @@ import sys #for excepotion handling and printing
 import datetime, time #to analyuse how long things take
 from xml.dom import minidom
 import numpy as np  # for a set from a list of dicts
+from django.core.management.sql import sql_flush
 
 STATS = 0
 STAT_NAMES = 0
@@ -20,34 +21,50 @@ start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
-def write_category_types():
-    logger.debug("entering write_category_types ",)
+def write_item_categories():
+    logger.debug("entering write_item_categories ",)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
-            currQ.execute("INSERT INTO category_type (name) "
+            currQ.execute("INSERT INTO item_category (name) "
                         "VALUES (%s)",
              [x])           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting catagory types type (%s)", x)
             connQ.rollback()
+
+def write_fix_categories():
+    logger.debug("entering write_fix_categories ",)
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    currQ = connQ.cursor()
+    list = ['Prefix', 'Suffix']
+    for x in list:
+        try:
+            currQ.execute("INSERT INTO fix_category (name) "
+                        "VALUES (%s)",
+             [x])           
+            connQ.commit()
+        except psycopg2.IntegrityError:
+            logger.debug("psql integrity error when commiting fix types type (%s)", x)
+            connQ.rollback()  
+
             
-def get_category_type(string):
-    logger.debug("entering write_category_types ",)
+def get_item_category(string):
+    logger.debug("entering write_item_categories ",)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     #print("string", string)
-    #print("SELECT * FROM category_types WHERE name = {0}".format(string))
+    #print("SELECT * FROM item_categorys WHERE name = {0}".format(string))
     try:
-        currQ.execute("SELECT * FROM category_type WHERE name = '{0}'".format(string))
+        currQ.execute("SELECT * FROM item_category WHERE name = '{0}'".format(string))
         a = currQ.fetchone()[0] #one()[0]
         return(a)
     except:
-        print("entering exception case in get_category_types", sys.exc_info()[0])
-        #print("exception string in get_category_types", string)
+        print("entering exception case in get_item_categorys", sys.exc_info()[0])
+        #print("exception string in get_item_categorys", string)
     currQ.close()
 
             
@@ -87,9 +104,10 @@ def write_prefix_types(list):
     currQ = connQ.cursor()
     for x in list:
         try:
-            currQ.execute("INSERT INTO prefix_types (type) "
-                        "VALUES (%s)",
-             [x])           
+            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
+            type = currQ.fetchall()[0][0]
+            currQ.execute("INSERT INTO fix_type (name, category_id) "
+                        "VALUES ('{0}', {1})".format(x,type))
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting prefix types type (%s)", x)
@@ -270,6 +288,7 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
                 prefix = {}
                 item_data = []
                 prefix["type"] = p_type
+                print("p_type", p_type)
                 prefix["i_level"] = data[y].find_all("td")[1].get_text()
                 name_data = data[y].find_all("td")[0].get_text()
                 if "(Master Crafted)" in name_data:
@@ -325,7 +344,7 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     write_stats(stats)
     names = set()
     for x in prefixes:
-        names.add(x["name"])
+        names.add((x["type"], x["name"]))
     print("length of prefix names", len(names))
     write_prefix_names(names)
     write_prefixes(prefixes)
@@ -337,9 +356,10 @@ def write_prefixes(the_list):
     currQ = connQ.cursor()  
     z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id FROM prefix_types WHERE type = (%s)", (x["type"],))
+        currQ.execute("SELECT id FROM fix_type WHERE name = (%s)", (x["type"],))
         prefix_type = currQ.fetchone()[0]
-        currQ.execute("SELECT id FROM prefix_names WHERE name = (%s)", (x["name"],))
+        #need to decide if we want a seperate stats table, and make the above sql
+        currQ.execute("SELECT id FROM fix_name WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
             for keys, values in y.items():
@@ -370,10 +390,14 @@ def write_prefix_names(the_set):
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
+        print("x", x)
         try:
-            currQ.execute("INSERT INTO prefix_names (name) "
-                        "VALUES (%s)",
-                       (x,))           
+            currQ.execute("SELECT id from fix_type where name = '{0}'".
+                          format(x[0]))
+            type_id = currQ.fetchall()[0][0]
+            print(x[1], type_id)
+            currQ.execute("INSERT INTO fix_name (name, type_id) "
+                        """VALUES (%s, %s)""",(x[1], type_id,))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting prefix names (%s)", x)
@@ -573,15 +597,15 @@ def fetch_weapons():
         w_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         weapon_types.append(w_type)
     #write_weapon_types(weapon_types)
-    # write weapon types to item_type table, look up the category_type
-    type = get_category_type("Weapons")
+    # write weapon types to item_type table, look up the item_category
+    type = get_item_category("Weapons")
     write_item_type(type, weapon_types)
     # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN category_type on category_type.id = item_type.type_id "
-                    "WHERE category_type.name = 'Weapons'")
+                    "JOIN item_category on item_category.id = item_type.type_id "
+                    "WHERE item_category.name = 'Weapons'")
     w_id = currQ.fetchall()
     weapon_types = dict((y, x) for x, y in w_id)
     for item_type in all_items:
@@ -738,14 +762,14 @@ def fetch_clothes():
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
     #write clothes types
-    type = get_category_type("Clothes")
+    type = get_item_category("Clothes")
     write_item_type(type, clothes_types)   
     # connect to database
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN category_type on category_type.id = item_type.type_id "
-                    "WHERE category_type.name = 'Clothes'")
+                    "JOIN item_category on item_category.id = item_type.type_id "
+                    "WHERE item_category.name = 'Clothes'")
     c_id = currQ.fetchall()
     clothing_types = dict((y, x) for x, y in c_id)
     for item_type in all_items:
@@ -904,13 +928,13 @@ def fetch_jewelry():
         jewelry_types.append(j_type)
     #write_jewelry_types(jewelry_types)
     # write item types
-    type = get_category_type("Jewelry")
+    type = get_item_category("Jewelry")
     write_item_type(type, jewelry_types)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN category_type on category_type.id = item_type.type_id "
-                    "WHERE category_type.name = 'Jewelry'")
+                    "JOIN item_category on item_category.id = item_type.type_id "
+                    "WHERE item_category.name = 'Jewelry'")
     j_id = currQ.fetchall()
     jewelry_types = dict((y, x) for x, y in j_id)
     for item_type in all_items:
@@ -1041,13 +1065,14 @@ def write_jewelry_stats(list):
 
     
 
-write_category_types()
+write_item_categories()
+write_fix_categories()
 
 fetch_prefixes()
-fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_suffixes()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)

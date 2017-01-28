@@ -42,54 +42,49 @@ class PoeUser(User):
         managed = True
         #app_label = "poe_auth"
 
-class CategoryType(models.Model):
+class ItemCategory(models.Model):
     name = models.CharField(unique = True, max_length = 50)
 
     class Meta:
         managed = True
-        db_table = 'category_type'
+        db_table = 'item_category'
         app_label = "poe" 
     
 class ItemType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
-    type = models.ForeignKey(CategoryType)
+    type = models.ForeignKey(ItemCategory)
 
     class Meta:
         managed = True
         db_table = 'item_type'
         app_label = "poe" 
 
+class FixCategory(models.Model):
+    name = models.CharField(unique = True, blank = False, max_length = 50)
+    
+    class Meta:
+        managed = True
+        db_table = 'fix_category'
+        app_label = "poe"
 
+class FixType(models.Model):
+    name = models.CharField(max_length = 50)
+    category = models.ForeignKey(FixCategory)
+    
+    class Meta:
+        managed = True
+        db_table = 'fix_type'
+        app_label = "poe"
 
-class PrefixNames(models.Model):
+class FixName(models.Model):
     name = models.CharField(unique=True, max_length=50)
-
+    type = models.ForeignKey(FixType)
+    
     class Meta:
         managed = True
-        db_table = 'prefix_names'
+        db_table = 'fix_name'
         app_label = "poe"
 
-
-class PrefixTypes(models.Model):
-    type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = True
-        db_table = 'prefix_types'
-        app_label = "poe"
-
-class Prefixes(models.Model):
-    type = models.ForeignKey(PrefixTypes, models.DO_NOTHING)
-    name = models.ForeignKey(PrefixNames, models.DO_NOTHING)
-    i_level = models.IntegerField()
-    crafted = models.BooleanField()
-    stat = models.ForeignKey('Stats', models.DO_NOTHING)
-
-    class Meta:
-        managed = True
-        db_table = 'prefixes'
-        app_label = "poe"
-        unique_together = (('type', 'name', 'i_level', 'crafted', 'stat'),)
 
 class StatNames(models.Model):
     name = models.CharField(unique=True, max_length=60)
