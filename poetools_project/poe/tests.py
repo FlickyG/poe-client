@@ -52,81 +52,74 @@ class GenericDataTableLengths(TestCase):
 ### Prefixes
     def test_length_prefix_types(self):
         #length of prefix_types =  33
-        data = models.PrefixTypes.objects.all()
+        data = models.FixType.objects.select_related().filter(category_id__name = "Prefix")
         self.assertEqual(len(data), 33)
         
     def test_length_prefix_names(self):
-        #length of prefix names 480
-        data = models.PrefixNames.objects.all()
+        #length of prefix names  480
+        data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Prefix")
         self.assertEqual(len(data), 480)
    
     def test_length_prefixes(self):
         #length of prefixes 1035
         #length of z once the inner stat dictionary of the higher list is known
-        data = models.Prefixes.objects.all()
+        data = models.Fix.objects.select_related().filter(name_id__type_id__category_id__name = "Prefix")
         self.assertEqual(len(data), 1035)
 ## Suffixes      
     def test_length_suffix_types(self):
         #length of suffix_types =  24
-        data = models.SuffixTypes.objects.all()
+        data = models.FixType.objects.select_related().filter(category_id__name = "Suffix")
         self.assertEqual(len(data), 24)
         
     def test_length_suffix_names(self):
         #length of suffix names 270
-        data = models.SuffixNames.objects.all()
+        data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Suffix")
         self.assertEqual(len(data), 270)
    
     def test_length_suffixes(self):
         #length of suffixes 420
         #length of z once the inner stat dictionary of the higher list is known
-        data = models.Suffixes.objects.all()
+        data = models.Fix.objects.select_related().filter(name_id__type_id__category_id__name = "Suffix")
         self.assertEqual(len(data), 420)
 
 ## weapons
     def test_length_weapon_names(self):
         #length of weapon names 307
-        data = models.ItemName.objects.select_related()
-        length = len(data.filter(type_id__type_id__name = "Weapons"))
-        self.assertEqual(length, 307)
+        data = models.ItemName.objects.select_related().filter(type_id__type_id__name = "Weapons")
+        self.assertEqual(len(data), 307)
 
     def test_length_weapon_stats(self):
         #length of weapon stats 250
-        data = models.ItemStat.objects.select_related()
-        length = len(data.filter(i_id__type_id__type_id__name = "Weapons"))
-        self.assertEqual(length, 250)
+        data = models.ItemStat.objects.select_related().filter(i_id__type_id__type_id__name = "Weapons")
+        self.assertEqual(len(data), 250)
 
 ## clothes
     def test_length_clothes_names(self):
         #length of clothes names 362
-        data = models.ItemName.objects.select_related()
-        length = len(data.filter(type_id__type_id__name = "Clothes"))
-        self.assertEqual(length, 362)
+        data = models.ItemName.objects.select_related().filter(type_id__type_id__name = "Clothes")
+        self.assertEqual(len(data), 362)
 
     def test_length_clothes_stats(self):
         #length of clothesweapon stats 244
-        data = models.ItemStat.objects.select_related()
-        length = len(data.filter(i_id__type_id__type_id__name = "Clothes"))
-        self.assertEqual(length, 244)
+        data = models.ItemStat.objects.select_related().filter(i_id__type_id__type_id__name = "Clothes")
+        self.assertEqual(len(data), 244)
 
 ## jewelry
     def test_length_jewelry_names(self):
         #length of jewelry names 74
-        data = models.ItemName.objects.select_related()
-        length = len(data.filter(type_id__type_id__name = "Jewelry"))
-        self.assertEqual(length, 65 )
+        data = models.ItemName.objects.select_related().filter(type_id__type_id__name = "Jewelry")
+        self.assertEqual(len(data), 65 )
 
     def test_length_jewelry_stats(self):
         #length of jewelry stats 111
-        data = models.ItemStat.objects.select_related()
-        length = len(data.filter(i_id__type_id__type_id__name = "Jewelry"))
-        self.assertEqual(length, 111)
+        data = models.ItemStat.objects.select_related().filter(i_id__type_id__type_id__name = "Jewelry")
+        self.assertEqual(len(data), 111)
 
 ## Stats
     def test_length_stats(self):
-        #length of stats  1530
-        #length of z once the inner stat dictionary of the higher list is known
+        #length of stats  1515 (sued to be 1530 before model reduction)
         data = models.Stats.objects.all()
-        self.assertEqual(len(data), 1530)
+        self.assertEqual(len(data), 1515)
         
     def test_length_stat_names(self):
         #length of stat_names 266

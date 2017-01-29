@@ -350,11 +350,9 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     write_prefix_names(names) # unique
     # make prefixes unique, to stop copying over duplicates from the website
     unique_prefixes = []
-    print("length of prefixe before sort", len(prefixes))
     for item in prefixes:
         if item not in unique_prefixes:
             unique_prefixes.append(item)
-    print("length of prefixe before sort", len(unique_prefixes))
     write_prefixes(unique_prefixes)
     #for x in unique_prefixes:
     #    print(x)
@@ -366,10 +364,12 @@ def write_prefixes(the_list):
     currQ = connQ.cursor()  
     z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s)", (x["type"],))
+        currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
+        category = currQ.fetchall()[0][0]
+        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
         prefix_type = currQ.fetchone()[0]
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type))
+        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type,))
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
             for keys, values in y.items():
@@ -399,17 +399,23 @@ def write_prefix_names(the_set):
     logger.debug("entering write_prefix_names (%s)", the_set)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
+    z = 0
     for x in the_set:
         try:
-            currQ.execute("SELECT id from fix_type where name = '{0}'".
-                          format(x[0]))
-            type_id = currQ.fetchall()[0][0]
+            z = z + 1
+            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
+            category = currQ.fetchall()[0][0]
+            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
+            type_id = currQ.fetchone()[0]
+            #type_id = currQ.fetchall()[0][0]
             currQ.execute("INSERT INTO fix_name (name, type_id) "
                         """VALUES (%s, %s)""",(x[1], type_id,))     
             connQ.commit()
         except psycopg2.IntegrityError:
+            z = z - 1
             logger.info("psql integrity error when commiting prefix names (%s)", x)
-            connQ.rollback() 
+            connQ.rollback()
+    print("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
     global STAT_NAMES
@@ -534,7 +540,7 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
         names.add((x['type'], x["name"]))
     print("length of suffix names", len(names))
     write_suffix_names(names) #unique
-    #write_suffixes(suffixes)
+    write_suffixes(suffixes)
 
 def write_suffix_names(names):
     logger.debug("entering write_sufffix_names (%s)", list)
@@ -542,9 +548,10 @@ def write_suffix_names(names):
     currQ = connQ.cursor()
     for x in names:
         try:
-            currQ.execute("SELECT id from fix_type where name = '{0}'".
-                          format(x[0]))
-            type_id = currQ.fetchall()[0][0]
+            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
+            category = currQ.fetchall()[0][0]
+            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
+            type_id = currQ.fetchone()[0]
             currQ.execute("INSERT INTO fix_name (name, type_id) "
                         """VALUES (%s, %s)""",(x[1], type_id,))           
             connQ.commit()
@@ -558,10 +565,12 @@ def write_suffixes(the_list):
     currQ = connQ.cursor()
     z = 0
     for x in the_list:
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s)", (x["type"],))
-        prefix_type = currQ.fetchone()[0]
+        currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
+        category = currQ.fetchall()[0][0]
+        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
+        suffix_type = currQ.fetchone()[0]
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s)", (x["name"],))
+        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], suffix_type,)) 
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
             for keys, values in y.items():
