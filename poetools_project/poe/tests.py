@@ -163,9 +163,9 @@ class GenericDataTablecontents(TestCase):
         self.assertEqual(data[0].s.max_value, 12)
         #
         data = models.ItemStat.objects.select_related().filter(i_id__name = "Blinder")
+        self.assertEqual(data[0].i.i_level, 22)
         self.assertEqual(data[0].i.min_dmg, 10)
         self.assertEqual(data[0].i.max_dmg, 27)
-        self.assertEqual(data[0].i.i_level, 22)
         self.assertEqual(data[0].s.name.name, "Local Life Gain Per Target")
         self.assertEqual(data[0].s.min_value, 10)
         self.assertEqual(data[0].s.max_value, 10)
@@ -186,7 +186,42 @@ class GenericDataTablecontents(TestCase):
         self.assertEqual(data[0].s.name.name, "From Armour Movement Speed +%")
         self.assertEqual(data[0].s.min_value, -3)
         self.assertEqual(data[0].s.max_value, -3)
-   
+        
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Two-Toned Boots")
+        self.assertEqual(data[0].i.i_level, 72)
+        self.assertEqual(data[0].i.evasion, 109)
+        self.assertEqual(data[0].i.armour, 0)
+        self.assertEqual(data[0].i.energy_shield, 32)
+        self.assertEqual(data[0].s.name.name, "Cold And Lightning Damage Resistance %")
+        self.assertEqual(data[0].s.min_value, 15)
+        self.assertEqual(data[0].s.max_value, 20)
+
+    def test_jewelry_stat(self):
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Golden Obi")
+        self.assertEqual(data[0].i.i_level, 12)
+        self.assertEqual(data[0].i.evasion, None)
+        self.assertEqual(data[0].i.armour, None)
+        self.assertEqual(data[0].i.energy_shield, None)
+        self.assertEqual(data[0].s.name.name, "Base Item Found Rarity +%")
+        self.assertEqual(data[0].s.min_value, 20)
+        self.assertEqual(data[0].s.max_value, 30)
+        
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Longtooth Talisman")
+        self.assertEqual(data[0].i.i_level, 1)
+        self.assertEqual(data[0].i.evasion, None)
+        self.assertEqual(data[0].i.armour, None)
+        self.assertEqual(data[0].i.energy_shield, None)
+        #
+        stat1 = data.filter(s_id__name_id__name = "Base Additional Physical Damage Reduction %")[0]
+        self.assertEqual(stat1.s.name.name, "Base Additional Physical Damage Reduction %")
+        self.assertEqual(stat1.s.min_value, 4)
+        self.assertEqual(stat1.s.max_value, 6)
+        #
+        stat2 = data.filter(s_id__name_id__name = "Local Stat Monsters Pick Up Item")[0]
+        self.assertEqual(stat2.s.name.name, "Local Stat Monsters Pick Up Item")
+        self.assertEqual(stat2.s.min_value, 1)
+        self.assertEqual(stat2.s.max_value, 1)
+
     def test_assert_lists(self):
         a = ["dave", "adam", "clive"]
         a.sort()

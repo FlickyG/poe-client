@@ -4,6 +4,7 @@ from poe import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^about/$', views.about, name='about'),
+    #url(r'^items/$', views.items, name='items'),
     url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'), # end of section 8
     url(r'^add_category/$', views.add_category, name='add_category'), # NEW MAPPING!
     url(r'^add_page/$', views.add_page, name='add_page'), # NEW MAPPING!
