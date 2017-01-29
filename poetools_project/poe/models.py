@@ -176,3 +176,6 @@ class ItemStat(models.Model):
         managed = True
         db_table = 'item_stat'
         app_label = "poe"
+    
+    def __str__(self):
+        return str(self.i.name)
