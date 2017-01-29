@@ -1,4 +1,6 @@
 #!/bin/python
+from django.test import TestCase, RequestFactory
+from django.core.urlresolvers import reverse 
 
 import poe.models as poe
 from django.db.models.query import QuerySet
@@ -71,13 +73,17 @@ stat_list = [int(i[0]) for i in d.values_list("id")]
 get_suffix_names_from_stat_id(stat_list)
 
 '''
-for z in models.Fix.objects.select_related().filter(name_id__type_id__name = "Armour"):
+for z in poe.Fix.objects.select_related().filter(name_id__type_id__name = "Armour"):
     print(z.name.name, z.stat.min_value, z.stat.max_value)
 
 z = models.Fix.objects.select_related().filter(name_id__name = "Essences")
 for x in z:
     print(x.id, x.name.type.name, x.name.name, x.name.type.category.name)
 
+for x in z:
+    print(z.name.name, z.stat.min_value, z.stat.max_value)
+
+data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Prefix")
 
 # get weapon id for a weapon with a name
 #weapon_id = poe.WeaponNames.objects.filter(name = "Death Bow")[0].id

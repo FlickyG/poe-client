@@ -21,7 +21,7 @@ class Category(models.Model):
                 super(Category, self).save(*args, **kwargs)
 
         def __unicode__(self):
-                return self.name
+                return str(self.name)
 
 class Page(models.Model):
     category = models.ForeignKey(Category)
@@ -50,6 +50,9 @@ class ItemCategory(models.Model):
         db_table = 'item_category'
         app_label = "poe" 
     
+    def __str__(self):
+        return str(self.name)
+    
 class ItemType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
     type = models.ForeignKey(ItemCategory)
@@ -59,6 +62,9 @@ class ItemType(models.Model):
         db_table = 'item_type'
         app_label = "poe" 
 
+    def __str__(self):
+        return str(self.name)
+
 class StatNames(models.Model):
     name = models.CharField(unique=True, max_length=60)
 
@@ -66,6 +72,9 @@ class StatNames(models.Model):
         managed = True
         db_table = 'stat_names'
         app_label = "poe"
+        
+    def __str__(self):
+        return str(self.name)
 
 class Stats(models.Model):
     name = models.ForeignKey(StatNames, models.DO_NOTHING)
@@ -78,7 +87,9 @@ class Stats(models.Model):
         app_label = "poe"
         unique_together = ('name', 'min_value', 'max_value',)
 
-
+    def __str__(self):
+        return str(self.name)
+        
 class FixCategory(models.Model):
     name = models.CharField(unique = True, blank = False, max_length = 50)
     
@@ -86,6 +97,9 @@ class FixCategory(models.Model):
         managed = True
         db_table = 'fix_category'
         app_label = "poe"
+
+    def __str__(self):
+        return str(self.name)
 
 class FixType(models.Model):
     name = models.CharField(max_length = 50)
@@ -96,6 +110,9 @@ class FixType(models.Model):
         db_table = 'fix_type'
         app_label = "poe"
 
+    def __str__(self):
+        return str(self.name)
+
 class FixName(models.Model):
     name = models.CharField(max_length=50)
     type = models.ForeignKey(FixType)
@@ -104,6 +121,9 @@ class FixName(models.Model):
         managed = True
         db_table = 'fix_name'
         app_label = "poe"
+
+    def __str__(self):
+        return str(self.name)
 
 class Fix(models.Model):
     name = models.ForeignKey(FixName)
@@ -116,6 +136,9 @@ class Fix(models.Model):
         db_table = 'fix'
         app_label = "poe"
         unique_together = ('name', 'stat', 'i_level', 'm_crafted')
+        
+    def __str__(self):
+        return str(self.name)
 ####
 ####
 
@@ -141,6 +164,9 @@ class ItemName(models.Model):
         managed = True
         db_table = 'item_name'
         app_label = "poe"
+
+    def __str__(self):
+        return str(self.name)
 
 class ItemStat(models.Model):
     i = models.ForeignKey(ItemName, models.DO_NOTHING)

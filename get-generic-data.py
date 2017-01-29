@@ -810,11 +810,11 @@ def fetch_clothes():
                 item["i_level"] = raw_data[2].get_text()
                 #item["damage"] = raw_data[3].get_text()
                 item["armour"] = raw_data[3].get_text()
-                item["evasion"] = raw_data[3].get_text()
-                item["energy_shield"] = raw_data[4].get_text()
-                item["req_str"] = raw_data[5].get_text()
-                item["req_dex"] = raw_data[6].get_text()
-                item["req_int"] = raw_data[7].get_text()
+                item["evasion"] = raw_data[4].get_text()
+                item["energy_shield"] = raw_data[5].get_text()
+                item["req_str"] = raw_data[6].get_text()
+                item["req_dex"] = raw_data[7].get_text()
+                item["req_int"] = raw_data[8].get_text()
                 item["type_id"] = c_type
                 #urls = raw_data[0].find_all("img")
                 x = x+1                

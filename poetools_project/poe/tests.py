@@ -153,8 +153,40 @@ class GenericDataTablecontents(TestCase):
             'Thrusting One Hand Sword', 'Two Hand Axe', 'Two Hand Mace', 
             'Two Hand Sword', 'Wand'])
         
-        
-    
+    def test_weapon_stat(self):
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Highborn Bow")
+        self.assertEqual(data[0].i.min_dmg, 17)
+        self.assertEqual(data[0].i.max_dmg, 66)
+        self.assertEqual(data[0].i.i_level, 50)
+        self.assertEqual(data[0].s.name.name, "Weapon Elemental Damage +%")
+        self.assertEqual(data[0].s.min_value, 6)
+        self.assertEqual(data[0].s.max_value, 12)
+        #
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Blinder")
+        self.assertEqual(data[0].i.min_dmg, 10)
+        self.assertEqual(data[0].i.max_dmg, 27)
+        self.assertEqual(data[0].i.i_level, 22)
+        self.assertEqual(data[0].s.name.name, "Local Life Gain Per Target")
+        self.assertEqual(data[0].s.min_value, 10)
+        self.assertEqual(data[0].s.max_value, 10)
+        #
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Etched Hatchet")
+        self.assertEqual(data[0].i.min_dmg, 24)
+        self.assertEqual(data[0].i.max_dmg, 42)
+        self.assertEqual(data[0].i.i_level, 35)
+        self.assertEqual(data[0].s.name.name, "Physical Damage +%")
+        self.assertEqual(data[0].s.min_value, 8)
+        self.assertEqual(data[0].s.max_value, 8)
+
+    def test_cloth_stat(self):
+        data = models.ItemStat.objects.select_related().filter(i_id__name = "Plate Vest")
+        self.assertEqual(data[0].i.evasion, 0)
+        self.assertEqual(data[0].i.armour, 14)
+        self.assertEqual(data[0].i.energy_shield, 0)
+        self.assertEqual(data[0].s.name.name, "From Armour Movement Speed +%")
+        self.assertEqual(data[0].s.min_value, -3)
+        self.assertEqual(data[0].s.max_value, -3)
+   
     def test_assert_lists(self):
         a = ["dave", "adam", "clive"]
         a.sort()
