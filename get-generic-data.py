@@ -356,8 +356,8 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
             unique_prefixes.append(item)
     print("length of prefixe before sort", len(unique_prefixes))
     write_prefixes(unique_prefixes)
-    for x in unique_prefixes:
-        print(x)
+    #for x in unique_prefixes:
+    #    print(x)
 
 
 def write_prefixes(the_list):
@@ -369,7 +369,7 @@ def write_prefixes(the_list):
         currQ.execute("SELECT id FROM fix_type WHERE name = (%s)", (x["type"],))
         prefix_type = currQ.fetchone()[0]
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s)", (x["name"],))
+        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type))
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
             for keys, values in y.items():
@@ -405,7 +405,7 @@ def write_prefix_names(the_set):
                           format(x[0]))
             type_id = currQ.fetchall()[0][0]
             currQ.execute("INSERT INTO fix_name (name, type_id) "
-                        """VALUES (%s, %s)""",(x[1], type_id,))           
+                        """VALUES (%s, %s)""",(x[1], type_id,))     
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting prefix names (%s)", x)
@@ -1080,9 +1080,9 @@ write_fix_categories()
 
 fetch_prefixes()
 fetch_suffixes()
-#fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_weapons()
+fetch_clothes()
+fetch_jewelry()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)

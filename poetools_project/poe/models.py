@@ -97,7 +97,7 @@ class FixType(models.Model):
         app_label = "poe"
 
 class FixName(models.Model):
-    name = models.CharField(unique=True, max_length=50)
+    name = models.CharField(max_length=50)
     type = models.ForeignKey(FixType)
     
     class Meta:
