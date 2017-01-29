@@ -350,9 +350,11 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     write_prefix_names(names) # unique
     # make prefixes unique, to stop copying over duplicates from the website
     unique_prefixes = []
+    print("length of prefixe before sort", len(prefixes))
     for item in prefixes:
         if item not in unique_prefixes:
             unique_prefixes.append(item)
+    print("length of prefixe before sort", len(unique_prefixes))
     write_prefixes(unique_prefixes)
     for x in unique_prefixes:
         print(x)
