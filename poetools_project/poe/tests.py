@@ -56,9 +56,9 @@ class GenericDataTableLengths(TestCase):
         self.assertEqual(len(data), 33)
         
     def test_length_prefix_names(self):
-        #length of prefix names 302
+        #length of prefix names 480
         data = models.PrefixNames.objects.all()
-        self.assertEqual(len(data), 302)
+        self.assertEqual(len(data), 480)
    
     def test_length_prefixes(self):
         #length of prefixes 1035
@@ -72,9 +72,9 @@ class GenericDataTableLengths(TestCase):
         self.assertEqual(len(data), 24)
         
     def test_length_suffix_names(self):
-        #length of suffix names 247
+        #length of suffix names 270
         data = models.SuffixNames.objects.all()
-        self.assertEqual(len(data), 247)
+        self.assertEqual(len(data), 270)
    
     def test_length_suffixes(self):
         #length of suffixes 420

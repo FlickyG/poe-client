@@ -71,6 +71,12 @@ stat_list = [int(i[0]) for i in d.values_list("id")]
 get_suffix_names_from_stat_id(stat_list)
 
 '''
+for z in models.Fix.objects.select_related().filter(name_id__type_id__name = "Accuracy and Light Radius"):
+    print(z.name.name, z.stat.min_value, z.stat.max_value)
+
+z = models.Fix.objects.select_related().filter(name_id__name = "Essences")
+for x in z:
+    print(x.id, x.name.type.name, x.name.name, x.name.type.category.name)
 
 
 # get weapon id for a weapon with a name

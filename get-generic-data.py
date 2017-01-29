@@ -119,11 +119,13 @@ def write_suffix_types(list):
     currQ = connQ.cursor()
     for x in list:
         try:
-            currQ.execute("INSERT INTO suffix_types (type) "
-                        "VALUES (%s)",
-             [x])           
+            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
+            type = currQ.fetchall()[0][0]
+            currQ.execute("INSERT INTO fix_type (name, category_id) "
+                        "VALUES ('{0}', {1})".format(x,type))
             connQ.commit()
         except psycopg2.IntegrityError:
+            print("psql integrity error when commiting suffix types type (%s)", x)
             logger.debug("psql integrity error when commiting suffix types type (%s)", x)
             connQ.rollback()  
 
@@ -288,7 +290,6 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
                 prefix = {}
                 item_data = []
                 prefix["type"] = p_type
-                print("p_type", p_type)
                 prefix["i_level"] = data[y].find_all("td")[1].get_text()
                 name_data = data[y].find_all("td")[0].get_text()
                 if "(Master Crafted)" in name_data:
@@ -340,14 +341,21 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     stat_names = set()
     for stat in stats:
         stat_names.add(stat[0])
-    write_stat_names(stat_names)
-    write_stats(stats)
+    write_stat_names(stat_names) #unique
+    write_stats(stats) #unique
     names = set()
     for x in prefixes:
         names.add((x["type"], x["name"]))
     print("length of prefix names", len(names))
-    write_prefix_names(names)
-    write_prefixes(prefixes)
+    write_prefix_names(names) # unique
+    # make prefixes unique, to stop copying over duplicates from the website
+    unique_prefixes = []
+    for item in prefixes:
+        if item not in unique_prefixes:
+            unique_prefixes.append(item)
+    write_prefixes(unique_prefixes)
+    for x in unique_prefixes:
+        print(x)
 
 
 def write_prefixes(the_list):
@@ -375,9 +383,9 @@ def write_prefixes(the_list):
             stat_id = currQ.fetchone()[0]
             try:
                 z = z + 1 #  to count number of database entries
-                currQ.execute("INSERT INTO prefixes (type_id, name_id, i_level, crafted, stat_id) "
-                              "VALUES (%s, %s, %s, %s, %s)",
-                              (prefix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
+                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
+                              "VALUES (%s, %s, %s, %s)",
+                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))           
                 connQ.commit()
             except psycopg2.IntegrityError:     
                 z = z - 1 #  remove duplicates
@@ -390,12 +398,10 @@ def write_prefix_names(the_set):
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
-        print("x", x)
         try:
             currQ.execute("SELECT id from fix_type where name = '{0}'".
                           format(x[0]))
             type_id = currQ.fetchall()[0][0]
-            print(x[1], type_id)
             currQ.execute("INSERT INTO fix_name (name, type_id) "
                         """VALUES (%s, %s)""",(x[1], type_id,))           
             connQ.commit()
@@ -516,18 +522,17 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
         stat_names.add(stat[0])
     ####
     print("length of suffix_types = ", len(suffix_types))
-    write_suffix_types(suffix_types)
     stat_names = set()
     for stat in stats:
         stat_names.add(stat[0])
-    write_stat_names(stat_names)
-    write_stats(stats)
+    write_stat_names(stat_names) # unique
+    write_stats(stats) # unique
     names = set()
     for x in suffixes:
-        names.add(x["name"])
+        names.add((x['type'], x["name"]))
     print("length of suffix names", len(names))
-    write_suffix_names(names)
-    write_suffixes(suffixes)
+    write_suffix_names(names) #unique
+    #write_suffixes(suffixes)
 
 def write_suffix_names(names):
     logger.debug("entering write_sufffix_names (%s)", list)
@@ -535,9 +540,11 @@ def write_suffix_names(names):
     currQ = connQ.cursor()
     for x in names:
         try:
-            currQ.execute("INSERT INTO suffix_names (name) "
-                        "VALUES (%s)",
-                       (x,))           
+            currQ.execute("SELECT id from fix_type where name = '{0}'".
+                          format(x[0]))
+            type_id = currQ.fetchall()[0][0]
+            currQ.execute("INSERT INTO fix_name (name, type_id) "
+                        """VALUES (%s, %s)""",(x[1], type_id,))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting suffix names (%s)", x)
@@ -549,9 +556,10 @@ def write_suffixes(the_list):
     currQ = connQ.cursor()
     z = 0
     for x in the_list:
-        currQ.execute("SELECT id FROM suffix_types WHERE type = (%s)", (x["type"],))
-        suffix_type = currQ.fetchone()[0]
-        currQ.execute("SELECT id FROM suffix_names WHERE name = (%s)", (x["name"],))
+        currQ.execute("SELECT id FROM fix_type WHERE name = (%s)", (x["type"],))
+        prefix_type = currQ.fetchone()[0]
+        #need to decide if we want a seperate stats table, and make the above sql
+        currQ.execute("SELECT id FROM fix_name WHERE name = (%s)", (x["name"],))
         name_id = currQ.fetchone()[0]
         for y in x["stats"]:
             for keys, values in y.items():
@@ -567,9 +575,9 @@ def write_suffixes(the_list):
             stat_id = currQ.fetchone()[0]
             try:
                 z = z + 1
-                currQ.execute("INSERT INTO suffixes (type_id, name_id, i_level, crafted, stat_id) "
-                              "VALUES (%s, %s, %s, %s, %s)",
-                              (suffix_type, name_id, x["i_level"], str(x["master_crafted"]), stat_id,))           
+                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
+                              "VALUES (%s, %s, %s, %s)",
+                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))          
                 connQ.commit()
             except psycopg2.IntegrityError:
                 z = z - 1
@@ -1069,7 +1077,7 @@ write_item_categories()
 write_fix_categories()
 
 fetch_prefixes()
-#fetch_suffixes()
+fetch_suffixes()
 #fetch_weapons()
 #fetch_clothes()
 #fetch_jewelry()
