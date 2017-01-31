@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
 
-{% load staticfiles %}
-
 {% block title %}Add Page{% endblock %}
-    
-{% block body_block %}
-    	<form id="page_form" method="post" action="/rango/category/{{ category_name_slug }}/add_page/"> 
-    	<!-- previous line passes the action variable to the URL given --> 
-    	<h1>Add Page</h1>
-    	{% csrf_token %}
-    	{% for hidden in form.hidden_fields %}
-	        {{ hidden }}
-	    {% endfor %}
 
-    {% for field in form.visible_fields %}
-        {{ field.errors }}
-        {{ field.help_text }}
-        {{ field }}
-    {% endfor %}
-    <input type="submit" name="submit" value="Create Page" />
-{% endblock %}
+
+{% block body_block %}
+        {% if category %}
+                <form role="form"  id="page_form" method="post" action="/poe/category/{{category.slug}}/add_page/">
+            <h2 class="form-signin-heading">Add a Page to <a href="/poe/category/{{category.slug}}/"> {{ category.name }}</a></h2>
+                    {% csrf_token %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+
+                    {% for field in form.visible_fields %}
+                        {{ field.errors }}
+                        {{ field.help_text }}<br/>
+                        {{ field }}<br/>
+                    {% endfor %}
+                <br/>
+            <button class="btn btn-primary" type="submit" name="submit">Add Page</button>
+                </form>
+        {%  else %}
+            <p>This category does not exist.</p>
+        {%  endif %}
+
+
+        {% endblock %}
