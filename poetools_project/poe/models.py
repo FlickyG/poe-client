@@ -3,6 +3,8 @@ from django.db import utils
 from django.template.defaultfilters import slugify #section 7.3
 from django.contrib.auth.models import User #section 9
 
+import autoslug
+
 from django.db.models.signals import post_save #for custom user profile
 from django.dispatch import receiver #for custom user profile
 
@@ -92,6 +94,7 @@ class Stats(models.Model):
         
 class FixCategory(models.Model):
     name = models.CharField(unique = True, blank = False, max_length = 50)
+    slug = autoslug.AutoSlugField(populate_from='name')
     
     class Meta:
         managed = True

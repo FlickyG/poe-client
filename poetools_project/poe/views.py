@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
-from poe.models import Category #sectio9n 7.1
+from poe.models import FixCategory, Fix
 
-from poe.models import Page #section 7.3
+from poe.models import Category, Page #section 7.3
 
 from poe.forms import CategoryForm #section 8
 
@@ -20,6 +20,44 @@ import datetime
 from poe.forms import PageForm
 
 def index(request):
+
+    request.session.set_test_cookie()
+    
+    # fetch items
+    # fetch categories
+    category_list = FixCategory.objects.all()
+    print("hello index view", category_list)
+    context_dict = {'categories': category_list}
+
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+
+    response = render(request,'poe/index.html', context_dict)
+
+    return response
+
+def index2(request):
 
     request.session.set_test_cookie()
     
