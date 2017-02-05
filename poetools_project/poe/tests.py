@@ -127,7 +127,7 @@ class GenericDataTableLengths(TestCase):
         data = models.StatNames.objects.all()
         self.assertEqual(len(data), 266)
 
-class GenericDataTablecontents(TestCase):
+class GenericDataTablCcontents(TestCase):
     print("GenericDataTablecontents")
     multi_db = True
     fixtures = ["poe/fixtures/dumpdata.yaml",]
