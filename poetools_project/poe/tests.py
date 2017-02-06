@@ -222,6 +222,16 @@ class GenericDataTablCcontents(TestCase):
         self.assertEqual(stat2.s.min_value, 1)
         self.assertEqual(stat2.s.max_value, 1)
 
+    def test_index_page(self):
+        url = reverse("index")
+        response = self.client.post(url)
+        self.assertIn(b'<li  class="list-group-item"><a href="/poe/item/weapons/">Weapons</a></li>', response.content)
+        self.assertIn(b'<li  class="list-group-item"><a href="/poe/item/weapons/">Weapons</a></li>', response.content)
+        self.assertIn(b'<li  class="list-group-item"><a href="/poe/item/jewelry/">Jewelry</a></li>', response.content)
+        self.assertIn(b'<li  class="list-group-item"><a href="/poe/mods/prefix/">Prefix</a></li>', response.content)
+        self.assertIn(b'<li  class="list-group-item"><a href="/poe/mods/suffix/">Suffix</a></li>', response.content)
+        
+
     def test_assert_lists(self):
         a = ["dave", "adam", "clive"]
         a.sort()

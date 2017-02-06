@@ -4,6 +4,12 @@ from poe.models import Category #sectio9n 7.1
 
 from poe.models import Page #section 7.3
 
+from poe.models import ItemCategory
+from poe.models import FixCategory
+from poe.models import FixType
+from poe.models import ItemType
+from poe.models import ItemName
+
 from poe.forms import CategoryForm #section 8
 
 #from poe.forms import UserForm, UserProfileForm #sectio9n 9
@@ -20,6 +26,42 @@ import datetime
 from poe.forms import PageForm
 
 def index(request):
+
+    request.session.set_test_cookie()
+    item_category_list = ItemCategory.objects.all()
+    modifications_list = FixCategory.objects.all()
+
+    context_dict = {'item_categories': item_category_list, 'mods': modifications_list}
+
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+
+    response = render(request,'poe/index.html', context_dict)
+
+    return response
+
+def index_rango(request):
 
     request.session.set_test_cookie()
     
@@ -75,8 +117,70 @@ def about(request):
 def hello_world(request):
     return HttpResponse("Adam says hello world!")
 
+def item(request, category_name_slug):
+
+    # Create a context dictionary which we can pass to the template rendering engine.
+    context_dict = {}
+
+    try:
+        # Can we find a category name slug with the given name?
+        # If we can't, the .get() method raises a DoesNotExist exception.
+        # So the .get() method returns one model instance or raises an exception.
+        item_category = ItemCategory.objects.get(slug=category_name_slug)
+        context_dict['item_name'] = item_category.name
+        # Retrieve all of the associated item categories e.g. all the weapon type.
+        # Note that filter returns >= 1 model instance.
+        items = ItemType.objects.filter(type_id=item_category.id)
+        # Adds our results list to the template context under name pages.
+        context_dict['items'] = items
+        # We also add the category object from the database to the context dictionary.
+        # We'll use this in the template to verify that the category exists.
+        context_dict['category'] = item_category
+        #section 8
+        context_dict['slug'] = category_name_slug
+    except ItemType.DoesNotExist:
+        # We get here if we didn't find the specified category.
+        # Don't do anything - the template displays the "no category" message for us.
+        print("something went wrong with poe.views.item")
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'poe/item.html', context_dict)
+
+def mods(request, category_name_slug):
+
+    # Create a context dictionary which we can pass to the template rendering engine.
+    context_dict = {}
+
+    try:
+        # Can we find a category name slug with the given name?
+        # If we can't, the .get() method raises a DoesNotExist exception.
+        # So the .get() method returns one model instance or raises an exception.
+        item_category = FixCategory.objects.get(slug=category_name_slug)
+        context_dict['mod_name'] = item_category.name
+
+        # Retrieve all of the associated item categories e.g. all the weapon type.
+        # Note that filter returns >= 1 model instance.
+        mods = FixType.objects.filter(category_id=item_category.id)
+        # Adds our results list to the template context under name pages.
+        context_dict['mods'] = mods
+
+        # We also add the category object from the database to the context dictionary.
+        # We'll use this in the template to verify that the category exists.
+        context_dict['category'] = item_category
+        #section 8
+        context_dict['slug'] = category_name_slug
+    except ItemType.DoesNotExist:
+        # We get here if we didn't find the specified category.
+        # Don't do anything - the template displays the "no category" message for us.
+        print("something went wrong with poe.views.item")
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'poe/mods.html', context_dict)
+
 #section 7.3
-def category(request, category_name_slug):
+def category_rango(request, category_name_slug):
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
