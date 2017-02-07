@@ -117,7 +117,8 @@ def about(request):
 def hello_world(request):
     return HttpResponse("Adam says hello world!")
 
-def item(request, category_name_slug):
+def item(request, category_name_slug, sub_category_slug = None):
+    print("category_name_slug, sub_category_slug", category_name_slug, sub_category_slug)
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
@@ -125,19 +126,28 @@ def item(request, category_name_slug):
     try:
         # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
-        # So the .get() method returns one model instance or raises an exception.
-        item_category = ItemCategory.objects.get(slug=category_name_slug)
+        item_category = ItemCategory.objects.get(slug = category_name_slug)
         context_dict['item_name'] = item_category.name
         # Retrieve all of the associated item categories e.g. all the weapon type.
-        # Note that filter returns >= 1 model instance.
-        items = ItemType.objects.filter(type_id=item_category.id)
-        # Adds our results list to the template context under name pages.
-        context_dict['items'] = items
-        # We also add the category object from the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
+        # Add the results 
+        context_dict['items'] = ItemType.objects.filter(type_id=item_category.id)
+        # We also add the category object from the database to the context
+        # dictionary We'll use this in the template to verify that the category exists.
         context_dict['category'] = item_category
-        #section 8
+        # add the category slug so we can use it recursively when clicking 
+        # through the webpage
         context_dict['slug'] = category_name_slug
+        if sub_category_slug != None:  # if the sub category is present 
+            # select sub category
+            try:
+                pass
+                # select sub category objects
+                sub_item_category = ItemType.objects.get(slug = sub_category_slug)
+                context_dict['sub_item_name'] = item_category.name
+            except:
+                pass
+        else:
+            pass # ignore if None
     except ItemType.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything - the template displays the "no category" message for us.
