@@ -99,12 +99,8 @@ class Stats(models.Model):
         
 class FixCategory(models.Model):
     name = models.CharField(unique = True, blank = False, max_length = 50)
-<<<<<<< HEAD
     slug = models.SlugField()
-||||||| merged common ancestors
-=======
-    slug = autoslug.AutoSlugField(populate_from='name')
->>>>>>> 1ce448cb2783ee801c108d2ad50a4a7982366f3c
+
     
     class Meta:
         managed = True
