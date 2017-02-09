@@ -178,10 +178,11 @@ def item(request, category_name_slug, sub_category_slug = None):
         if sub_category_slug != None:  # if the sub category is present 
             # select sub category
             try:
-                pass
+                #pass
                 # select sub category objects
                 sub_item_category = ItemType.objects.get(slug = sub_category_slug)
                 context_dict['sub_item_name'] = item_category.name
+                context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
             except:
                 pass
         else:
