@@ -181,7 +181,8 @@ def item(request, category_name_slug, sub_category_slug = None):
                 #pass
                 # select sub category objects
                 sub_item_category = ItemType.objects.get(slug = sub_category_slug)
-                context_dict['sub_item_name'] = item_category.name
+                context_dict['sub_item_category'] = sub_item_category
+                context_dict['sub_item_name'] = sub_item_category.name
                 context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
             except:
                 pass
