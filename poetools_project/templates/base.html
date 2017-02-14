@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
 
-    <title>Rango - {% block title %}How to Tango with Django!{% endblock %}</title>
+    <title>POE - Tools - {% block title %}How to Tango with Django!{% endblock %}</title>
 
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
@@ -52,12 +52,16 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-                {% block side_block %}{% endblock %}
+                {% block side_block %}
+                <h1>Hello! Side Bar</h1>
+                {% endblock %}
 
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
            <div>
-                {% block body_block %}{% endblock %}
+                {% block body_block %}
+                <h1>Hello! Side Bar2</h1>
+                {% endblock %}
                 </div>
         </div>
       </div>
