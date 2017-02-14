@@ -1,7 +1,7 @@
-{% if item_cats %}
+{% if fix_cats %}
     <ul class="nav nav-sidebar">
-    {% for c in item_cats %}
-        <li><a href="{% url 'item'  c.slug %}">{{ c.name }}</a></li>
+    {% for f in fix_cats %}
+        <li><a href="{% url 'mods'  f.slug %}">{{ f.name }}</a></li>
     {% endfor %}
 
 {% else %}
