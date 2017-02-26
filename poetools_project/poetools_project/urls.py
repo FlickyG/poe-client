@@ -32,7 +32,7 @@ class MyRegistrationView(RegistrationView):
 
 
 urlpatterns = [
-    url(r'^$', include('poe.urls')),
+    url(r'^', include('poe.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^poe/', include('poe.urls')),
     #url(r'^rango/', include('rango.urls')),

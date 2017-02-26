@@ -49,9 +49,9 @@ SECRET_KEY = 'o8(%htaz@50*u+q_vj20^cpxfnqthge%mue5^_apkj6ae2b+%l'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'www.poeim.com']
 
 
 # Application definition
@@ -178,4 +178,13 @@ TEST_DATABASE_NAME = "poe_data"
 DATABASE_ROUTERS = ['poe.routers.PoeRouter']
 
 #NEED TO FIX PSQL PERMISSIONS
+
+# For Deployment
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_SSL_REDIRECT = False # change when in prod
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+X_FRAME_OPTIONS = 'DENY'
 
