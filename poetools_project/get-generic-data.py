@@ -41,7 +41,7 @@ def slugify(s):
 
 def write_item_categories():
     logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
@@ -57,7 +57,7 @@ def write_item_categories():
 
 def write_fix_categories():
     logger.debug("entering write_fix_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     list = ['Prefix', 'Suffix']
     for x in list:
@@ -73,7 +73,7 @@ def write_fix_categories():
             
 def get_item_category(string):
     logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     #print("string", string)
     #print("SELECT * FROM item_categorys WHERE name = {0}".format(string))
@@ -89,7 +89,7 @@ def get_item_category(string):
             
 def write_item_type(the_type, list):
     logger.debug("entering write_item_type (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in list:
         try:
@@ -105,7 +105,7 @@ def write_item_type(the_type, list):
             
 def get_item_type_id(item):
     logger.debug("entering write_item_type_id (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     #for x in list:
     try:
@@ -119,7 +119,7 @@ def get_item_type_id(item):
     
 def write_prefix_types(list):
     logger.debug("entering write_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in list:
         try:
@@ -134,7 +134,7 @@ def write_prefix_types(list):
             
 def write_suffix_types(list):
     logger.debug("entering write_suffix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in list:
         try:
@@ -272,7 +272,7 @@ def parse_jewelry(item_data):
 def get_prefix_types(key):
     prefix_types = {}
     logger.debug("entering get_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     try:
         currQ.execute("SELECT * FROM prefix_types")
@@ -379,7 +379,7 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
 
 def write_prefixes(the_list):
     logger.debug("entering write_prefixes (%s)", the_list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()  
     z = 0 #  to count number of database entries
     for x in the_list:
@@ -419,7 +419,7 @@ def write_prefixes(the_list):
       
 def write_prefix_names(the_set):
     logger.debug("entering write_prefix_names (%s)", the_set)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     z = 0
     for x in the_set:
@@ -443,7 +443,7 @@ def write_prefix_names(the_set):
 def write_stat_names(the_set):
     global STAT_NAMES
     logger.debug("entering write_stat_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
@@ -460,7 +460,7 @@ def write_stat_names(the_set):
 def write_stats(the_set):
     global STATS
     logger.debug("entering write_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
@@ -567,7 +567,7 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
 
 def write_suffix_names(names):
     logger.debug("entering write_sufffix_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     for x in names:
         try:
@@ -584,7 +584,7 @@ def write_suffix_names(names):
 
 def write_suffixes(the_list):
     logger.debug("entering write_suffixes (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     z = 0
     for x in the_list:
@@ -643,7 +643,7 @@ def fetch_weapons():
     type = get_item_category("Weapons")
     write_item_type(type, weapon_types)
     # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
                     "JOIN item_category on item_category.id = item_type.type_id "
@@ -724,7 +724,7 @@ def fetch_weapons():
     
 def write_weapon_names(list):
     logger.debug("entering write_weapon_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     z = 0  
     for x in list:
@@ -745,7 +745,7 @@ def write_weapon_names(list):
 
 def write_weapon_stats(list):
     logger.debug("entering write_weapon_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     z = 0
     for x in list:
@@ -808,7 +808,7 @@ def fetch_clothes():
     type = get_item_category("Clothes")
     write_item_type(type, clothes_types)   
     # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
                     "JOIN item_category on item_category.id = item_type.type_id "
@@ -895,7 +895,7 @@ def fetch_clothes():
     
 def write_clothes_names(list):
     logger.debug("entering write_clothes_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()  
     for x in list:
         try:
@@ -913,7 +913,7 @@ def write_clothes_names(list):
 
 def write_clothes_stats(list):
     logger.debug("entering write_clothes_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()  
     z = 0
     for x in list:
@@ -974,7 +974,7 @@ def fetch_jewelry():
     # write item types
     type = get_item_category("Jewelry")
     write_item_type(type, jewelry_types)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
                     "JOIN item_category on item_category.id = item_type.type_id "
@@ -1053,7 +1053,7 @@ def fetch_jewelry():
     
 def write_jewelry_names(list):
     logger.debug("entering write_jewelry_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()  
     for x in list:
         try:
@@ -1070,7 +1070,7 @@ def write_jewelry_names(list):
 
 def write_jewelry_stats(list):
     logger.debug("entering write_jewelry_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
     currQ = connQ.cursor()
     z = 0 
     for x in list:

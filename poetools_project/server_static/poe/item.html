@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}{{ item_name }}{% endblock %}
+
+{% block body_block %}
+    <h1>{{ item_name }}</h1>
+    {% if category %}
+        
+            {% if items and not sub_items %}
+            <ul>
+            {% for item in items %}
+                <li><a href="{% url 'item' category.slug item.slug %}">{{ item.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        
+        
+        {% if items and sub_items %}
+			<div class="container">
+				<h2> {{ sub_item_name  }}</h2>
+					<table class="table table-striped">
+			<!-- if the sub type is weapons -->
+        	{% ifequal category.name "Weapons" %}
+    			<thead>
+  					<tr>
+    					<th>Name</th>
+    					<th>Level</th>
+    					<th>Min Damage</th>
+    					<th>Max Damage</th>
+    					<th>APS</th>
+    					<th>DPS</th>
+    					<th>Req Str</th>
+    					<th>Req Dex</th>
+    					<th>Req Int</th>
+  					</tr>
+  				</thead>
+           		<tbody>
+           		{% for sub_type in sub_items %}
+           			<tr>
+	           			<td> {{ sub_type.name }}</td>
+	           			<td> {{ sub_type.i_level }}</td>
+	           			<td> {{ sub_type.min_dmg }}</td>
+	           			<td> {{ sub_type.max_dmg }}</td>
+	           			<td> {{ sub_type.aps }}</td>
+	           			<td> {{ sub_type.dps }}</td>
+	           			<td> {{ sub_type.req_str }}</td>
+	           			<td> {{ sub_type.req_dex }}</td>
+	           			<td> {{ sub_type.req_int }}</td>
+           			</tr>
+           		{% endfor %}
+          			</tbody>
+    			</table>
+	      		</div>
+	      	{% endifequal %}
+			<!-- if the sub type is clothes -->
+        	{% ifequal category.name "Clothes" %}
+   				<thead>
+  					<tr>
+    					<th>Name</th>
+    					<th>Level</th>
+    					<th>Armour</th>
+    					<th>Evasion</th>
+    					<th>Energy Shield</th>
+    					<th>Req Str</th>
+    					<th>Req Dex</th>
+    					<th>Req Int</th>
+  					</tr>
+  				</thead>
+           		<tbody>
+           		{% for sub_type in sub_items %}
+           			<tr>
+	           			<td> {{ sub_type.name }}</td>
+	           			<td> {{ sub_type.i_level }}</td>
+	           			<td> {{ sub_type.armour }}</td>
+	           			<td> {{ sub_type.evasion }}</td>
+	           			<td> {{ sub_type.energy_shield }}</td>
+	           			<td> {{ sub_type.req_str }}</td>
+	           			<td> {{ sub_type.req_dex }}</td>
+	           			<td> {{ sub_type.req_int }}</td>
+           			</tr>
+           		{% endfor %}
+          			</tbody>
+    			</table>
+	      		</div>
+	      	{% endifequal %}
+			<!-- if the sub type is jewelry -->
+        	{% ifequal category.name "Jewelry" %}
+   				<thead>
+  					<tr>
+    					<th>Name</th>
+    					<th>Level</th>
+     					</tr>
+  				</thead>
+           		<tbody>
+           		{% for sub_type in sub_items %}
+           			<tr>
+	           			<td> {{ sub_type.name }}</td>
+	           			<td> {{ sub_type.i_level }}</td>
+           			</tr>
+           		{% endfor %}
+          			</tbody>
+    			</table>
+	      		</div>
+	      	{% endifequal %}
+        {% else %}
+                <strong>Select a sub-category to continue {{sub_types}} </strong>
+        {% endif %}
+
+        {% if user.is_authenticated %} 
+            <a href="{% url 'add_page' category.slug %}">Add a Page</a>
+        {% endif %}
+    
+        {% else %}
+            The specified item {{ item_name }} does not exist!
+    	{% endif %}
+
+{% endblock %}

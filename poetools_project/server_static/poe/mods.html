@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}{{ mod_name }}{% endblock %}
+
+{% block body_block %}
+    <h1>{{ mod_name }}</h1>
+    {% if category %}
+        {% if mods %}
+        <ul>
+                {% for mod in mods %}
+                <li><a href="{{ mod.url }}">{{ mod.name }}</a></li>
+                {% endfor %}
+                </ul>
+        {% else %}
+                <strong> DD No pages currently in category.</strong>
+                {% endif %}
+
+        {% if user.is_authenticated %} 
+                <a href="{% url 'add_page' category.slug %}">Add a Page</a>
+                {% endif %}
+        {% else %}
+                 The specified item {{ item_name }} does not exist!
+    {% endif %}
+
+{% endblock %}
