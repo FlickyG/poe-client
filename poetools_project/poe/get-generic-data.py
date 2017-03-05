@@ -9,7 +9,7 @@ import logging, logging.config
 import sys #for excepotion handling and printing
 import datetime, time #to analyuse how long things take
 from xml.dom import minidom
-import numpy as np  # for a set from a list of dicts
+
 from django.core.management.sql import sql_flush
 
 
@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
+proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -26,13 +26,13 @@ os.chdir(proj_path)
 # This is so models get loaded.
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-from poe.models import ItemCategory
+from poe.models import ItemCategory, FixCategory, FixType
 
 
 STATS = 0
 STAT_NAMES = 0
 
-logging.config.fileConfig('../poe_tools_logging.conf')
+logging.config.fileConfig('poe_tools_logging.conf')
 logger = logging.getLogger(__name__)
 start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
@@ -60,26 +60,22 @@ def write_item_categories():
     for x in list:
         try:
             print("write_item_categories", x, slugify(x))
-            x = ItemCategory(name = x)
-            x.save()
+            y = ItemCategory(name = x)
+            y.save()
         except:
             logger.debug("psql integrity error when commiting catagory types type (%s)", x)
 
 
 def write_fix_categories():
     logger.debug("entering write_fix_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     list = ['Prefix', 'Suffix']
     for x in list:
         try:
-            currQ.execute("INSERT INTO fix_category (name, slug) "
-                        "VALUES (%s, %s)",
-             (x, slugify(x),))           
-            connQ.commit()
+            y = FixCategory(name = x)
+            y.save()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting fix types type (%s)", x)
-            connQ.rollback()  
+  
 
             
 def get_item_category(string):
@@ -130,34 +126,23 @@ def get_item_type_id(item):
     
 def write_prefix_types(list):
     logger.debug("entering write_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     for x in list:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-            type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
-                        "VALUES ('{0}', {1}, '{2}')".format(x, type, slugify(x)))
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting prefix types type (%s)", x)
-            connQ.rollback()
+            type = FixCategory.objects.get(name = 'Prefix')
+            type.fixtype_set.create(name = x)
+        except:
+            logger.debug("write_prefix_types - Unexpected error:", sys.exc_info()[0], x)
+            sys.exit()
             
 def write_suffix_types(list):
-    logger.debug("entering write_suffix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
+
     for x in list:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-            type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
-                        "VALUES ('{0}', {1}, '{2}')".format(x,type, slugify(x)))
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            type = FixCategory.objects.get(name = 'Suffix')
+            type.fixtype_set.create(name = x)
+        except:
             print("psql integrity error when commiting suffix types type (%s)", x)
-            logger.debug("psql integrity error when commiting suffix types type (%s)", x)
-            connQ.rollback()  
+            logger.debug("write_suffix_types - Unexpected error:", sys.exc_info()[0], x)
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
@@ -298,7 +283,10 @@ def get_prefix_types(key):
     currQ.close()
                
 def fetch_prefixes(): #layout is different - implicit mods are on the same line
-    logger.debug("entering fetch_refix_2 (%s)", list)
+    """ Downloads, parses and save this prefix data from the POE website.
+        Returns nothing but prints data
+    """
+    logger.debug("entering fetch_prefix (%s)", list)
     prefix_types = set()
     stats = set()
     prefixes = []
@@ -429,6 +417,9 @@ def write_prefixes(the_list):
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
+    """ Write the prefixes ot the fix_name table
+        prints the number of entries written
+    """
     logger.debug("entering write_prefix_names (%s)", the_set)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -1122,9 +1113,9 @@ def write_jewelry_stats(list):
     
 
 write_item_categories()
-#write_fix_categories()
+write_fix_categories()
 
-#fetch_prefixes()
+fetch_prefixes()
 #fetch_suffixes()
 #fetch_weapons()
 #fetch_clothes()
