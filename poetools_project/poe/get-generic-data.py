@@ -13,11 +13,26 @@ import numpy as np  # for a set from a list of dicts
 from django.core.management.sql import sql_flush
 
 
+###
+### So we can use our django models here in this script
+###
+import os
+proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
+# This is so Django knows where to find stuff.
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
+sys.path.append(proj_path)
+# This is so my local_settings.py gets loaded.
+os.chdir(proj_path)
+# This is so models get loaded.
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+from poe.models import ItemCategory
+
 
 STATS = 0
 STAT_NAMES = 0
 
-logging.config.fileConfig('poe_tools_logging.conf')
+logging.config.fileConfig('../poe_tools_logging.conf')
 logger = logging.getLogger(__name__)
 start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
@@ -41,19 +56,15 @@ def slugify(s):
 
 def write_item_categories():
     logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
             print("write_item_categories", x, slugify(x))
-            currQ.execute("INSERT INTO item_category (name, slug) "
-                        "VALUES (%s, %s)",
-             (x, slugify(x),))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            x = ItemCategory(name = x)
+            x.save()
+        except:
             logger.debug("psql integrity error when commiting catagory types type (%s)", x)
-            connQ.rollback()
+
 
 def write_fix_categories():
     logger.debug("entering write_fix_categories ",)
@@ -1111,13 +1122,15 @@ def write_jewelry_stats(list):
     
 
 write_item_categories()
-write_fix_categories()
+#write_fix_categories()
 
-fetch_prefixes()
-fetch_suffixes()
-fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_prefixes()
+#fetch_suffixes()
+#fetch_weapons()
+#fetch_clothes()
+#fetch_jewelry()
+
+
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
