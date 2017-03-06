@@ -3,8 +3,12 @@ from django.db import utils
 from django.template.defaultfilters import slugify #section 7.3
 from django.contrib.auth.models import User #section 9
 
+import autoslug
+
 from django.db.models.signals import post_save #for custom user profile
 from django.dispatch import receiver #for custom user profile
+
+from autoslug import AutoSlugField
 
 # Create your models here.
 class Category(models.Model):
@@ -44,6 +48,7 @@ class PoeUser(User):
 
 class ItemCategory(models.Model):
     name = models.CharField(unique = True, max_length = 50)
+    slug = models.SlugField()
 
     class Meta:
         managed = True
@@ -56,6 +61,7 @@ class ItemCategory(models.Model):
 class ItemType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
     type = models.ForeignKey(ItemCategory)
+    slug = models.SlugField()
 
     class Meta:
         managed = True
@@ -67,6 +73,7 @@ class ItemType(models.Model):
 
 class StatNames(models.Model):
     name = models.CharField(unique=True, max_length=60)
+    slug = models.SlugField(max_length = 75)
 
     class Meta:
         managed = True
@@ -92,6 +99,8 @@ class Stats(models.Model):
         
 class FixCategory(models.Model):
     name = models.CharField(unique = True, blank = False, max_length = 50)
+    slug = models.SlugField()
+
     
     class Meta:
         managed = True
@@ -104,6 +113,7 @@ class FixCategory(models.Model):
 class FixType(models.Model):
     name = models.CharField(max_length = 50)
     category = models.ForeignKey(FixCategory)
+    slug = models.SlugField()
     
     class Meta:
         managed = True
@@ -116,6 +126,7 @@ class FixType(models.Model):
 class FixName(models.Model):
     name = models.CharField(max_length=50)
     type = models.ForeignKey(FixType)
+    slug = models.SlugField()
     
     class Meta:
         managed = True
@@ -159,6 +170,7 @@ class ItemName(models.Model):
     evasion = models.SmallIntegerField(blank=True, null=True)
     energy_shield = models.FloatField(blank=True, null=True)
     type = models.ForeignKey(ItemType)
+    slug = models.SlugField()    
     
     class Meta:
         managed = True
@@ -176,3 +188,6 @@ class ItemStat(models.Model):
         managed = True
         db_table = 'item_stat'
         app_label = "poe"
+    
+    def __str__(self):
+        return str(self.i.name)

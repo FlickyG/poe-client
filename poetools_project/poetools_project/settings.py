@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'rango',
     'poe',
+    'django_tables2', # for sorted tables
 ]
 
 MIDDLEWARE = [
@@ -94,6 +95,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media', # I set this explicitly
+                'django.template.context_processors.request', # for sorted tables
             ],
         },
     },

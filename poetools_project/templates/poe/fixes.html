@@ -1,0 +1,11 @@
+{% if fix_cats %}
+    <ul class="nav nav-sidebar">
+    {% for f in fix_cats %}
+        <li><a href="{% url 'mods'  f.slug %}">{{ f.name }}</a></li>
+    {% endfor %}
+
+{% else %}
+    <li> <strong >There are no category present.</strong></li>
+
+    </ul>
+{% endif %}

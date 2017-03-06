@@ -12,6 +12,8 @@ from xml.dom import minidom
 import numpy as np  # for a set from a list of dicts
 from django.core.management.sql import sql_flush
 
+
+
 STATS = 0
 STAT_NAMES = 0
 
@@ -21,6 +23,22 @@ start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
+def slugify(s):
+    #force lower case
+    s = s.lower()
+    #replaces spaces with hyphens
+    s = s.replace(" ", "-")
+    #remove all other puncuation
+    punc = '!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~£'
+    for x in punc:
+        if x in s:
+            s = s.replace(x, "")
+    # remove numbers
+    for x in range(0, 10, 1):
+        if str(x) in s:
+            s = s.replace(str(x), "")
+    return s
+
 def write_item_categories():
     logger.debug("entering write_item_categories ",)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
@@ -28,9 +46,10 @@ def write_item_categories():
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
-            currQ.execute("INSERT INTO item_category (name) "
-                        "VALUES (%s)",
-             [x])           
+            print("write_item_categories", x, slugify(x))
+            currQ.execute("INSERT INTO item_category (name, slug) "
+                        "VALUES (%s, %s)",
+             (x, slugify(x),))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting catagory types type (%s)", x)
@@ -43,9 +62,9 @@ def write_fix_categories():
     list = ['Prefix', 'Suffix']
     for x in list:
         try:
-            currQ.execute("INSERT INTO fix_category (name) "
-                        "VALUES (%s)",
-             [x])           
+            currQ.execute("INSERT INTO fix_category (name, slug) "
+                        "VALUES (%s, %s)",
+             (x, slugify(x),))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting fix types type (%s)", x)
@@ -75,9 +94,9 @@ def write_item_type(the_type, list):
     for x in list:
         try:
             #print("name", x)
-            currQ.execute("INSERT INTO item_type (name, type_id) "
-                        "VALUES (%s, %s)",
-             (x, the_type, ))           
+            currQ.execute("INSERT INTO item_type (name, type_id, slug) "
+                        "VALUES (%s, %s, %s)",
+             (x, the_type, slugify(x),))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
@@ -106,8 +125,8 @@ def write_prefix_types(list):
         try:
             currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
             type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id) "
-                        "VALUES ('{0}', {1})".format(x,type))
+            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
+                        "VALUES ('{0}', {1}, '{2}')".format(x, type, slugify(x)))
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting prefix types type (%s)", x)
@@ -121,8 +140,8 @@ def write_suffix_types(list):
         try:
             currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
             type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id) "
-                        "VALUES ('{0}', {1})".format(x,type))
+            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
+                        "VALUES ('{0}', {1}, '{2}')".format(x,type, slugify(x)))
             connQ.commit()
         except psycopg2.IntegrityError:
             print("psql integrity error when commiting suffix types type (%s)", x)
@@ -391,6 +410,9 @@ def write_prefixes(the_list):
                 connQ.commit()
             except psycopg2.IntegrityError:     
                 z = z - 1 #  remove duplicates
+                print("unable to INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
+                              "VALUES (%s, %s, %s, %s)",
+                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))
                 #logger.info("psql integrity error when commiting prefixes (%s)", x)
                 connQ.rollback() 
     print("length of prefixes written to database ", z)
@@ -408,12 +430,13 @@ def write_prefix_names(the_set):
             currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
             type_id = currQ.fetchone()[0]
             #type_id = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_name (name, type_id) "
-                        """VALUES (%s, %s)""",(x[1], type_id,))     
+            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
+                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))     
             connQ.commit()
         except psycopg2.IntegrityError:
             z = z - 1
             logger.info("psql integrity error when commiting prefix names (%s)", x)
+            print("psql integrity error when commiting prefix names (%s)", x)
             connQ.rollback()
     print("write_prefix_names z", z) 
     
@@ -425,9 +448,9 @@ def write_stat_names(the_set):
     for x in the_set:
         try:
             STAT_NAMES = STAT_NAMES + 1
-            currQ.execute("INSERT INTO stat_names (name) "
-                        "VALUES (%s)",
-                       (x,))           
+            currQ.execute("INSERT INTO stat_names (name, slug) "
+                        "VALUES (%s, %s)",
+                       (x, slugify(x)))           
             connQ.commit()
         except psycopg2.IntegrityError:
             STAT_NAMES = STAT_NAMES - 1
@@ -552,8 +575,8 @@ def write_suffix_names(names):
             category = currQ.fetchall()[0][0]
             currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
             type_id = currQ.fetchone()[0]
-            currQ.execute("INSERT INTO fix_name (name, type_id) "
-                        """VALUES (%s, %s)""",(x[1], type_id,))           
+            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
+                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.info("psql integrity error when commiting suffix names (%s)", x)
@@ -650,6 +673,7 @@ def fetch_weapons():
                 item["req_str"] = raw_data[6].get_text()
                 item["req_dex"] = raw_data[7].get_text()
                 item["req_int"] = raw_data[8].get_text()
+                item["slug"] = slugify(raw_data[1].get_text())
                 #need the index from the item type table
                 item["type_id"] = w_type
                 x = x+1                
@@ -707,11 +731,11 @@ def write_weapon_names(list):
         try:
             z = z + 1
             currQ.execute("INSERT INTO item_name (name, i_level, min_dmg, max_dmg,"
-                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
                            x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"], x["type_id"]))           
+                           x["small_url"], x["type_id"], x["slug"]))           
             connQ.commit()
         except psycopg2.IntegrityError as e:
             z = z - 1
@@ -816,6 +840,7 @@ def fetch_clothes():
                 item["req_dex"] = raw_data[7].get_text()
                 item["req_int"] = raw_data[8].get_text()
                 item["type_id"] = c_type
+                item["slug"] = raw_data[1].get_text()
                 #urls = raw_data[0].find_all("img")
                 x = x+1                
                 #implicits = data[x].find_all("td")
@@ -876,11 +901,11 @@ def write_clothes_names(list):
         try:
             pass
             currQ.execute("INSERT INTO item_name (name, i_level, armour, evasion,"
-                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["armour"], x["evasion"],
                            x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],x["type_id"]))           
+                           x["small_url"],x["type_id"], x["slug"]))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting clothes names (%s)", x)
@@ -975,6 +1000,7 @@ def fetch_jewelry():
                 item["name"] = raw_data[1].get_text()
                 item["i_level"] = raw_data[2].get_text()     
                 item["type_id"] = j_type 
+                item["slug"] = raw_data[1].get_text()
                 key_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[3])) if x]
                 value_results = [ x for x in re.findall(r">(.*?)<",str(raw_data[4])) if x]
                 stats = []
@@ -1033,10 +1059,10 @@ def write_jewelry_names(list):
         try:
             pass
             currQ.execute("INSERT INTO item_name (name, i_level, large_url, "
-                                "small_url, type_id)"
-                          "VALUES (%s, %s, %s, %s, %s)",
+                                "small_url, type_id, slug)"
+                          "VALUES (%s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["large_url"],
-                                x["small_url"],x["type_id"],))           
+                                x["small_url"],x["type_id"], x["slug"]))           
             connQ.commit()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting jewelry names (%s)", x)
