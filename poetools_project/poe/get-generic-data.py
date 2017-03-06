@@ -445,19 +445,15 @@ def write_prefix_names(the_set):
 def write_stat_names(the_set):
     global STAT_NAMES
     logger.debug("entering write_stat_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     for x in the_set:
         try:
             STAT_NAMES = STAT_NAMES + 1
-            currQ.execute("INSERT INTO stat_names (name, slug) "
-                        "VALUES (%s, %s)",
-                       (x, slugify(x)))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            y = StatNames(name = x)
+            y.save()           
+        except:
             STAT_NAMES = STAT_NAMES - 1
-            logger.debug("psql integrity error when commiting stat names (%s)", x)
-            connQ.rollback()     
+            logger.debug("write_stat_names - Unexpected error:", sys.exc_info()[0], x)
+            sys.exit()     
     
 def write_stats(the_set):
     global STATS
@@ -468,17 +464,15 @@ def write_stats(the_set):
         try:
             STATS = STATS + 1
             # get id of the stat neame
-            currQ.execute("SELECT id FROM stat_names WHERE name = %s", 
-                          (x[0],))
-            stat_name = currQ.fetchone()
-            currQ.execute("INSERT INTO stats (name_id, min_value, max_value) "
-                        "VALUES (%s, %s, %s)",
-                        (stat_name, x[1], x[2]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            print("name = ", x[0])
+            # currQ.execute("SELECT id FROM stat_names WHERE name = %s", (x[0],))
+            the_statname = StatNames.objects.get(name = x[0])
+            y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
+            y.save()           
+        except:
             STATS = STATS - 1
-            logger.debug("psql integrity error when commiting stats  (%s)", x)
-            connQ.rollback()  
+            logger.debug("write_stats - Unexpected error:", sys.exc_info()[0], x)
+            sys.exit()
     
 
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
@@ -1116,11 +1110,12 @@ write_item_categories()
 write_fix_categories()
 
 fetch_prefixes()
-#fetch_suffixes()
-#fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_suffixes()
+fetch_weapons()
+fetch_clothes()
+fetch_jewelry()
 
+"""
 my_fixname = FixName.objects.get(id = 11)
 my_stat = Stats.objects.get(id = 1)
 my_fix  = Fix(name = my_fixname, stat = my_stat, i_level = 1, m_crafted = True)
@@ -1142,7 +1137,7 @@ the_name.save()
 
 the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
 the_fix.save()
-
+"""
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
 
