@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
+proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -26,7 +26,7 @@ os.chdir(proj_path)
 # This is so models get loaded.
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-from poe.models import ItemCategory, FixCategory, FixType
+from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats, StatNames, FixName, Stats
 
 
 STATS = 0
@@ -1121,7 +1121,27 @@ fetch_prefixes()
 #fetch_clothes()
 #fetch_jewelry()
 
+my_fixname = FixName.objects.get(id = 11)
+my_stat = Stats.objects.get(id = 1)
+my_fix  = Fix(name = my_fixname, stat = my_stat, i_level = 1, m_crafted = True)
 
+my_fixcategory = FixCategory(name = "adam")
+my_fixcategory.save()
+
+my_fixType = FixType(category = my_fixcategory, name = "green")
+my_fixType.save()
+
+my_statnames = StatNames(name = "andy")
+my_statnames.save()
+
+the_stat = Stats(min_value = 1, max_value = 111, name = my_statnames)
+the_stat.save()
+
+the_name = FixName(type = my_fixType, name = "watson")
+the_name.save()
+
+the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
+the_fix.save()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
