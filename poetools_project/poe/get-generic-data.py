@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
+proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -447,32 +447,40 @@ def write_stat_names(the_set):
     logger.debug("entering write_stat_names (%s)", list)
     for x in the_set:
         try:
-            STAT_NAMES = STAT_NAMES + 1
-            y = StatNames(name = x)
-            y.save()           
-        except:
-            STAT_NAMES = STAT_NAMES - 1
-            logger.debug("write_stat_names - Unexpected error:", sys.exc_info()[0], x)
-            sys.exit()     
+            y = StatNames.objects.get(name = x) #the entry already exists
+            pass
+        except StatNames.DoesNotExist as e:
+            try:
+                STAT_NAMES = STAT_NAMES + 1
+                y = StatNames(name = x)
+                y.save()
+            except:
+                STAT_NAMES = STAT_NAMES - 1
+                logger.debug("write_stat_names - Unexpected error:", sys.exc_info()[0], x)
+                sys.exit()
+            
+         
     
 def write_stats(the_set):
     global STATS
     logger.debug("entering write_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     for x in the_set:
         try:
             STATS = STATS + 1
             # get id of the stat neame
-            print("name = ", x[0])
-            # currQ.execute("SELECT id FROM stat_names WHERE name = %s", (x[0],))
             the_statname = StatNames.objects.get(name = x[0])
-            y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
-            y.save()           
-        except:
+            try:
+                y = Stats.objects.get(name = the_statname, min_value = x[1], max_value = x[2])
+                pass
+            except Stats.DoesNotExist as e:
+                y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
+                y.save()
+                print("writing stat")
+        except Exception as e:
             STATS = STATS - 1
-            logger.debug("write_stats - Unexpected error:", sys.exc_info()[0], x)
+            logger.info("write_stats - Unexpected error:")
             sys.exit()
+
     
 
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
