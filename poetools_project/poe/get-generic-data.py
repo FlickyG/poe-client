@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
+proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -421,25 +421,23 @@ def write_prefix_names(the_set):
         prints the number of entries written
     """
     logger.debug("entering write_prefix_names (%s)", the_set)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     z = 0
     for x in the_set:
         try:
             z = z + 1
-            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-            category = currQ.fetchall()[0][0]
-            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
-            type_id = currQ.fetchone()[0]
-            #type_id = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
-                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))     
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            try:
+                the_category = FixCategory.objects.get(name = 'Prefix')
+            except Fix.DoesNotExist as e:
+                logger.debug("Fix.DoesNotExist ", e)
+            try:
+                type_id = FixType.objects.get(name = x[0], category = the_category)
+            except FixType.DoesNotExist as e:
+                logger.debug("FixType.DoesNotExist ", e)     
+            y = FixName(name = x[1], type = type_id)
+            y.save()
+        except Exception as e:
             z = z - 1
-            logger.info("psql integrity error when commiting prefix names (%s)", x)
-            print("psql integrity error when commiting prefix names (%s)", x)
-            connQ.rollback()
+            logger.info("error commiting prefix names (%s)", x)
     print("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
@@ -475,7 +473,6 @@ def write_stats(the_set):
             except Stats.DoesNotExist as e:
                 y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
                 y.save()
-                print("writing stat")
         except Exception as e:
             STATS = STATS - 1
             logger.info("write_stats - Unexpected error:")
