@@ -378,42 +378,28 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
 
 def write_prefixes(the_list):
     logger.debug("entering write_prefixes (%s)", the_list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()  
     z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-        category = currQ.fetchall()[0][0]
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
-        prefix_type = currQ.fetchone()[0]
+        the_category = FixCategory.objects.get(name = 'Prefix')
+        prefix_type = FixType.objects.get(name = x['type'], category = the_category)
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type,))
-        name_id = currQ.fetchone()[0]
+        #currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type,))
+        name_id = FixName.objects.get(name = x['name'], type = prefix_type)
         for y in x["stats"]:
             for keys, values in y.items():
                 if "implicit_mod_key" in keys:
-                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    stat_name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
+                    stat_name_id = StatNames.objects.get(name = values)#HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
-            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (stat_name_id, minimum, maximum))
-            stat_id = currQ.fetchone()[0]
+            stat_id = Stats.objects.get(name = stat_name_id, min_value = minimum, max_value = maximum)
             try:
                 z = z + 1 #  to count number of database entries
-                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))           
-                connQ.commit()
-            except psycopg2.IntegrityError:     
+                x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+            except Exception as e:     
                 z = z - 1 #  remove duplicates
-                print("unable to INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))
-                #logger.info("psql integrity error when commiting prefixes (%s)", x)
-                connQ.rollback() 
+                logger.debug(" error when commiting prefixes (%s)", x, e)
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
