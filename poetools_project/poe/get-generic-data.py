@@ -26,7 +26,8 @@ os.chdir(proj_path)
 # This is so models get loaded.
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats, StatNames, FixName, Stats, ItemName
+from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
+from poe.models import StatNames, FixName, Stats, ItemName, ItemType
 
 
 STATS = 0
@@ -596,13 +597,8 @@ def fetch_weapons():
     # write weapon types to item_type table, look up the item_category
     type = get_item_category("Weapons")
     write_item_type(type, weapon_types)
-    # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Weapons'")
-    w_id = currQ.fetchall()
+    # retrieve the item type ids for the weapons 
+    w_id = ItemType.objects.select_related().filter(type__name = "Weapons").values_list('id', 'name')
     weapon_types = dict((y, x) for x, y in w_id) # dictionary of ids and strings
     for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
@@ -628,7 +624,7 @@ def fetch_weapons():
                 item["req_int"] = raw_data[8].get_text()
                 item["slug"] = slugify(raw_data[1].get_text())
                 #need the index from the item type table
-                item["type_id"] = w_type change this to model
+                item["type_id"] = ItemType.objects.get(id = w_type)
                 x = x+1                
                 mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
                 #input("Press Enter to continue...")
@@ -694,23 +690,20 @@ def write_weapon_names(list):
                     small_url = x["small_url"],
                     type = x["type_id"]
                 )
-            z.save()
-            z = z + 1
-            """
-            currQ.execute("INSERT INTO item_name (name, i_level, min_dmg, max_dmg,"
-                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
-                           x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"], x["type_id"], x["slug"]))
-            """           
+            y.save()
+            z = z + 1          
         except Exception as e:
             z = z - 1
-            print("error when commiting weapon names (%s)", e)
             logger.debug("error when commiting weapon names (%s)", e)
     print("number of weapon names writtent to database", z) 
 
 def write_weapon_stats(list):
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
     logger.debug("entering write_weapon_stats (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -775,12 +768,7 @@ def fetch_clothes():
     type = get_item_category("Clothes")
     write_item_type(type, clothes_types)   
     # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Clothes'")
-    c_id = currQ.fetchall()
+    c_id = ItemType.objects.select_related().filter(type__name = "Clothes").values_list('id', 'name')
     clothing_types = dict((y, x) for x, y in c_id)
     for item_type in all_items:
         #write_clothes_types(clothes_types)
@@ -862,23 +850,32 @@ def fetch_clothes():
     
 def write_clothes_names(list):
     logger.debug("entering write_clothes_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()  
     for x in list:
         try:
-            pass
-            currQ.execute("INSERT INTO item_name (name, i_level, armour, evasion,"
-                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["armour"], x["evasion"],
-                           x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting clothes names (%s)", x)
-            connQ.rollback() 
+            pass        
+            y = ItemName(name = x["name"],
+                        i_level = x["i_level"],
+                        armour = x["armour"],
+                        evasion = x["evasion"],
+                        energy_shield = x["energy_shield"],
+                        req_str = x["req_str"],
+                        req_dex = x["req_dex"],
+                        req_int = x["req_int"],
+                        large_url = x["large_url"],
+                        small_url = x["small_url"],
+                        type_id = x["type_id"],
+                        )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting clothes names (%s)", e)
 
 def write_clothes_stats(list):
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
     logger.debug("entering write_clothes_stats (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()  
@@ -941,12 +938,7 @@ def fetch_jewelry():
     # write item types
     type = get_item_category("Jewelry")
     write_item_type(type, jewelry_types)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Jewelry'")
-    j_id = currQ.fetchall()
+    j_id = ItemType.objects.select_related().filter(type__name = "Jewelry").values_list('id', 'name')
     jewelry_types = dict((y, x) for x, y in j_id)
     for item_type in all_items:
         j_type = jewelry_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
@@ -1036,11 +1028,18 @@ def write_jewelry_names(list):
             connQ.rollback() 
 
 def write_jewelry_stats(list):
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
     logger.debug("entering write_jewelry_stats (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     z = 0 
     for x in list:
+        print("list of x", x)
         currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
         w_id = currQ.fetchone()
         if "implicits" in x:
