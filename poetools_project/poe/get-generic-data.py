@@ -26,7 +26,7 @@ os.chdir(proj_path)
 # This is so models get loaded.
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats, StatNames, FixName, Stats
+from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats, StatNames, FixName, Stats, ItemName
 
 
 STATS = 0
@@ -39,7 +39,12 @@ logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
 def slugify(s):
-    #force lower case
+    """
+    Forces a string into lower case, replaces spaces with hyphens
+    and removes special characters.
+    Accepts: a string
+    Returns: a string
+    """
     s = s.lower()
     #replaces spaces with hyphens
     s = s.replace(" ", "-")
@@ -55,6 +60,12 @@ def slugify(s):
     return s
 
 def write_item_categories():
+    """
+    Creates ItemCategory model instances from a pre-defined list and writes
+    them to the database
+    Accepts: None
+    Returns: None
+    """
     logger.debug("entering write_item_categories ",)
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
@@ -67,6 +78,12 @@ def write_item_categories():
 
 
 def write_fix_categories():
+    """
+    Creates FixCategory model instances from a pre-defined list and saves
+    them to the database.
+    Accepts: None
+    Returns: None
+    """        
     logger.debug("entering write_fix_categories ",)
     list = ['Prefix', 'Suffix']
     for x in list:
@@ -76,9 +93,13 @@ def write_fix_categories():
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting fix types type (%s)", x)
   
-
             
 def get_item_category(string):
+    """
+    Queries the database for a ItemCategory object with a given name
+    Accepts: string corresponding to the ItemCategory.name
+    Returns: The corresponding model object
+    """
     logger.debug("entering write_item_categories ",)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -95,6 +116,11 @@ def get_item_category(string):
 
             
 def write_item_type(the_type, list):
+    """ 
+    Creates ItemType model instances from a list and writes them to the database
+    Accepts: A list of ItemType names
+    Returns: None
+    """    
     logger.debug("entering write_item_type (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -111,6 +137,10 @@ def write_item_type(the_type, list):
             connQ.rollback()
             
 def get_item_type_id(item):
+    """ Queries the database for a ItemType object with a given name
+        Accepts: string corresponding to the ItemType.name
+        Returns: None
+    """
     logger.debug("entering write_item_type_id (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
@@ -125,6 +155,12 @@ def get_item_type_id(item):
     
     
 def write_prefix_types(list):
+    """ Creates PrefixType model instances from a list and writes them to 
+        the database.  Has and intermediate step where it identifies the Prefix 
+        model object.
+        Accepts: A list of PrefixType names
+        Returns: None
+    """   
     logger.debug("entering write_prefix_types (%s)", list)
     for x in list:
         try:
@@ -135,7 +171,13 @@ def write_prefix_types(list):
             sys.exit()
             
 def write_suffix_types(list):
-
+    """
+    Creates SuffixType model instances from a list and writes them to 
+    the database.  Has and intermediate step where it identifies the Suffix 
+    model object.
+    Accepts: A list of SuffixType names
+    Returns: None
+    """  
     for x in list:
         try:
             type = FixCategory.objects.get(name = 'Suffix')
@@ -167,124 +209,14 @@ url_prefixes = "http://www.pathofexile.com/item-data/prefixmod"
 url_suffixes = "http://www.pathofexile.com/item-data/suffixmod"
 
 
-        
-def parse_clothing(item_data):
-    item = {}
-    item["large_url"] = item_data[0][0].find_all("img")[0]["data-large-image"]
-    item["small_url"] = item_data[0][0].find_all("img")[0]["src"]
-    item["name"] = item_data[0][1].get_text()
-    item["item_level"] = item_data[0][2].get_text()
-    item["armour"] = item_data[0][3].get_text()
-    item["evasion_rating"] = item_data[0][4].get_text()
-    item["energy_shield"] = item_data[0][5].get_text()
-    item["req_str"] = item_data[0][6].get_text()
-    item["req_dex"] = item_data[0][7].get_text()
-    item["req_int"] = item_data[0][8].get_text()
-    # generate a list of dictionaries for the mods
-    try:
-        # find implcit type, which is the keys
-        item_data[1][0].get_text()
-        implicit_mods = {}
-        test_text = str(item_data[1][0])
-        key_results = [ x for x in re.findall(r">(.*?)<",test_text) if x]
-        mod_keys = []
-        mod_values = []
-        for x in key_results:
-            if 'Dummy Stat Display Nothing' in x:
-                pass # skip these
-            else:
-                mod_keys.append(x)
-        # find implicit values
-        test_text = str(item_data[1][1])
-        value_results = [x for x in re.findall(r">(.*?)<",test_text) if x]
-        for x in value_results:
-            these_values = [] 
-            # the values cover a range
-            if "to" in x:
-                min_value = x.split()[0]
-                max_value = x.split()[2]
-                these_values.append(min_value)
-                these_values.append(max_value)
-                mod_values.append(these_values)
-            else: # if there is a single number and no 'to' 
-                min_value = x
-                max_value = x
-                these_values.append(min_value)
-                these_values.append(max_value)
-                mod_values.append(these_values)
-        # check lists are the same length
-        assert len(mod_keys) == len(mod_values) # sense check we're passing these correctly
-        number_of_mods = len(mod_keys)
-        for x in range(0,number_of_mods):
-            item["implicit_mod_key_"+str(x)] = mod_keys[x]
-            item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
-            item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
-    except IndexError: # not all items have implicit mods
-        pass
-    
-def parse_jewelry(item_data):
-    item = {}
-    item["large_url"] = item_data[0][0].find_all("img")[0]["data-large-image"]
-    item["small_url"] = item_data[0][0].find_all("img")[0]["src"]
-    item["name"] = item_data[0][1].get_text()
-    item["item_level"] = item_data[0][2].get_text()
-    #<td>Zombie Quantity<br/>Base Number Of Skeletons Allowed<br/>Spectre Quantity<br/>Local Stat Monsters Pick Up Item<br/></td>
-    key_results = [ x for x in re.findall(r">(.*?)<",str(item_data[0][3])) if x]
-    value_results = [ x for x in re.findall(r">(.*?)<",str(item_data[0][4])) if x]
-    mod_keys = []
-    mod_values = []
-    for x in key_results:
-        if 'Dummy Stat Display Nothing' in x:
-            pass # skip these
-        else:
-            mod_keys.append(x)
-    # find implicit values
-    if item["name"] == "Undying Flesh Talisman":
-            mod_values = [['0','0'],['1', '1'],['1','1'],['0','0']]   
-    else:
-        for x in value_results:
-            these_values = []  
-            # the values cover a range
-            if "to" in x:
-                min_value = x.split()[0]
-                max_value = x.split()[2]
-                these_values.append(min_value)
-                these_values.append(max_value)
-                mod_values.append(these_values)
-            else: # if there is a single number and no 'to' 
-                min_value = x
-                max_value = x
-                these_values.append(min_value)
-                these_values.append(max_value)
-                mod_values.append(these_values)
-    assert len(mod_keys) == len(mod_values) # sense check we're passing these correctly
-    number_of_mods = len(mod_keys)
-    for x in range(0,number_of_mods):
-        item["implicit_mod_key_"+str(x)] = mod_keys[x]
-        item["implicit_mod_values_"+str(x)+"_min"] = mod_values[x][0]
-        item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
- 
 
-def get_prefix_types(key):
-    prefix_types = {}
-    logger.debug("entering get_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    try:
-        currQ.execute("SELECT * FROM prefix_types")
-        a = currQ.fetchall()
-        temp_prefixes = []
-        for x in a:
-            temp_prefixes.append(x[::-1])
-        prefix_types = dict(temp_prefixes)
-        return(prefix_types[key])
-    except:
-        print("entering exception case in get_prefix_types", sys.exc_info()[0])
-    currQ.close()
+
                
 def fetch_prefixes(): #layout is different - implicit mods are on the same line
-    """ Downloads, parses and save this prefix data from the POE website.
-        Returns nothing but prints data
+    """ 
+    Downloads, parses and calls other methods to save this prefix data from the POE website.
+    Accepts: None
+    Returns None but prints data
     """
     logger.debug("entering fetch_prefix (%s)", list)
     prefix_types = set()
@@ -377,6 +309,11 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
 
 
 def write_prefixes(the_list):
+    """
+    Saves prefix model instances to the database
+    Accepts: List of prefix names and values
+    Returns: None but prints some data
+    """
     logger.debug("entering write_prefixes (%s)", the_list)
     z = 0 #  to count number of database entries
     for x in the_list:
@@ -403,8 +340,10 @@ def write_prefixes(the_list):
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
-    """ Write the prefixes ot the fix_name table
-        prints the number of entries written
+    """
+    Write the prefixes to the fix_name table
+    Accepts: a set of 
+    Returns: nothing but prints the number of entries written
     """
     logger.debug("entering write_prefix_names (%s)", the_set)
     z = 0
@@ -427,6 +366,12 @@ def write_prefix_names(the_set):
     print("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
+    """
+    Creates StatName model instances and saves them to the database. Keeps track
+    of the number of stats names successfully saved
+    Accepts: a set of prefix names
+    Returns: None
+    """
     global STAT_NAMES
     logger.debug("entering write_stat_names (%s)", list)
     for x in the_set:
@@ -446,11 +391,15 @@ def write_stat_names(the_set):
          
     
 def write_stats(the_set):
+    """
+    Creates stat model instances and saves them to the database
+    Accepts: a set of stats
+    Returns: None but keeps track of the number of Stats successfully written to the database 
+    """
     global STATS
     logger.debug("entering write_stats (%s)", list)
     for x in the_set:
         try:
-            STATS = STATS + 1
             # get id of the stat neame
             the_statname = StatNames.objects.get(name = x[0])
             try:
@@ -459,6 +408,7 @@ def write_stats(the_set):
             except Stats.DoesNotExist as e:
                 y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
                 y.save()
+                STATS = STATS + 1
         except Exception as e:
             STATS = STATS - 1
             logger.info("write_stats - Unexpected error:")
@@ -467,6 +417,12 @@ def write_stats(the_set):
     
 
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
+    """
+    Downloads the suffix data from the GGG website, extracts the useful info and
+    calls other methods in order to save this data to the database
+    Accepts: None
+    Returns: None but prints useful data along the way
+    """
     logger.debug("entering fetch_refix_2 (%s)", list)
     suffix_types = set()
     stats = set()
@@ -552,62 +508,73 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     write_suffix_names(names) #unique
     write_suffixes(suffixes)
 
-def write_suffix_names(names):
+def write_suffix_names(the_set):
+    """
+    Creates suffix name model instances and saves them to the databae
+    Accepts: a list of suffix names
+    Returns: None
+    """
     logger.debug("entering write_sufffix_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    for x in names:
+    z = 0
+    for x in the_set:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-            category = currQ.fetchall()[0][0]
-            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
-            type_id = currQ.fetchone()[0]
-            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
-                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.info("psql integrity error when commiting suffix names (%s)", x)
-            connQ.rollback() 
+            z = z + 1
+            try:
+                the_category = FixCategory.objects.get(name = 'Suffix')
+            except Fix.DoesNotExist as e:
+                logger.debug("Fix.DoesNotExist ", e)
+            try:
+                type_id = FixType.objects.get(name = x[0], category = the_category)
+            except FixType.DoesNotExist as e:
+                logger.debug("FixType.DoesNotExist ", e)     
+            y = FixName(name = x[1], type = type_id)
+            y.save()
+        except Exception as e:
+            z = z - 1
+            logger.info("error commiting suffix names (%s)", x)
+    print("write_suffixnames z", z) 
 
 def write_suffixes(the_list):
+    """
+    Creates suffix model instances and saves them to the database.  
+    Accepts: a list of suffixes
+    Returns: None but prints useful info along the way
+    """
     logger.debug("entering write_suffixes (%s)", list)
     connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
-    z = 0
+    z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-        category = currQ.fetchall()[0][0]
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
-        suffix_type = currQ.fetchone()[0]
+        the_category = FixCategory.objects.get(name = 'Suffix')
+        suffix_type = FixType.objects.get(name = x['type'], category = the_category)
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], suffix_type,)) 
-        name_id = currQ.fetchone()[0]
+        #currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], suffix_type,))
+        name_id = FixName.objects.get(name = x['name'], type = suffix_type)
         for y in x["stats"]:
             for keys, values in y.items():
                 if "implicit_mod_key" in keys:
-                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    stat_name_id = currQ.fetchone()[0]
+                    stat_name_id = StatNames.objects.get(name = values)#HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the suffix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
-            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (stat_name_id, minimum, maximum))
-            stat_id = currQ.fetchone()[0]
+            stat_id = Stats.objects.get(name = stat_name_id, min_value = minimum, max_value = maximum)
             try:
-                z = z + 1
-                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))          
-                connQ.commit()
-            except psycopg2.IntegrityError:
-                z = z - 1
-                logger.debug("psql integrity error when commiting suffixes (%s)", x)
-                connQ.rollback()
-    print("length of suffixes written to datase ", z) 
+                z = z + 1 #  to count number of database entries
+                x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+            except Exception as e:     
+                z = z - 1 #  remove duplicates
+                logger.debug(" error when commiting suffixes (%s)", x, e)
+    print("length of suffixes written to database ", z)
      
    
 def fetch_weapons():
+    """
+    Downloads the weapon data from the GGG website, extracts the useful info
+    and then calls additional methods in order to save this to the database
+    Accepts: None
+    Returns: None but prints useful info along the way
+    """
     weapon_types = []
     all_stats = set()
     all_weapons = []
@@ -636,9 +603,10 @@ def fetch_weapons():
                     "JOIN item_category on item_category.id = item_type.type_id "
                     "WHERE item_category.name = 'Weapons'")
     w_id = currQ.fetchall()
-    weapon_types = dict((y, x) for x, y in w_id)
+    weapon_types = dict((y, x) for x, y in w_id) # dictionary of ids and strings
     for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        # extract from the dictonary the id for the weapon
         w_type = weapon_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
@@ -647,12 +615,10 @@ def fetch_weapons():
                 item_data = []
                 item = {}
                 raw_data = data[x].find_all("td")
-                #item["w_type"] = w_type
                 item["large_url"] = raw_data[0].find_all("img")[0]["data-large-image"]
                 item["small_url"] = raw_data[0].find_all("img")[0]["src"]
                 item["name"] = raw_data[1].get_text()
                 item["i_level"] = raw_data[2].get_text()
-                #item["damage"] = raw_data[3].get_text()
                 item["min_dmg"] = raw_data[3].get_text().split()[0]
                 item["max_dmg"] = raw_data[3].get_text().split()[2]
                 item["aps"] = raw_data[4].get_text()
@@ -662,7 +628,7 @@ def fetch_weapons():
                 item["req_int"] = raw_data[8].get_text()
                 item["slug"] = slugify(raw_data[1].get_text())
                 #need the index from the item type table
-                item["type_id"] = w_type
+                item["type_id"] = w_type change this to model
                 x = x+1                
                 mods = [ z for z in re.findall(r">(.*?)<",str(data[x])) if (z and ((z != ", ") or (z != ", ")))]
                 #input("Press Enter to continue...")
@@ -711,23 +677,37 @@ def fetch_weapons():
     
 def write_weapon_names(list):
     logger.debug("entering write_weapon_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     z = 0  
     for x in list:
         try:
+            y = ItemName(
+                    name = x["name"],
+                    i_level = x["i_level"], 
+                    min_dmg = x["max_dmg"],
+                    max_dmg = x["max_dmg"],
+                    aps = x['aps'],
+                    dps = x['dps'],
+                    req_str = x['req_str'],
+                    req_dex = x['req_dex'],
+                    req_int = x['req_int'],
+                    large_url = x["large_url"],
+                    small_url = x["small_url"],
+                    type = x["type_id"]
+                )
+            z.save()
             z = z + 1
+            """
             currQ.execute("INSERT INTO item_name (name, i_level, min_dmg, max_dmg,"
                           "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                           (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
                            x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"], x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError as e:
+                           x["small_url"], x["type_id"], x["slug"]))
+            """           
+        except Exception as e:
             z = z - 1
-            logger.debug("psql integrity error when commiting weapon names (%s)", x)
-            connQ.rollback()
+            print("error when commiting weapon names (%s)", e)
+            logger.debug("error when commiting weapon names (%s)", e)
     print("number of weapon names writtent to database", z) 
 
 def write_weapon_stats(list):
