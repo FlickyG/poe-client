@@ -27,7 +27,7 @@ os.chdir(proj_path)
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
-from poe.models import StatNames, FixName, Stats, ItemName, ItemType
+from poe.models import StatNames, FixName, Stats, ItemName, ItemType, ItemStat
 
 
 STATS = 0
@@ -95,27 +95,6 @@ def write_fix_categories():
             logger.debug("psql integrity error when commiting fix types type (%s)", x)
   
             
-def get_item_category(string):
-    """
-    Queries the database for a ItemCategory object with a given name
-    Accepts: string corresponding to the ItemCategory.name
-    Returns: The corresponding model object
-    """
-    logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    #print("string", string)
-    #print("SELECT * FROM item_categorys WHERE name = {0}".format(string))
-    try:
-        currQ.execute("SELECT * FROM item_category WHERE name = '{0}'".format(string))
-        a = currQ.fetchone()[0] #one()[0]
-        return(a)
-    except:
-        print("entering exception case in get_item_categorys", sys.exc_info()[0])
-        #print("exception string in get_item_categorys", string)
-    currQ.close()
-
-            
 def write_item_type(the_type, list):
     """ 
     Creates ItemType model instances from a list and writes them to the database
@@ -123,38 +102,18 @@ def write_item_type(the_type, list):
     Returns: None
     """    
     logger.debug("entering write_item_type (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     for x in list:
         try:
             #print("name", x)
-            currQ.execute("INSERT INTO item_type (name, type_id, slug) "
-                        "VALUES (%s, %s, %s)",
-             (x, the_type, slugify(x),))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
-            print("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
-            connQ.rollback()
-            
-def get_item_type_id(item):
-    """ Queries the database for a ItemType object with a given name
-        Accepts: string corresponding to the ItemType.name
-        Returns: None
-    """
-    logger.debug("entering write_item_type_id (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
-    #for x in list:
-    try:
-        currQ.mogrify("SELECT id FROM item_type WHERE name = '{0}' ".
-            format(item))           
-        a = currQ.fetchone()
-    except psycopg2.IntegrityError:
-        logger.debug("psql integrity error when getting item type ID type (%s)" % item)
-
-    
-    
+            y = ItemType(
+                         name = x,
+                         type = the_type,
+                         )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
+            print("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
+                 
 def write_prefix_types(list):
     """ Creates PrefixType model instances from a list and writes them to 
         the database.  Has and intermediate step where it identifies the Prefix 
@@ -321,7 +280,6 @@ def write_prefixes(the_list):
         the_category = FixCategory.objects.get(name = 'Prefix')
         prefix_type = FixType.objects.get(name = x['type'], category = the_category)
         #need to decide if we want a seperate stats table, and make the above sql
-        #currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type,))
         name_id = FixName.objects.get(name = x['name'], type = prefix_type)
         for y in x["stats"]:
             for keys, values in y.items():
@@ -542,8 +500,6 @@ def write_suffixes(the_list):
     Returns: None but prints useful info along the way
     """
     logger.debug("entering write_suffixes (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     z = 0 #  to count number of database entries
     for x in the_list:
         the_category = FixCategory.objects.get(name = 'Suffix')
@@ -595,7 +551,7 @@ def fetch_weapons():
         weapon_types.append(w_type)
     #write_weapon_types(weapon_types)
     # write weapon types to item_type table, look up the item_category
-    type = get_item_category("Weapons")
+    type = ItemCategory.objects.get(name = 'Weapons')
     write_item_type(type, weapon_types)
     # retrieve the item type ids for the weapons 
     w_id = ItemType.objects.select_related().filter(type__name = "Weapons").values_list('id', 'name')
@@ -705,44 +661,39 @@ def write_weapon_stats(list):
     Returns: the number of stats written 
     """
     logger.debug("entering write_weapon_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     z = 0
     for x in list:
-        query = currQ.execute("""SELECT id FROM item_name WHERE name = %s""", (x["name"],))
-        #print("query")
-        #currQ.execute(query)
-        w_id = currQ.fetchone()
+        w_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
-                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        min = currQ.fetchone()[0]
                         min = values
                 for keys, values in y.items():   
                     if "max" in keys:
-                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        max = currQ.fetchone()[0]
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # w_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = w_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
+                except Exception as e:
+                    print("error when commiting weapon stats (%s)", e)
                     z = z - 1
-                    logger.debug("psql integrity error when commiting weapon stats (%s)", x)
+                    logger.debug("error when commiting weapon stats (%s)", e)
     return(z)
    
 def fetch_clothes():
@@ -765,7 +716,7 @@ def fetch_clothes():
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
     #write clothes types
-    type = get_item_category("Clothes")
+    type = type = ItemCategory.objects.get(name = 'Clothes')
     write_item_type(type, clothes_types)   
     # connect to database
     c_id = ItemType.objects.select_related().filter(type__name = "Clothes").values_list('id', 'name')
@@ -876,43 +827,40 @@ def write_clothes_stats(list):
     Accepts: a list for each item, of all the item's data
     Returns: the number of stats written 
     """
-    logger.debug("entering write_clothes_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()  
+    logger.debug("entering write_clothes_stats (%s)", list)  
     z = 0
     for x in list:
-        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
-        w_id = currQ.fetchone()
+        c_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
-                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        min = currQ.fetchone()[0]
                         min = values
                 for keys, values in y.items():   
                     if "max" in keys:
-                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        max = currQ.fetchone()[0]
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # c_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = c_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
-                    z = z -1
-                    logger.debug("psql integrity error when commiting clothes stats (%s)", x)
+                except Exception as e:
+                    print("error when commiting clothes stats (%s)", e)
+                    z = z - 1
+                    logger.debug("error when commiting clothes stats (%s)", e)
     return(z)
 
 def fetch_jewelry():
@@ -936,7 +884,7 @@ def fetch_jewelry():
         jewelry_types.append(j_type)
     #write_jewelry_types(jewelry_types)
     # write item types
-    type = get_item_category("Jewelry")
+    type = type = ItemCategory.objects.get(name = 'Jewelry')
     write_item_type(type, jewelry_types)
     j_id = ItemType.objects.select_related().filter(type__name = "Jewelry").values_list('id', 'name')
     jewelry_types = dict((y, x) for x, y in j_id)
@@ -1012,20 +960,18 @@ def fetch_jewelry():
     
 def write_jewelry_names(list):
     logger.debug("entering write_jewelry_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()  
     for x in list:
         try:
-            pass
-            currQ.execute("INSERT INTO item_name (name, i_level, large_url, "
-                                "small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["large_url"],
-                                x["small_url"],x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting jewelry names (%s)", x)
-            connQ.rollback() 
+            y = ItemName(
+                        name = x["name"], 
+                        i_level = x["i_level"],
+                        large_url = x["large_url"],
+                        small_url = x["small_url"],
+                        type_id = x["type_id"],
+                        )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting jewelry names (%s)", e)
 
 def write_jewelry_stats(list):
     """
@@ -1035,43 +981,39 @@ def write_jewelry_stats(list):
     Returns: the number of stats written 
     """
     logger.debug("entering write_jewelry_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
-    currQ = connQ.cursor()
     z = 0 
     for x in list:
-        print("list of x", x)
-        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
-        w_id = currQ.fetchone()
+        j_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
-                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        min = currQ.fetchone()[0]
                         min = values
                 for keys, values in y.items():   
                     if "max" in keys:
-                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        max = currQ.fetchone()[0]
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()[0]
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # j_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = j_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
+                except Exception as e:
+                    print("error when commiting jewelry stats (%s)", e)
                     z = z - 1
-                    logger.debug("psql integrity error when commiting jewelry stats (%s)", x)
+                    logger.debug("error when commiting jewelry stats (%s)", e)
     return(z)
 
     
