@@ -637,7 +637,7 @@ def write_weapon_names(list):
             y = ItemName(
                     name = x["name"],
                     i_level = x["i_level"], 
-                    min_dmg = x["max_dmg"],
+                    min_dmg = x["min_dmg"],
                     max_dmg = x["max_dmg"],
                     aps = x['aps'],
                     dps = x['dps'],
