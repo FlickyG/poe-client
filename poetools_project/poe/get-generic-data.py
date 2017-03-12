@@ -293,6 +293,7 @@ def write_prefixes(the_list):
             try:
                 z = z + 1 #  to count number of database entries
                 x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+                x2.save()
             except Exception as e:     
                 z = z - 1 #  remove duplicates
                 logger.debug(" error when commiting prefixes (%s)", x, e)
@@ -519,6 +520,7 @@ def write_suffixes(the_list):
             try:
                 z = z + 1 #  to count number of database entries
                 x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+                x2.save()
             except Exception as e:     
                 z = z - 1 #  remove duplicates
                 logger.debug(" error when commiting suffixes (%s)", x, e)
