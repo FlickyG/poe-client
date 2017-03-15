@@ -691,6 +691,7 @@ def write_weapon_stats(list):
                                   s = stat
                                   )
                     aa.save()
+                    w_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
                     print("error when commiting weapon stats (%s)", e)
@@ -858,6 +859,7 @@ def write_clothes_stats(list):
                                   s = stat
                                   )
                     aa.save()
+                    c_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
                     print("error when commiting clothes stats (%s)", e)
@@ -1011,6 +1013,7 @@ def write_jewelry_stats(list):
                                   s = stat
                                   )
                     aa.save()
+                    j_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
                     print("error when commiting jewelry stats (%s)", e)
@@ -1026,32 +1029,9 @@ write_fix_categories()
 fetch_prefixes()
 fetch_suffixes()
 fetch_weapons()
-fetch_clothes()
-fetch_jewelry()
+#fetch_clothes()
+#fetch_jewelry()
 
-"""
-my_fixname = FixName.objects.get(id = 11)
-my_stat = Stats.objects.get(id = 1)
-my_fix  = Fix(name = my_fixname, stat = my_stat, i_level = 1, m_crafted = True)
-
-my_fixcategory = FixCategory(name = "adam")
-my_fixcategory.save()
-
-my_fixType = FixType(category = my_fixcategory, name = "green")
-my_fixType.save()
-
-my_statnames = StatNames(name = "andy")
-my_statnames.save()
-
-the_stat = Stats(min_value = 1, max_value = 111, name = my_statnames)
-the_stat.save()
-
-the_name = FixName(type = my_fixType, name = "watson")
-the_name.save()
-
-the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
-the_fix.save()
-"""
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
 

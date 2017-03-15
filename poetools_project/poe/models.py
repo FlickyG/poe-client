@@ -221,6 +221,7 @@ class ItemName(models.Model):
     evasion = models.SmallIntegerField(blank=True, null=True)
     energy_shield = models.FloatField(blank=True, null=True)
     type = models.ForeignKey(ItemType)
+    stats = models.ManyToManyField(Stats)
     slug = models.SlugField()    
     
     class Meta:
