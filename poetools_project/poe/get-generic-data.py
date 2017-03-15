@@ -75,7 +75,7 @@ def write_item_categories():
             y = ItemCategory(name = x)
             y.save()
         except:
-            logger.debug("psql integrity error when commiting catagory types type (%s)", x)
+            logger.debug("error when commiting catagory types type (%s)", x)
 
 
 def write_fix_categories():
@@ -92,7 +92,7 @@ def write_fix_categories():
             y = FixCategory(name = x)
             y.save()
         except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting fix types type (%s)", x)
+            logger.debug("error when commiting fix types type (%s)", x)
   
             
 def write_item_type(the_type, list):
@@ -143,7 +143,7 @@ def write_suffix_types(list):
             type = FixCategory.objects.get(name = 'Suffix')
             type.fixtype_set.create(name = x)
         except:
-            print("psql integrity error when commiting suffix types type (%s)", x)
+            print("error when commiting suffix types type (%s)", x)
             logger.debug("write_suffix_types - Unexpected error:", sys.exc_info()[0], x)
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
