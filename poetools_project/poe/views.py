@@ -21,9 +21,11 @@ from django.contrib.auth import logout #section 9
 # Create your views here.
 from django.http import HttpResponse
 import datetime
-#from datetime import datetime
+
 
 from poe.forms import PageForm
+import poe.tables
+
 
 def index(request):
 
@@ -169,6 +171,7 @@ def item(request, category_name_slug, sub_category_slug = None):
         # Retrieve all of the associated item categories e.g. all the weapon type.
         # Add the results 
         context_dict['items'] = ItemType.objects.filter(type_id=item_category.id)
+        context_dict['table'] = poe.tables.ItemTable(ItemType.objects.filter(type_id=item_category.id))
         # We also add the category object from the database to the context
         # dictionary We'll use this in the template to verify that the category exists.
         context_dict['category'] = item_category
@@ -184,6 +187,7 @@ def item(request, category_name_slug, sub_category_slug = None):
                 context_dict['sub_item_category'] = sub_item_category
                 context_dict['sub_item_name'] = sub_item_category.name
                 context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
+                context_dict['table'] = poe.tables.ItemTable(ItemName.objects.filter(type_id=sub_item_category.id))
             except:
                 pass
         else:

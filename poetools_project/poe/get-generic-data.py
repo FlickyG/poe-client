@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
+proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -686,11 +686,6 @@ def write_weapon_stats(list):
                     # w_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
                     # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
-                    aa = ItemStat(
-                                  i = w_id,
-                                  s = stat
-                                  )
-                    aa.save()
                     w_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
@@ -853,12 +848,6 @@ def write_clothes_stats(list):
                 try:
                     # c_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
-                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
-                    aa = ItemStat(
-                                  i = c_id,
-                                  s = stat
-                                  )
-                    aa.save()
                     c_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
@@ -1008,11 +997,6 @@ def write_jewelry_stats(list):
                     # j_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
                     # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
-                    aa = ItemStat(
-                                  i = j_id,
-                                  s = stat
-                                  )
-                    aa.save()
                     j_id.stats.add(stat)
                     z = z + 1
                 except Exception as e:
@@ -1029,8 +1013,8 @@ write_fix_categories()
 fetch_prefixes()
 fetch_suffixes()
 fetch_weapons()
-#fetch_clothes()
-#fetch_jewelry()
+fetch_clothes()
+fetch_jewelry()
 
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
