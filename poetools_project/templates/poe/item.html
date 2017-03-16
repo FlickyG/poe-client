@@ -16,14 +16,10 @@
             {% endfor %}
             </ul>
         {% endif %}
-        {% load django_tables2 %}
-		{% render_table table %}
         {% if items and sub_items %}
-			<div class="container">
-				<h2> {{ sub_item_name  }}</h2>
-					<table class="table table-striped">
+            {% load django_tables2 %}
+            {% render_table table %}
 			<!-- if the sub type is weapons -->
-
         {% else %}
                 <strong>Select a sub-category to continue {{sub_types}} </strong>
         {% endif %}
