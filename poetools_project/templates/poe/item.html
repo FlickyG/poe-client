@@ -18,7 +18,7 @@
         {% endif %}
         {% if items and sub_items %}
             {% load django_tables2 %}
-            {% render_table table %}
+            {% render_table table "poe/stat_table.html" %}
 			<!-- if the sub type is weapons -->
         {% else %}
                 <strong>Select a sub-category to continue {{sub_types}} </strong>

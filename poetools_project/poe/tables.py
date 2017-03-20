@@ -35,6 +35,7 @@ class WeaponTable(tables.Table):
                     'req_str',
                     'req_dex',
                     'req_int',
+                    'stats.name',
                 )
         
 class ClothingTable(tables.Table):
