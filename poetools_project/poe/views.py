@@ -26,6 +26,7 @@ import sys
 
 from poe.forms import PageForm
 import poe.tables
+from django_tables2.config import RequestConfig
 
 
 def index(request):
@@ -189,14 +190,16 @@ def item(request, category_name_slug, sub_category_slug = None):
                 context_dict['sub_item_name'] = sub_item_category.name
                 context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
                 if item_category.name == "Weapons":
-                    context_dict['table'] = poe.tables.WeaponTable(ItemName.objects.filter(type_id=sub_item_category.id))   
+                    table = poe.tables.WeaponTable(ItemName.objects.filter(type_id=sub_item_category.id))   
                 elif item_category.name == 'Clothes':
-                    context_dict['table'] = poe.tables.ClothingTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                    table = poe.tables.ClothingTable(ItemName.objects.filter(type_id=sub_item_category.id))
                 elif item_category.name == 'Jewelry':
-                    context_dict['table'] = poe.tables.JewelTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                    table = poe.tables.JewelTable(ItemName.objects.filter(type_id=sub_item_category.id))
                 else:
                     print("something went wrong", item_category)
                     sys.exit()
+                RequestConfig(request).configure(table)
+                context_dict['table'] = table
             except:
                 pass
         else:

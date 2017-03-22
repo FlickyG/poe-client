@@ -37,6 +37,7 @@ class WeaponTable(tables.Table):
                     'req_int',
                     'stats.name',
                 )
+        attrs = {'width':'100%'}
         
 class ClothingTable(tables.Table):
     class Meta:
