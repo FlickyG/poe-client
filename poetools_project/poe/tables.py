@@ -38,6 +38,7 @@ class WeaponTable(tables.Table):
                     'req_dex',
                     'req_int',
                     'len_stats',
+                    'stat_names', 
                 )
         attrs = {'width':'100%'}
         
@@ -54,7 +55,8 @@ class ClothingTable(tables.Table):
                     'armour',
                     'evasion',
                     'energy_shield',
-                    'len_stats',                    
+                    'len_stats',
+                    'stat_names',                   
                 )
         attrs = {'width':'100%'}        
         

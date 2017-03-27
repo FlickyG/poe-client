@@ -230,13 +230,19 @@ class ItemName(models.Model):
         app_label = "poe"
     
     @property
+    def len_stats(self):
+        names = [x.name.name for x in self.stats.all()]
+        print("names", names)
+        return names #len(self.stats.all())
+    
+    @property
     def stat_names(self):
         names = [x.name.name for x in self.stats.all()]
         print("names", names)
         return names #len(self.stats.all())
-poe.models.ItemName.objects.filter(name = "Avian Twins Talisman")[0].stat_names[0]
-need to insert colspan in the template but I think we need to know the length of the stats
-and for that we need java script, no other means of calculating this in html
+#poe.models.ItemName.objects.filter(name = "Avian Twins Talisman")[0].stat_names[0]
+#need to insert colspan in the template but I think we need to know the length of the stats
+#and for that we need java script, no other means of calculating this in html
 
     def __str__(self):
         return str(self.name)

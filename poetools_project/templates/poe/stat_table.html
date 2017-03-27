@@ -27,9 +27,16 @@
             {% for column, cell in row.items %}
                 <td {{ column.attrs.td.as_html }}>
                 {% if column.localize == None %}
-                	{% if column.header == "Stat Names" %}
-	                	{{ cell.length }}
-	                	{{ cell }}
+                	{% if column.header == "Len Stats" %}
+                	<script>
+                	   function myFunction() {
+                	       var data = cell;
+                	       var n = data.length
+                	       return n
+                	   }
+                	</script>
+	                	{{ n }}
+	                	balls
                 {% else %}
                 	{{ cell }}
                 {% endif %}                	
