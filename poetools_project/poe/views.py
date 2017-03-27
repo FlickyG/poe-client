@@ -10,6 +10,8 @@ from poe.models import FixType
 from poe.models import ItemType
 from poe.models import ItemName
 
+from poe.models import PoeAccount 
+
 from poe.forms import CategoryForm #section 8
 
 import poe.common.character_tools
@@ -305,7 +307,10 @@ def restricted(request):
     return HttpResponse("Since you're logged in, you can see this text!")
 
 @login_required
-def ggg_characters(request):
-    print("hello world from gg_characters")
-    poe.common.character_tools.get_characters(user)
-    return render(request, 'poe/ggg_characters.html')
+def ggg_characters(request, account_name_slug):
+    context_dict = {}
+    print("hello world from gg_characters", account_name_slug)
+    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
+    print("chekcing this_account in gg_characters", this_account.poe_sessid)
+    poe.common.character_tools.get_characters(this_account)
+    return render(request, 'poe/ggg_characters.html', context_dict)

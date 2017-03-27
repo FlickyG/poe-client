@@ -52,6 +52,11 @@ class PoeUser(User):
         managed = True
         #model_label = "poeuser"
 
+    def save(self, *args, **kwargs):
+        super(PoeUser, self).save(*args, **kwargs)
+        x = PoeAccount(acc_name = self.poe_account_name)
+        x.save()
+
 class ItemCategory(models.Model):
     name = models.CharField(unique = True, max_length = 50)
     slug = models.SlugField()
@@ -286,3 +291,22 @@ class ItemStat(models.Model):
         # Uncomment if you don't want the slug to change every time the name changes
         #if self.id is None:
         super(ItemStat, self).save(*args, **kwargs)
+        
+###
+### GGG Characters
+###
+class PoeAccount(models.Model):
+    acc_name = models.CharField(max_length=32, blank=False, )
+    
+    class Meta:
+        managed = True
+        db_table = 'poe_account'
+        app_label = 'poe'
+        
+    def __str__(self):
+        return str(self.acc_name)
+    
+''' def save(self, *args, **kwargs):
+        super(PoeAccount, self).save(*args, **kwargs)
+'''
+    
