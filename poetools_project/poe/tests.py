@@ -17,6 +17,7 @@ class SimpleTestCase(TestCase):
         self.assertEqual(response.status_code, 302) 
         models.PoeUser.objects.get(username = "mike2001")
         session = self.client.session
+        print("session if", session)
    
     def test_index_page(self):
         url = reverse("index")

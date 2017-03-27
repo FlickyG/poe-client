@@ -49,7 +49,7 @@ class PoeUser(User):
     
     class Meta:
         managed = True
-        #app_label = "poe_auth"
+        #model_label = "poeuser"
 
 class ItemCategory(models.Model):
     name = models.CharField(unique = True, max_length = 50)

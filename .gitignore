@@ -14,6 +14,13 @@
 first_go.sqlite
 rango.db
 
+#logfile
+logfile*
+
+#eclipse setting files 
+.settings
+
+
 #migrations
 poetools_project/rango/migrations/*
 poetools_project/poe/migrations/*

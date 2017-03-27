@@ -32,7 +32,7 @@ LOGIN_URL = '/accounts/login/'#section 9
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #tutorial secti9on 5
-DATABASE_PATH = os.path.join(PROJECT_PATH, 'rango.db')
+DATABASE_PATH = os.path.join(PROJECT_PATH, 'poe_tools_auth.db')
 
 #I added this
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     #'rango',
     'poe',
     'django_tables2', # for sorted tables
+  
 ]
 
 MIDDLEWARE = [
