@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block body_block %}
+
+<link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
+
+{% if item_cats %}
+    <ul class="nav nav-sidebar">
+    {% for c in item_cats %}
+        <li><a href="{% url 'item'  c.slug %}">{{ c.name }}</a></li>
+    {% endfor %}
+
+{% else %}
+    <li> <strong >There are no category present.</strong></li>
+    <li> <strong >{{ user.username }}</strong></li>
+	<li> <strong >{{ user.poeuser.poe_sessid }}</strong></li>
+	<li> <strong >{{ user.poeuser.poe_account_name }}</strong></li>
+    
+    </ul>
+{% endif %}
+
+{% endblock %}

@@ -103,42 +103,6 @@ def index_rango(request):
 
     return response
 
-def index2(request):
-
-    request.session.set_test_cookie()
-    
-    category_list = Category.objects.order_by('-likes')[:5]
-    page_list = Page.objects.order_by('-views')[:5]
-
-    context_dict = {'categories': category_list, 'pages': page_list}
-
-    visits = request.session.get('visits')
-    if not visits:
-        visits = 1
-    reset_last_visit_time = False
-
-    last_visit = request.session.get('last_visit')
-    if last_visit:
-        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-
-        if (datetime.datetime.now() - last_visit_time).seconds > 0:
-            # ...reassign the value of the cookie to +1 of what it was before...
-            visits = visits + 1
-            # ...and update the last visit cookie, too.
-            reset_last_visit_time = True
-    else:
-        # Cookie last_visit doesn't exist, so create it to the current date/time.
-        reset_last_visit_time = True
-
-    if reset_last_visit_time:
-        request.session['last_visit'] = str(datetime.datetime.now())
-        request.session['visits'] = visits
-    context_dict['visits'] = visits
-
-
-    response = render(request,'poe/index.html', context_dict)
-
-    return response
 
 def about(request):
     
@@ -338,4 +302,7 @@ def add_page(request, category_name_slug):
 def restricted(request):
     return HttpResponse("Since you're logged in, you can see this text!")
 
-
+@login_required
+def ggg_characters(request):
+    print("hello worls from gg_characters")
+    return render(request, 'poe/ggg_characters.html')
