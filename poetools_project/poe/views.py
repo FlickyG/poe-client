@@ -21,9 +21,13 @@ from django.contrib.auth import logout #section 9
 # Create your views here.
 from django.http import HttpResponse
 import datetime
-#from datetime import datetime
+import sys
+
 
 from poe.forms import PageForm
+import poe.tables
+from django_tables2.config import RequestConfig
+
 
 def index(request):
 
@@ -169,6 +173,7 @@ def item(request, category_name_slug, sub_category_slug = None):
         # Retrieve all of the associated item categories e.g. all the weapon type.
         # Add the results 
         context_dict['items'] = ItemType.objects.filter(type_id=item_category.id)
+        #context_dict['table'] = poe.tables.ItemTable(ItemType.objects.filter(type_id=item_category.id))
         # We also add the category object from the database to the context
         # dictionary We'll use this in the template to verify that the category exists.
         context_dict['category'] = item_category
@@ -184,6 +189,17 @@ def item(request, category_name_slug, sub_category_slug = None):
                 context_dict['sub_item_category'] = sub_item_category
                 context_dict['sub_item_name'] = sub_item_category.name
                 context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
+                if item_category.name == "Weapons":
+                    table = poe.tables.WeaponTable(ItemName.objects.filter(type_id=sub_item_category.id))   
+                elif item_category.name == 'Clothes':
+                    table = poe.tables.ClothingTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                elif item_category.name == 'Jewelry':
+                    table = poe.tables.JewelTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                else:
+                    print("something went wrong", item_category)
+                    sys.exit()
+                RequestConfig(request).configure(table)
+                context_dict['table'] = table
             except:
                 pass
         else:
