@@ -43,6 +43,7 @@ class Page(models.Model):
 
 class PoeUser(User):
     poe_sessid = models.CharField(max_length = 32, primary_key = True)
+    poe_account_name = models.CharField(max_length = 32)
         
     def __unicode__(self):
         return self.username

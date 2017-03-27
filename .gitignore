@@ -19,7 +19,8 @@ logfile*
 
 #eclipse setting files 
 .settings
-
+#user database
+poe_tools_auth.db
 
 #migrations
 poetools_project/rango/migrations/*

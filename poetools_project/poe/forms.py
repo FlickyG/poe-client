@@ -52,6 +52,10 @@ class PoeRegistrationForm(RegistrationForm):
     
     class Meta:
         model = PoeUser
-        fields = ("username", "poe_sessid",)
+        fields = ("username", "poe_sessid", 'poe_account_name')
+    
+    def clean(self):
+        if 'reg_button' in self.data:
+            print("amazing")
           
       
