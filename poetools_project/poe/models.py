@@ -10,6 +10,11 @@ from django.dispatch import receiver #for custom user profile
 
 from autoslug import AutoSlugField
 
+import logging
+print("____________ NAME _____________",__name__)
+stdlogger = logging.getLogger(__name__)
+stdlogger.warn("Entering poe.models")
+
 # Create your models here.
 class Category(models.Model):
         name = models.CharField(max_length=128, unique=True)
@@ -206,6 +211,9 @@ class Fix(models.Model):
 
 
 class ItemName(models.Model):
+    clsslogger = logging.getLogger("poe.tables")
+    clsslogger.debug("degin ,esshe")
+    print("ItemNAme Logging __name__", __name__)
     name = models.CharField(unique=True, max_length=50)
     i_level = models.SmallIntegerField()
     min_dmg = models.SmallIntegerField(blank=True, null=True)
@@ -214,7 +222,7 @@ class ItemName(models.Model):
     dps = models.FloatField(blank=True, null=True)
     req_str = models.SmallIntegerField(blank=True, null=True)
     req_dex = models.SmallIntegerField(blank=True, null=True)
-    req_int = models.SmallIntegerField(blank=True, null=True)
+    req_int = models.SmallIntegerField(blank=True, null=True) 
     large_url = models.CharField(max_length=800, blank=True)
     small_url = models.CharField(max_length=400, blank=True)
     armour = models.SmallIntegerField(blank=True, null=True)
@@ -232,13 +240,20 @@ class ItemName(models.Model):
     @property
     def len_stats(self):
         names = [x.name.name for x in self.stats.all()]
-        print("names", names)
-        return names #len(self.stats.all())
+        l = len(self.stats.all())
+        m = ''.join((__name__, " length of stats ", str(l)))
+        self.clsslogger.debug(m)
+        return len(self.stats.all())
     
     @property
     def stat_names(self):
         names = [x.name.name for x in self.stats.all()]
-        print("names", names)
+        try:
+            pass
+            #stdlogger.debug("Entering index method")
+        except Exception:
+            print("eeee")    
+        self.clsslogger.debug(names)
         return names #len(self.stats.all())
 #poe.models.ItemName.objects.filter(name = "Avian Twins Talisman")[0].stat_names[0]
 #need to insert colspan in the template but I think we need to know the length of the stats
