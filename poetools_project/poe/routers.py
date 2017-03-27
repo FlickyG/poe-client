@@ -17,7 +17,8 @@ class PoeRouter(object):
 
     
     def allow_relation(self, obj1, obj2, **hints):
-        if model._meta.app_label == 'poe':
+        if obj1._meta.app_label == 'poe' or \
+            obj2._meta.app_label == 'poe':
             return True
         else:
             return None

@@ -18,11 +18,11 @@ class Category(models.Model):
         slug = models.SlugField()
 
         def save(self, *args, **kwargs):
-                # Uncomment if you don't want the slug to change every time the name changes
-                #if self.id is None:
-                        #self.slug = slugify(self.name)
-                self.slug = slugify(self.name)
-                super(Category, self).save(*args, **kwargs)
+            # Uncomment if you don't want the slug to change every time the name changes
+            #if self.id is None:
+                    #self.slug = slugify(self.name)
+            self.slug = slugify(self.name)
+            super(Category, self).save(*args, **kwargs)
 
         def __unicode__(self):
                 return str(self.name)
@@ -58,6 +58,13 @@ class ItemCategory(models.Model):
     def __str__(self):
         return str(self.name)
     
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(ItemCategory, self).save(*args, **kwargs)
+    
 class ItemType(models.Model):
     name = models.CharField(unique = True, max_length = 50)
     type = models.ForeignKey(ItemCategory)
@@ -70,6 +77,13 @@ class ItemType(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(ItemType, self).save(*args, **kwargs)
 
 class StatNames(models.Model):
     name = models.CharField(unique=True, max_length=60)
@@ -82,6 +96,13 @@ class StatNames(models.Model):
         
     def __str__(self):
         return str(self.name)
+
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(StatNames, self).save(*args, **kwargs)
 
 class Stats(models.Model):
     name = models.ForeignKey(StatNames, models.DO_NOTHING)
@@ -96,6 +117,13 @@ class Stats(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(Stats, self).save(*args, **kwargs)
         
 class FixCategory(models.Model):
     name = models.CharField(unique = True, blank = False, max_length = 50)
@@ -109,6 +137,13 @@ class FixCategory(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(FixCategory, self).save(*args, **kwargs)
 
 class FixType(models.Model):
     name = models.CharField(max_length = 50)
@@ -122,6 +157,13 @@ class FixType(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(FixType, self).save(*args, **kwargs)
 
 class FixName(models.Model):
     name = models.CharField(max_length=50)
@@ -135,6 +177,13 @@ class FixName(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(FixName, self).save(*args, **kwargs)
 
 class Fix(models.Model):
     name = models.ForeignKey(FixName)
@@ -150,6 +199,8 @@ class Fix(models.Model):
         
     def __str__(self):
         return str(self.name)
+    
+
 ####
 ####
 
@@ -179,6 +230,13 @@ class ItemName(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(ItemName, self).save(*args, **kwargs)
 
 class ItemStat(models.Model):
     i = models.ForeignKey(ItemName, models.DO_NOTHING)
@@ -191,3 +249,8 @@ class ItemStat(models.Model):
     
     def __str__(self):
         return str(self.i.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        super(ItemStat, self).save(*args, **kwargs)

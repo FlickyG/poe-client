@@ -1,0 +1,105 @@
+(poe-tools)MB19600:poetools_project adam.green$ python manage.py test poe --parallel
+GenericDataTestCase
+GenericDataTablecontents
+Creating test database for alias 'default'...
+Cloning test database for alias 'default'...
+Cloning test database for alias 'default'...
+Cloning test database for alias 'default'...
+Creating test database for alias 'poe_db'...
+Cloning test database for alias 'poe_db'...
+Cloning test database for alias 'poe_db'...
+Cloning test database for alias 'poe_db'...
+...GenericDataTestCase
+....F.F.F....F.......F
+======================================================================
+FAIL: test_length_prefix_names (poe.tests.GenericDataTableLengths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 600, in run
+    testMethod()
+  File "/Users/adam.green/Documents/workspace/poe-client/poetools_project/poe/tests.py", line 61, in test_length_prefix_names
+    self.assertEqual(len(data), 480)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 820, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 813, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 484 != 480
+
+======================================================================
+FAIL: test_length_prefixes (poe.tests.GenericDataTableLengths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 600, in run
+    testMethod()
+  File "/Users/adam.green/Documents/workspace/poe-client/poetools_project/poe/tests.py", line 67, in test_length_prefixes
+    self.assertEqual(len(data), 1035)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 820, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 813, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 1042 != 1035
+
+======================================================================
+FAIL: test_length_stats (poe.tests.GenericDataTableLengths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 600, in run
+    testMethod()
+  File "/Users/adam.green/Documents/workspace/poe-client/poetools_project/poe/tests.py", line 122, in test_length_stats
+    self.assertEqual(len(data), 1515)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 820, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 813, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 1548 != 1515
+
+======================================================================
+FAIL: test_length_weapon_stats (poe.tests.GenericDataTableLengths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 600, in run
+    testMethod()
+  File "/Users/adam.green/Documents/workspace/poe-client/poetools_project/poe/tests.py", line 94, in test_length_weapon_stats
+    self.assertEqual(len(data), 250)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 820, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 813, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 253 != 250
+
+======================================================================
+FAIL: test_weapon_stat (poe.tests.GenericDataTablCcontents)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 58, in testPartExecutor
+    yield
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 600, in run
+    testMethod()
+  File "/Users/adam.green/Documents/workspace/poe-client/poetools_project/poe/tests.py", line 162, in test_weapon_stat
+    self.assertEqual(data[0].s.min_value, 6)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 820, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/unittest/case.py", line 813, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 20 != 6
+
+----------------------------------------------------------------------
+Ran 25 tests in 40.145s
+
+FAILED (failures=5)
+Destroying test database for alias 'default'...
+Destroying test database for alias 'default'...
+Destroying test database for alias 'default'...
+Destroying test database for alias 'default'...
+Destroying test database for alias 'poe_db'...
+Destroying test database for alias 'poe_db'...
+Destroying test database for alias 'poe_db'...
+Destroying test database for alias 'poe_db'...

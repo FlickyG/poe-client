@@ -56,15 +56,15 @@ class GenericDataTableLengths(TestCase):
         self.assertEqual(len(data), 33)
         
     def test_length_prefix_names(self):
-        #length of prefix names  480
+        #length of prefix names  480, raised to 484 on r2.6
         data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Prefix")
-        self.assertEqual(len(data), 480)
+        self.assertEqual(len(data), 484)
    
     def test_length_prefixes(self):
-        #length of prefixes 1035
+        #length of prefixes 1035, raised to 1042 a r2.6
         #length of z once the inner stat dictionary of the higher list is known
         data = models.Fix.objects.select_related().filter(name_id__type_id__category_id__name = "Prefix")
-        self.assertEqual(len(data), 1035)
+        self.assertEqual(len(data), 1042)
 ## Suffixes      
     def test_length_suffix_types(self):
         #length of suffix_types =  24
@@ -89,9 +89,9 @@ class GenericDataTableLengths(TestCase):
         self.assertEqual(len(data), 307)
 
     def test_length_weapon_stats(self):
-        #length of weapon stats 250
+        #length of weapon stats 250, rasied to 253 at r2.6
         data = models.ItemStat.objects.select_related().filter(i_id__type_id__type_id__name = "Weapons")
-        self.assertEqual(len(data), 250)
+        self.assertEqual(len(data), 253)
 
 ## clothes
     def test_length_clothes_names(self):
@@ -118,8 +118,9 @@ class GenericDataTableLengths(TestCase):
 ## Stats
     def test_length_stats(self):
         #length of stats  1515 (sued to be 1530 before model reduction)
+        #raised to 1548 at r2.6
         data = models.Stats.objects.all()
-        self.assertEqual(len(data), 1515)
+        self.assertEqual(len(data), 1548)
         
     def test_length_stat_names(self):
         #length of stat_names 266
@@ -159,20 +160,20 @@ class GenericDataTablCcontents(TestCase):
         self.assertEqual(data[0].i.max_dmg, 66)
         self.assertEqual(data[0].i.i_level, 50)
         self.assertEqual(data[0].s.name.name, "Weapon Elemental Damage +%")
-        self.assertEqual(data[0].s.min_value, 6)
-        self.assertEqual(data[0].s.max_value, 12)
+        self.assertEqual(data[0].s.min_value, 20)
+        self.assertEqual(data[0].s.max_value, 24)
         #
         data = models.ItemStat.objects.select_related().filter(i_id__name = "Blinder")
         self.assertEqual(data[0].i.i_level, 22)
-        self.assertEqual(data[0].i.min_dmg, 10)
-        self.assertEqual(data[0].i.max_dmg, 27)
+        self.assertEqual(data[0].i.min_dmg, 12)
+        self.assertEqual(data[0].i.max_dmg, 32)
         self.assertEqual(data[0].s.name.name, "Local Life Gain Per Target")
-        self.assertEqual(data[0].s.min_value, 10)
-        self.assertEqual(data[0].s.max_value, 10)
+        self.assertEqual(data[0].s.min_value, 12)
+        self.assertEqual(data[0].s.max_value, 12)
         #
         data = models.ItemStat.objects.select_related().filter(i_id__name = "Etched Hatchet")
-        self.assertEqual(data[0].i.min_dmg, 24)
-        self.assertEqual(data[0].i.max_dmg, 42)
+        self.assertEqual(data[0].i.min_dmg, 26)
+        self.assertEqual(data[0].i.max_dmg, 46)
         self.assertEqual(data[0].i.i_level, 35)
         self.assertEqual(data[0].s.name.name, "Physical Damage +%")
         self.assertEqual(data[0].s.min_value, 8)
