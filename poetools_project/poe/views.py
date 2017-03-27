@@ -12,6 +12,8 @@ from poe.models import ItemName
 
 from poe.forms import CategoryForm #section 8
 
+import poe.common.character_tools
+
 #from poe.forms import UserForm, UserProfileForm #sectio9n 9
 from django.contrib.auth import authenticate, login #sectio9n 9
 from django.http import HttpResponseRedirect, HttpResponse #sectio9n 9
@@ -304,5 +306,6 @@ def restricted(request):
 
 @login_required
 def ggg_characters(request):
-    print("hello worls from gg_characters")
+    print("hello world from gg_characters")
+    poe.common.character_tools.get_characters(user)
     return render(request, 'poe/ggg_characters.html')
