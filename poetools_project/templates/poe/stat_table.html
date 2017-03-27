@@ -29,7 +29,7 @@
 	                <td {{ column.attrs.td.as_html }}>
 	                {% if column.localize == None %}
 	                	{% if column.header == "Len Stats" %}
-		                	<td> {{ cell }} </td>
+		                	{{ cell }}
 		                {% elif column.header == "Stat Names" %}
 		                	{{ cell}}
 	                {% else %}
