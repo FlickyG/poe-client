@@ -309,8 +309,9 @@ def restricted(request):
 @login_required
 def ggg_characters(request, account_name_slug):
     context_dict = {}
+    context_dict["account_name"] = account_name_slug
     print("hello world from gg_characters", account_name_slug)
     this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
-    print("chekcing this_account in gg_characters", this_account.poe_sessid)
+    print("chekcing this_account in gg_characters", this_account)
     poe.common.character_tools.get_characters(this_account)
     return render(request, 'poe/ggg_characters.html', context_dict)
