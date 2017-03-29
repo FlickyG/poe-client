@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
+proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)

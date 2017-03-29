@@ -5,12 +5,11 @@ import poe.models
 import logging
 stdlogger = logging.getLogger(__name__)
 stdlogger.debug("Entering poe.tabels")
-print("Entering poe.tebls")
+
 
 class ItemTable(tables.Table):
     class Meta:
         model = poe.models.ItemName
-        print("ItemName.type", poe.models.ItemName.type)
         fields = (
                     'name',
                     'i_level',
@@ -50,7 +49,6 @@ class WeaponTable(tables.Table):
 class ClothingTable(tables.Table):
     class Meta:
         model = poe.models.ItemName
-        print("ItemName.type", poe.models.ItemName.type)
         fields = (
                     'name',
                     'i_level',
@@ -68,7 +66,6 @@ class ClothingTable(tables.Table):
 class JewelTable(tables.Table):
     class Meta:
         model = poe.models.ItemName
-        print("ItemName.type", poe.models.ItemName.type)
         stat_name = tables.Column()
         fields = (
                     'name',

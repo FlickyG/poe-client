@@ -32,6 +32,8 @@ from poe.forms import PageForm
 import poe.tables
 from django_tables2.config import RequestConfig
 
+import logging
+stdlogger = logging.getLogger("poe_generic")
 
 def index(request):
 
@@ -308,10 +310,11 @@ def restricted(request):
 
 @login_required
 def ggg_characters(request, account_name_slug):
+    stdlogger.debug("entering ggg_characters")
     context_dict = {}
     context_dict["account_name"] = account_name_slug
-    print("hello world from gg_characters", account_name_slug)
-    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
-    print("chekcing this_account in gg_characters", this_account)
+    print("hello world from gg_characters", account_name_slug)    
+    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)  
     poe.common.character_tools.get_characters(this_account)
+    
     return render(request, 'poe/ggg_characters.html', context_dict)

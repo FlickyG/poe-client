@@ -228,6 +228,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        'poe_generic': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        },
         'poe.models': {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',

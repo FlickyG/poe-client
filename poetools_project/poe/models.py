@@ -54,7 +54,7 @@ class PoeUser(User):
 
     def save(self, *args, **kwargs):
         super(PoeUser, self).save(*args, **kwargs)
-        x = PoeAccount(acc_name = self.poe_account_name)
+        x = PoeAccount(acc_name = self.poe_account_name, sessid = self.poe_sessid)
         x.save()
 
 class ItemCategory(models.Model):
@@ -217,8 +217,7 @@ class Fix(models.Model):
 
 
 class ItemName(models.Model):
-    clsslogger = logging.getLogger("poe.tables")
-    clsslogger.debug("degin ,esshe")
+    stdlogger.debug("ItemName")
     print("ItemNAme Logging __name__", __name__)
     name = models.CharField(unique=True, max_length=50)
     i_level = models.SmallIntegerField()
@@ -297,7 +296,8 @@ class ItemStat(models.Model):
 ###
 class PoeAccount(models.Model):
     acc_name = models.CharField(max_length=32, blank=False, )
-    
+    sessid = models.CharField(max_length=32, blank=False, )
+  
     class Meta:
         managed = True
         db_table = 'poe_account'
@@ -306,7 +306,21 @@ class PoeAccount(models.Model):
     def __str__(self):
         return str(self.acc_name)
     
-''' def save(self, *args, **kwargs):
-        super(PoeAccount, self).save(*args, **kwargs)
-'''
+class PoeCharacter(models.Model):
+    account = models.ForeignKey(PoeAccount) 
+    name = models.CharField(max_length = 64, null=True)
+    x = {
+         'level': 70,
+         'class': 'Duelist',
+         'ascendancyClass': 0,
+         'classId': 4,
+         'league': 'Standard',
+         'name': 'Flicky_Dagger'
+         }
+    level = models.IntegerField()
+    ggg_class = models.CharField(max_length = 32)
+    ascendancy_class = models.IntegerField()
+    classId = models.CharField(max_length = 64)
+    league = models.CharField(max_length = 64)
+    
     
