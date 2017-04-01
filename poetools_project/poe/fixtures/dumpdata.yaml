@@ -1,535 +1,439 @@
 ____________ NAME _____________ poe.models
 ItemNAme Logging __name__ poe.models
 hello from PoeRouter allow_migration
-True model_name registrationprofile app_label registration
-hello from PoeRouter allow_migration
-True model_name registrationprofile app_label registration
-hello from PoeRouter allow_migration
-True model_name registrationprofile app_label registration
-hello from PoeRouter allow_migration
-True model_name registrationprofile app_label registration
+False model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
 True model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
 False model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+True model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+False model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+True model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+False model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+True model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+False model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+True model_name registrationprofile app_label registration
 hello from PoeRouter allow_migration
-True model_name logentry app_label admin
+False model_name logentry app_label admin
 hello from PoeRouter allow_migration
 True model_name logentry app_label admin
 hello from PoeRouter allow_migration
 False model_name logentry app_label admin
 hello from PoeRouter allow_migration
-True model_name permission app_label auth
+True model_name logentry app_label admin
 hello from PoeRouter allow_migration
-True model_name permission app_label auth
+False model_name logentry app_label admin
 hello from PoeRouter allow_migration
-True model_name permission app_label auth
+True model_name logentry app_label admin
 hello from PoeRouter allow_migration
-True model_name permission app_label auth
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name logentry app_label admin
+hello from PoeRouter allow_migration
+True model_name logentry app_label admin
+hello from PoeRouter allow_migration
+False model_name permission app_label auth
 hello from PoeRouter allow_migration
 True model_name permission app_label auth
 hello from PoeRouter allow_migration
 False model_name permission app_label auth
 hello from PoeRouter allow_migration
-True model_name group app_label auth
+True model_name permission app_label auth
 hello from PoeRouter allow_migration
-True model_name group app_label auth
+False model_name permission app_label auth
 hello from PoeRouter allow_migration
-True model_name group app_label auth
+True model_name permission app_label auth
+hello from PoeRouter allow_migration
+False model_name permission app_label auth
+hello from PoeRouter allow_migration
+True model_name permission app_label auth
+hello from PoeRouter allow_migration
+False model_name permission app_label auth
+hello from PoeRouter allow_migration
+True model_name permission app_label auth
+hello from PoeRouter allow_migration
+False model_name group app_label auth
 hello from PoeRouter allow_migration
 True model_name group app_label auth
 hello from PoeRouter allow_migration
 False model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
+True model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
+False model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
+True model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
+False model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
+True model_name group app_label auth
 hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
-hello from PoeRouter allow_migration
-True model_name user app_label auth
+False model_name user app_label auth
 hello from PoeRouter allow_migration
 True model_name user app_label auth
 hello from PoeRouter allow_migration
 False model_name user app_label auth
 hello from PoeRouter allow_migration
-True model_name contenttype app_label contenttypes
+True model_name user app_label auth
 hello from PoeRouter allow_migration
-True model_name contenttype app_label contenttypes
+False model_name user app_label auth
 hello from PoeRouter allow_migration
-True model_name contenttype app_label contenttypes
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name user app_label auth
+hello from PoeRouter allow_migration
+True model_name user app_label auth
+hello from PoeRouter allow_migration
+False model_name contenttype app_label contenttypes
 hello from PoeRouter allow_migration
 True model_name contenttype app_label contenttypes
 hello from PoeRouter allow_migration
 False model_name contenttype app_label contenttypes
 hello from PoeRouter allow_migration
-True model_name session app_label sessions
+True model_name contenttype app_label contenttypes
 hello from PoeRouter allow_migration
-True model_name session app_label sessions
+False model_name contenttype app_label contenttypes
 hello from PoeRouter allow_migration
-True model_name session app_label sessions
+True model_name contenttype app_label contenttypes
+hello from PoeRouter allow_migration
+False model_name contenttype app_label contenttypes
+hello from PoeRouter allow_migration
+True model_name contenttype app_label contenttypes
+hello from PoeRouter allow_migration
+False model_name session app_label sessions
 hello from PoeRouter allow_migration
 True model_name session app_label sessions
 hello from PoeRouter allow_migration
 False model_name session app_label sessions
 hello from PoeRouter allow_migration
-False model_name category app_label poe
+True model_name session app_label sessions
+hello from PoeRouter allow_migration
+False model_name session app_label sessions
+hello from PoeRouter allow_migration
+True model_name session app_label sessions
+hello from PoeRouter allow_migration
+False model_name session app_label sessions
+hello from PoeRouter allow_migration
+True model_name session app_label sessions
+hello from PoeRouter allow_migration
+True model_name category app_label poe
+hello from PoeRouter allow_migration
+True model_name category app_label poe
+hello from PoeRouter allow_migration
+True model_name category app_label poe
+hello from PoeRouter allow_migration
+True model_name category app_label poe
+hello from PoeRouter allow_migration
+True model_name category app_label poe
 hello from PoeRouter allow_migration
 True model_name category app_label poe
 hello from PoeRouter allow_migration
 False model_name category app_label poe
 hello from PoeRouter allow_migration
-True model_name category app_label poe
+True model_name page app_label poe
 hello from PoeRouter allow_migration
-False model_name category app_label poe
+True model_name page app_label poe
 hello from PoeRouter allow_migration
-True model_name category app_label poe
+True model_name page app_label poe
 hello from PoeRouter allow_migration
-False model_name category app_label poe
+True model_name page app_label poe
 hello from PoeRouter allow_migration
-True model_name category app_label poe
-hello from PoeRouter allow_migration
-False model_name category app_label poe
-hello from PoeRouter allow_migration
-True model_name category app_label poe
-hello from PoeRouter allow_migration
-False model_name category app_label poe
-hello from PoeRouter allow_migration
-True model_name category app_label poe
-hello from PoeRouter allow_migration
-False model_name page app_label poe
+True model_name page app_label poe
 hello from PoeRouter allow_migration
 True model_name page app_label poe
 hello from PoeRouter allow_migration
 False model_name page app_label poe
 hello from PoeRouter allow_migration
-True model_name page app_label poe
-hello from PoeRouter allow_migration
-False model_name page app_label poe
-hello from PoeRouter allow_migration
-True model_name page app_label poe
-hello from PoeRouter allow_migration
-False model_name page app_label poe
-hello from PoeRouter allow_migration
-True model_name page app_label poe
-hello from PoeRouter allow_migration
-False model_name page app_label poe
-hello from PoeRouter allow_migration
-True model_name page app_label poe
-hello from PoeRouter allow_migration
-False model_name page app_label poe
-hello from PoeRouter allow_migration
-True model_name page app_label poe
-hello from PoeRouter allow_migration
-True model_name poeuser app_label poe
-hello from PoeRouter allow_migration
-True model_name poeuser app_label poe
-hello from PoeRouter allow_migration
-True model_name poeuser app_label poe
+False model_name poeuser app_label poe
 hello from PoeRouter allow_migration
 True model_name poeuser app_label poe
 hello from PoeRouter allow_migration
 False model_name poeuser app_label poe
 hello from PoeRouter allow_migration
-False model_name itemcategory app_label poe
+True model_name poeuser app_label poe
+hello from PoeRouter allow_migration
+False model_name poeuser app_label poe
+hello from PoeRouter allow_migration
+True model_name poeuser app_label poe
+hello from PoeRouter allow_migration
+False model_name poeuser app_label poe
+hello from PoeRouter allow_migration
+True model_name poeuser app_label poe
+hello from PoeRouter allow_migration
+True model_name itemcategory app_label poe
+hello from PoeRouter allow_migration
+True model_name itemcategory app_label poe
+hello from PoeRouter allow_migration
+True model_name itemcategory app_label poe
 hello from PoeRouter allow_migration
 True model_name itemcategory app_label poe
 hello from PoeRouter allow_migration
 False model_name itemcategory app_label poe
 hello from PoeRouter allow_migration
-True model_name itemcategory app_label poe
+True model_name itemtype app_label poe
 hello from PoeRouter allow_migration
-False model_name itemcategory app_label poe
+True model_name itemtype app_label poe
 hello from PoeRouter allow_migration
-True model_name itemcategory app_label poe
+True model_name itemtype app_label poe
 hello from PoeRouter allow_migration
-False model_name itemcategory app_label poe
-hello from PoeRouter allow_migration
-True model_name itemcategory app_label poe
-hello from PoeRouter allow_migration
-False model_name itemtype app_label poe
+True model_name itemtype app_label poe
 hello from PoeRouter allow_migration
 True model_name itemtype app_label poe
 hello from PoeRouter allow_migration
 False model_name itemtype app_label poe
 hello from PoeRouter allow_migration
-True model_name itemtype app_label poe
+True model_name statnames app_label poe
 hello from PoeRouter allow_migration
-False model_name itemtype app_label poe
+True model_name statnames app_label poe
 hello from PoeRouter allow_migration
-True model_name itemtype app_label poe
-hello from PoeRouter allow_migration
-False model_name itemtype app_label poe
-hello from PoeRouter allow_migration
-True model_name itemtype app_label poe
-hello from PoeRouter allow_migration
-False model_name itemtype app_label poe
-hello from PoeRouter allow_migration
-True model_name itemtype app_label poe
-hello from PoeRouter allow_migration
-False model_name statnames app_label poe
+True model_name statnames app_label poe
 hello from PoeRouter allow_migration
 True model_name statnames app_label poe
 hello from PoeRouter allow_migration
 False model_name statnames app_label poe
 hello from PoeRouter allow_migration
-True model_name statnames app_label poe
+True model_name stats app_label poe
 hello from PoeRouter allow_migration
-False model_name statnames app_label poe
+True model_name stats app_label poe
 hello from PoeRouter allow_migration
-True model_name statnames app_label poe
+True model_name stats app_label poe
 hello from PoeRouter allow_migration
-False model_name statnames app_label poe
-hello from PoeRouter allow_migration
-True model_name statnames app_label poe
-hello from PoeRouter allow_migration
-False model_name stats app_label poe
+True model_name stats app_label poe
 hello from PoeRouter allow_migration
 True model_name stats app_label poe
 hello from PoeRouter allow_migration
 False model_name stats app_label poe
 hello from PoeRouter allow_migration
-True model_name stats app_label poe
+True model_name fixcategory app_label poe
 hello from PoeRouter allow_migration
-False model_name stats app_label poe
+True model_name fixcategory app_label poe
 hello from PoeRouter allow_migration
-True model_name stats app_label poe
-hello from PoeRouter allow_migration
-False model_name stats app_label poe
-hello from PoeRouter allow_migration
-True model_name stats app_label poe
-hello from PoeRouter allow_migration
-False model_name stats app_label poe
-hello from PoeRouter allow_migration
-True model_name stats app_label poe
-hello from PoeRouter allow_migration
-False model_name fixcategory app_label poe
+True model_name fixcategory app_label poe
 hello from PoeRouter allow_migration
 True model_name fixcategory app_label poe
 hello from PoeRouter allow_migration
 False model_name fixcategory app_label poe
 hello from PoeRouter allow_migration
-True model_name fixcategory app_label poe
+True model_name fixtype app_label poe
 hello from PoeRouter allow_migration
-False model_name fixcategory app_label poe
+True model_name fixtype app_label poe
 hello from PoeRouter allow_migration
-True model_name fixcategory app_label poe
+True model_name fixtype app_label poe
 hello from PoeRouter allow_migration
-False model_name fixcategory app_label poe
-hello from PoeRouter allow_migration
-True model_name fixcategory app_label poe
-hello from PoeRouter allow_migration
-False model_name fixtype app_label poe
+True model_name fixtype app_label poe
 hello from PoeRouter allow_migration
 True model_name fixtype app_label poe
 hello from PoeRouter allow_migration
 False model_name fixtype app_label poe
 hello from PoeRouter allow_migration
-True model_name fixtype app_label poe
+True model_name fixname app_label poe
 hello from PoeRouter allow_migration
-False model_name fixtype app_label poe
+True model_name fixname app_label poe
 hello from PoeRouter allow_migration
-True model_name fixtype app_label poe
+True model_name fixname app_label poe
 hello from PoeRouter allow_migration
-False model_name fixtype app_label poe
-hello from PoeRouter allow_migration
-True model_name fixtype app_label poe
-hello from PoeRouter allow_migration
-False model_name fixtype app_label poe
-hello from PoeRouter allow_migration
-True model_name fixtype app_label poe
-hello from PoeRouter allow_migration
-False model_name fixname app_label poe
+True model_name fixname app_label poe
 hello from PoeRouter allow_migration
 True model_name fixname app_label poe
 hello from PoeRouter allow_migration
 False model_name fixname app_label poe
 hello from PoeRouter allow_migration
-True model_name fixname app_label poe
+True model_name fix app_label poe
 hello from PoeRouter allow_migration
-False model_name fixname app_label poe
+True model_name fix app_label poe
 hello from PoeRouter allow_migration
-True model_name fixname app_label poe
+True model_name fix app_label poe
 hello from PoeRouter allow_migration
-False model_name fixname app_label poe
+True model_name fix app_label poe
 hello from PoeRouter allow_migration
-True model_name fixname app_label poe
-hello from PoeRouter allow_migration
-False model_name fixname app_label poe
-hello from PoeRouter allow_migration
-True model_name fixname app_label poe
-hello from PoeRouter allow_migration
-False model_name fix app_label poe
+True model_name fix app_label poe
 hello from PoeRouter allow_migration
 True model_name fix app_label poe
 hello from PoeRouter allow_migration
 False model_name fix app_label poe
 hello from PoeRouter allow_migration
-True model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-False model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-True model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-False model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-True model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-False model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-True model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-False model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-True model_name fix app_label poe
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
-False model_name itemname app_label poe
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
+hello from PoeRouter allow_migration
+True model_name itemname app_label poe
 hello from PoeRouter allow_migration
 True model_name itemname app_label poe
 hello from PoeRouter allow_migration
 False model_name itemname app_label poe
 hello from PoeRouter allow_migration
-True model_name itemname app_label poe
+True model_name itemstat app_label poe
 hello from PoeRouter allow_migration
-False model_name itemname app_label poe
+True model_name itemstat app_label poe
 hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemname app_label poe
-hello from PoeRouter allow_migration
-True model_name itemname app_label poe
-hello from PoeRouter allow_migration
-False model_name itemstat app_label poe
+True model_name itemstat app_label poe
 hello from PoeRouter allow_migration
 True model_name itemstat app_label poe
 hello from PoeRouter allow_migration
 False model_name itemstat app_label poe
 hello from PoeRouter allow_migration
-True model_name itemstat app_label poe
+True model_name poeaccount app_label poe
 hello from PoeRouter allow_migration
-False model_name itemstat app_label poe
+True model_name poeaccount app_label poe
 hello from PoeRouter allow_migration
-True model_name itemstat app_label poe
-hello from PoeRouter allow_migration
-False model_name itemstat app_label poe
-hello from PoeRouter allow_migration
-True model_name itemstat app_label poe
-hello from PoeRouter allow_migration
-False model_name poeaccount app_label poe
+True model_name poeaccount app_label poe
 hello from PoeRouter allow_migration
 True model_name poeaccount app_label poe
 hello from PoeRouter allow_migration
 False model_name poeaccount app_label poe
 hello from PoeRouter allow_migration
-True model_name poeaccount app_label poe
+True model_name poeitem app_label poe
 hello from PoeRouter allow_migration
-False model_name poeaccount app_label poe
+True model_name poeitem app_label poe
 hello from PoeRouter allow_migration
-True model_name poeaccount app_label poe
-hello from PoeRouter allow_migration
-False model_name poeaccount app_label poe
-hello from PoeRouter allow_migration
-True model_name poeaccount app_label poe
-hello from PoeRouter allow_migration
-False model_name poeitem app_label poe
+True model_name poeitem app_label poe
 hello from PoeRouter allow_migration
 True model_name poeitem app_label poe
 hello from PoeRouter allow_migration
 False model_name poeitem app_label poe
 hello from PoeRouter allow_migration
-True model_name poeitem app_label poe
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
-False model_name poeitem app_label poe
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
-True model_name poeitem app_label poe
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
-False model_name poeitem app_label poe
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
-True model_name poeitem app_label poe
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
+hello from PoeRouter allow_migration
+True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
 True model_name poecharacter app_label poe
 hello from PoeRouter allow_migration
 False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-False model_name poecharacter app_label poe
-hello from PoeRouter allow_migration
-True model_name poecharacter app_label poe
 [hello from PoeRouter allow_migration
 True model_name category app_label poe
 hello from PoeRouter allow_migration
