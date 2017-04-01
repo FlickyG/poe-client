@@ -42,7 +42,6 @@ class Page(models.Model):
         return self.title
 
 class PoeUser(User):
-    poe_sessid = models.CharField(max_length = 32, primary_key = True)
     poe_account_name = models.CharField(max_length = 32)
         
     def __unicode__(self):
@@ -54,7 +53,7 @@ class PoeUser(User):
 
     def save(self, *args, **kwargs):
         super(PoeUser, self).save(*args, **kwargs)
-        x = PoeAccount(acc_name = self.poe_account_name, sessid = self.poe_sessid)
+        x = PoeAccount(acc_name = self.poe_account_name)
         x.save()
 
 class ItemCategory(models.Model):

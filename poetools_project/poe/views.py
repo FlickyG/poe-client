@@ -50,8 +50,9 @@ def index(request):
         if form.is_valid():
             print("form user", request.user)
             print("form is valid", form['new_sessid'].value())
-            me = poe.models.PoeAccount.objects.get(acc_name = request.user)
-            print("old sessid ", me.sessid)
+            print("type", request.user.poeuser.poe_account_name)
+            me = poe.models.PoeUser.get(poe_account_name = request.user)
+            #print("old sessid ", me.sessid)
             """
             if cat:
                 page = form.save(commit=False)
