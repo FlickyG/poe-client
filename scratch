@@ -306,7 +306,7 @@ works in print("poe_db" == db, "model_name", model_name, "app_label", app_label)
 
 
 
-==
+== change sessid form from index page
 <tr>
 	<th>
 		<label for="id_new_sessid">New sessid:</label>
@@ -316,4 +316,17 @@ works in print("poe_db" == db, "model_name", model_name, "app_label", app_label)
 			<br /><span class="helptext">Please update your session ID here</span><
 	/td>
 </tr>
+
+====
+
+import poe.models
+import poe.common.character_tools
+
+account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
+char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
+data =  poe.common.character_tools.get_items(account, char)
+
+ggg_items = data['items']
+
+
 

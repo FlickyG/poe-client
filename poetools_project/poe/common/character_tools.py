@@ -61,6 +61,10 @@ def delete_all_characters():
     for char in all_chars:
         stdlogger.debug(' '.join(("Deleting this character", char.name)))
         char.delete()
+        
+def register_flicky():
+    account = poe.models.PoeAccount.get(acc_name = "flickyg")
+    
 
 def get_items(poe_account, character):
     print("hello")
