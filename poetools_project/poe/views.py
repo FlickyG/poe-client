@@ -318,3 +318,5 @@ def ggg_characters(request, account_name_slug):
     poe.common.character_tools.get_characters(this_account)
     
     return render(request, 'poe/ggg_characters.html', context_dict)
+
+#poe.models.PoeAccount(acc_name = "greenmasterflick", sessid = "898fb2c004a5d6ecb0bfa5b1be72b1f4")

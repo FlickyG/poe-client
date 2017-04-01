@@ -305,11 +305,15 @@ class PoeAccount(models.Model):
         
     def __str__(self):
         return str(self.acc_name)
-    
+
+class PoeItem(models.Model):
+    name = models.CharField(max_length = 32, blank = False, )
+    ggg_id = models.CharField(max_length = 65, blank = True, )
+
 class PoeCharacter(models.Model):
     account = models.ForeignKey(PoeAccount) 
     name = models.CharField(max_length = 64, null=True)
-    x = {
+    eg = {
          'level': 70,
          'class': 'Duelist',
          'ascendancyClass': 0,
@@ -322,5 +326,67 @@ class PoeCharacter(models.Model):
     ascendancy_class = models.IntegerField()
     classId = models.CharField(max_length = 64)
     league = models.CharField(max_length = 64)
+    # Equipped Weapons
+    Weapon = models.OneToOneField(PoeItem,
+                                  null = True,
+                                  related_name = '%(class)s_weapon'
+                                  )
+   
+    Offhand = models.OneToOneField(PoeItem,
+                                   related_name = '%(class)s_offhand',
+                                   null = True,
+                                   )
     
+
+
+    Weapon2 = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_weapon2",
+                                   )
+    Offhand2 = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_offhand2",
+                                   )
+    # Equipped Armour
+    Helm = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_helm",
+                                   )
+    BodyArmour = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_bodyarmour",
+                                   )
+    Gloves = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_gloves",
+                                   )
+    Belt = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_belt",
+                                   )
+    Boots = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_boots",
+                                   )
+    # Equipped Jewelry
+    Amulet = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_amulet",
+                                   )
+    Ring = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_ring",
+                                   )
+    Ring2 = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_ring2",
+                                   )
+    MainInventory = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_maininventory",
+                                   )
+    Flask = models.OneToOneField(PoeItem,
+                                   null = True,
+                                   related_name = "%(class)s_flask",
+                                   )
     
