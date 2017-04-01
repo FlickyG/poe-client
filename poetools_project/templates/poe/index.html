@@ -46,8 +46,10 @@
 {% else %}
 	<h1>Flicky says... hello {{user.username}}</h1>
 		 <div class="container">
+			Current Session ID: {{ old_sessid }}
   			<form action="" method="POST" >
   			{% csrf_token %}
+
     			{{ form }}
 				<input type="submit" value="Save" />
   			</form>

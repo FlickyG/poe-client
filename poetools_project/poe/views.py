@@ -43,26 +43,17 @@ def index(request):
     request.session.set_test_cookie()
     item_category_list = ItemCategory.objects.all()
     modifications_list = FixCategory.objects.all()
-    print("top request.method", request.method)
     if request.method == 'POST':
-        print("request.method", request.method)
         form = ResetSessID(request.POST)
         if form.is_valid():
-            print("form user", request.user)
-            print("form is valid", form['new_sessid'].value())
-            print("type", request.user.poeuser.poe_account_name)
-            me = poe.models.PoeUser.get(poe_account_name = request.user)
-            #print("old sessid ", me.sessid)
-            """
-            if cat:
-                page = form.save(commit=False)
-                page.category = cat
-                page.views = 0
-                page.save()
-                # probably better to use a redirect here.
-                return category(request, category_name_slug)
-            """
-            context_dict =  {'form': ResetSessID}
+            # get the right account
+            me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+            
+            # commit new sessid passed to here
+            me.sessid = form['new_sessid'].value()
+            me.save(update_fields=['sessid'])
+            context_dict = {"old_sessid": me.sessid}
+            context_dict['form'] = ResetSessID
             response = render(request,'poe/index.html', context_dict)
             return response
         else:
@@ -78,6 +69,8 @@ def index(request):
 
     else:
         context_dict = {'form': ResetSessID}
+        me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+        context_dict["old_sessid"] = me.sessid
         """
             print("in the else clause", request.method)
             if form.is_valid():
