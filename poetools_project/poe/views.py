@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from poe.models import FixCategory, Fix
 
@@ -10,7 +10,7 @@ from poe.models import FixType
 from poe.models import ItemType
 from poe.models import ItemName
 
-from poe.models import PoeAccount 
+from poe.models import PoeAccount, PoeCharacter
 
 from poe.forms import CategoryForm #section 8
 
@@ -43,76 +43,79 @@ def index(request):
     request.session.set_test_cookie()
     item_category_list = ItemCategory.objects.all()
     modifications_list = FixCategory.objects.all()
-    if request.method == 'POST':
-        form = ResetSessID(request.POST)
-        if form.is_valid():
-            # get the right account
-            me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
-            
-            # commit new sessid passed to here
-            me.sessid = form['new_sessid'].value()
-            me.save(update_fields=['sessid'])
-            context_dict = {"old_sessid": me.sessid}
-            context_dict['form'] = ResetSessID
-            response = render(request,'poe/index.html', context_dict)
-            return response
-        else:
-            print("form has errors", form.fields)
-            #form = PageForm(request.POST)
-            
-            for x in form.errors:
-                  for y in x:
-                      print(x, y)
-            response = render(request,'poe/index.html', context_dict)
-
-            return response
-
-    else:
-        context_dict = {'form': ResetSessID}
-        me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
-        context_dict["old_sessid"] = me.sessid
-        """
-            print("in the else clause", request.method)
+    context_dict = {}
+    if request.user.is_authenticated:
+        print("user", type(request.user))
+        if request.method == 'POST':
+            form = ResetSessID(request.POST)
             if form.is_valid():
-                print("form is valid")
-                   # probably better to use a redirect here.
-                return category(request, category_name_slug)
+                # get the right account
+                me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+                
+                # commit new sessid passed to here
+                me.sessid = form['new_sessid'].value()
+                me.save(update_fields=['sessid'])
+                context_dict["old_sessid"] = me.sessid
+                context_dict['form'] = ResetSessID
+                response = render(request,'poe/index.html', context_dict)
+                return response
             else:
-                print("form has errors")
-                print(form.errors)
-            """
-            
+                print("form has errors", form.fields)
+                #form = PageForm(request.POST)
+                
+                for x in form.errors:
+                      for y in x:
+                          print(x, y)
+                response = render(request,'poe/index.html', context_dict)
     
+                return response
     
-        context_dict.update({'item_categories': item_category_list, 'mods': modifications_list})
-    
-        visits = request.session.get('visits')
-        if not visits:
-            visits = 1
-        reset_last_visit_time = False
-    
-        last_visit = request.session.get('last_visit')
-        if last_visit:
-            last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-    
-            if (datetime.datetime.now() - last_visit_time).seconds > 0:
-                # ...reassign the value of the cookie to +1 of what it was before...
-                visits = visits + 1
-                # ...and update the last visit cookie, too.
-                reset_last_visit_time = True
         else:
-            # Cookie last_visit doesn't exist, so create it to the current date/time.
-            reset_last_visit_time = True
+            context_dict = {'form': ResetSessID}
+            me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+            context_dict["old_sessid"] = me.sessid
+            """
+                print("in the else clause", request.method)
+                if form.is_valid():
+                    print("form is valid")
+                       # probably better to use a redirect here.
+                    return category(request, category_name_slug)
+                else:
+                    print("form has errors")
+                    print(form.errors)
+                """
+                
     
-        if reset_last_visit_time:
-            request.session['last_visit'] = str(datetime.datetime.now())
-            request.session['visits'] = visits
-        context_dict['visits'] = visits
     
-        #print("context_dict", context_dict)
-        response = render(request,'poe/index.html', context_dict)
+    context_dict.update({'item_categories': item_category_list, 'mods': modifications_list})
 
-        return response
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+    #print("context_dict", context_dict)
+    response = render(request,'poe/index.html', context_dict)
+
+    return response
 
 
 
@@ -359,8 +362,15 @@ def ggg_characters(request, account_name_slug):
     context_dict["account_name"] = account_name_slug
     print("hello world from gg_characters", account_name_slug)    
     this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)  
-    poe.common.character_tools.get_characters(this_account)
+    context_dict['characters'] = poe.models.PoeCharacter.objects.filter(account = this_account)
     
     return render(request, 'poe/ggg_characters.html', context_dict)
 
 #poe.models.PoeAccount(acc_name = "greenmasterflick", sessid = "898fb2c004a5d6ecb0bfa5b1be72b1f4")
+
+
+def get_data(request, account_name_slug):
+    print("hello get data", account_name_slug)
+    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
+    poe.common.character_tools.get_characters(this_account)
+    return redirect(index)
