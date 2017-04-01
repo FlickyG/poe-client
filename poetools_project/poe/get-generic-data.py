@@ -17,7 +17,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
-proj_path = "/Users/adam.green/Documents/workspace/poe-client/poetools_project/"
+proj_path = "/home/adam/workspace1/poe-client/poetools_project/"
 # This is so Django knows where to find stuff.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
 sys.path.append(proj_path)
@@ -75,7 +75,7 @@ def write_item_categories():
             y = ItemCategory(name = x)
             y.save()
         except:
-            logger.debug("error when commiting catagory types type (%s)", x)
+            logger.debug("psql integrity error when commiting catagory types type (%s)", x)
 
 
 def write_fix_categories():
@@ -92,7 +92,7 @@ def write_fix_categories():
             y = FixCategory(name = x)
             y.save()
         except psycopg2.IntegrityError:
-            logger.debug("error when commiting fix types type (%s)", x)
+            logger.debug("psql integrity error when commiting fix types type (%s)", x)
   
             
 def write_item_type(the_type, list):
@@ -143,7 +143,7 @@ def write_suffix_types(list):
             type = FixCategory.objects.get(name = 'Suffix')
             type.fixtype_set.create(name = x)
         except:
-            print("error when commiting suffix types type (%s)", x)
+            print("psql integrity error when commiting suffix types type (%s)", x)
             logger.debug("write_suffix_types - Unexpected error:", sys.exc_info()[0], x)
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
@@ -686,7 +686,11 @@ def write_weapon_stats(list):
                     # w_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
                     # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
-                    w_id.stats.add(stat)
+                    aa = ItemStat(
+                                  i = w_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
                 except Exception as e:
                     print("error when commiting weapon stats (%s)", e)
@@ -848,7 +852,12 @@ def write_clothes_stats(list):
                 try:
                     # c_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
-                    c_id.stats.add(stat)
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = c_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
                 except Exception as e:
                     print("error when commiting clothes stats (%s)", e)
@@ -997,7 +1006,11 @@ def write_jewelry_stats(list):
                     # j_id = ItemName.objects.get(name = "Profane Wand")
                     # stat_id = StatNames.objects.get(name = "Spell Damage +%")
                     # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
-                    j_id.stats.add(stat)
+                    aa = ItemStat(
+                                  i = j_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
                 except Exception as e:
                     print("error when commiting jewelry stats (%s)", e)
@@ -1016,6 +1029,29 @@ fetch_weapons()
 fetch_clothes()
 fetch_jewelry()
 
+"""
+my_fixname = FixName.objects.get(id = 11)
+my_stat = Stats.objects.get(id = 1)
+my_fix  = Fix(name = my_fixname, stat = my_stat, i_level = 1, m_crafted = True)
+
+my_fixcategory = FixCategory(name = "adam")
+my_fixcategory.save()
+
+my_fixType = FixType(category = my_fixcategory, name = "green")
+my_fixType.save()
+
+my_statnames = StatNames(name = "andy")
+my_statnames.save()
+
+the_stat = Stats(min_value = 1, max_value = 111, name = my_statnames)
+the_stat.save()
+
+the_name = FixName(type = my_fixType, name = "watson")
+the_name.save()
+
+the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
+the_fix.save()
+"""
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
 

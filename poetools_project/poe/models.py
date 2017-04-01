@@ -11,7 +11,7 @@ from django.dispatch import receiver #for custom user profile
 from autoslug import AutoSlugField
 
 import logging
-print("____________ NAME _____________",__name__)
+
 stdlogger = logging.getLogger(__name__)
 stdlogger.warn("Entering poe.models")
 
@@ -218,7 +218,6 @@ class Fix(models.Model):
 
 class ItemName(models.Model):
     stdlogger.debug("ItemName")
-    print("ItemNAme Logging __name__", __name__)
     name = models.CharField(unique=True, max_length=50)
     i_level = models.SmallIntegerField()
     min_dmg = models.SmallIntegerField(blank=True, null=True)
