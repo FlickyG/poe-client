@@ -28,48 +28,96 @@ import datetime
 import sys
 
 
-from poe.forms import PageForm
+from poe.forms import PageForm, ResetSessID
 import poe.tables
 from django_tables2.config import RequestConfig
 
 import logging
 stdlogger = logging.getLogger("poe_generic")
 
-def index(request):
 
+
+
+def index(request):
+    #print("hello", request.new_sessid)
     request.session.set_test_cookie()
     item_category_list = ItemCategory.objects.all()
     modifications_list = FixCategory.objects.all()
+    print("top request.method", request.method)
+    if request.method == 'POST':
+        print("request.method", request.method)
+        form = ResetSessID(request.POST)
+        if form.is_valid():
+            print("form is valid", form['new_sessid'].value())
+            """
+            if cat:
+                page = form.save(commit=False)
+                page.category = cat
+                page.views = 0
+                page.save()
+                # probably better to use a redirect here.
+                return category(request, category_name_slug)
+            """
+            context_dict =  {'form': ResetSessID}
+            response = render(request,'poe/index.html', context_dict)
+            return response
+        else:
+            print("form has errors", form.fields)
+            #form = PageForm(request.POST)
+            
+            for x in form.errors:
+                  for y in x:
+                      print(x, y)
+            response = render(request,'poe/index.html', context_dict)
 
-    context_dict = {'item_categories': item_category_list, 'mods': modifications_list}
+            return response
 
-    visits = request.session.get('visits')
-    if not visits:
-        visits = 1
-    reset_last_visit_time = False
-
-    last_visit = request.session.get('last_visit')
-    if last_visit:
-        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-
-        if (datetime.datetime.now() - last_visit_time).seconds > 0:
-            # ...reassign the value of the cookie to +1 of what it was before...
-            visits = visits + 1
-            # ...and update the last visit cookie, too.
-            reset_last_visit_time = True
     else:
-        # Cookie last_visit doesn't exist, so create it to the current date/time.
-        reset_last_visit_time = True
+        context_dict = {'form': ResetSessID}
+        """
+            print("in the else clause", request.method)
+            if form.is_valid():
+                print("form is valid")
+                   # probably better to use a redirect here.
+                return category(request, category_name_slug)
+            else:
+                print("form has errors")
+                print(form.errors)
+            """
+            
+    
+    
+        context_dict.update({'item_categories': item_category_list, 'mods': modifications_list})
+    
+        visits = request.session.get('visits')
+        if not visits:
+            visits = 1
+        reset_last_visit_time = False
+    
+        last_visit = request.session.get('last_visit')
+        if last_visit:
+            last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+    
+            if (datetime.datetime.now() - last_visit_time).seconds > 0:
+                # ...reassign the value of the cookie to +1 of what it was before...
+                visits = visits + 1
+                # ...and update the last visit cookie, too.
+                reset_last_visit_time = True
+        else:
+            # Cookie last_visit doesn't exist, so create it to the current date/time.
+            reset_last_visit_time = True
+    
+        if reset_last_visit_time:
+            request.session['last_visit'] = str(datetime.datetime.now())
+            request.session['visits'] = visits
+        context_dict['visits'] = visits
+    
+        #print("context_dict", context_dict)
+        response = render(request,'poe/index.html', context_dict)
 
-    if reset_last_visit_time:
-        request.session['last_visit'] = str(datetime.datetime.now())
-        request.session['visits'] = visits
-    context_dict['visits'] = visits
+        return response
 
 
-    response = render(request,'poe/index.html', context_dict)
-
-    return response
 
 def index_rango(request):
 
@@ -134,7 +182,6 @@ def item(request, category_name_slug, sub_category_slug = None):
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
-
     try:
         # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.

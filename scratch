@@ -299,3 +299,21 @@ $$;
             print("print account!", key, value)
             ACCOUNTS.append(account(value))
 
+
+== dump data not working
+
+works in print("poe_db" == db, "model_name", model_name, "app_label", app_label)
+
+
+
+==
+<tr>
+	<th>
+		<label for="id_new_sessid">New sessid:</label>
+	</th>
+	<td>
+		<input id="id_new_sessid" maxlength="128" name="new_sessid" type="text" value="asdasd" />
+			<br /><span class="helptext">Please update your session ID here</span><
+	/td>
+</tr>
+

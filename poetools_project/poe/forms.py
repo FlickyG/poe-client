@@ -1,5 +1,5 @@
 from django import forms
-from poe.models import Page, Category, PoeUser
+from poe.models import Page, Category, PoeUser, PoeAccount
 from django.contrib.auth.models import User #section 9
 from registration.forms import RegistrationForm # to enable custom fields
 
@@ -58,4 +58,24 @@ class PoeRegistrationForm(RegistrationForm):
         if 'reg_button' in self.data:
             print("amazing")
           
-      
+    
+class ResetSessID(forms.ModelForm):
+    new_sessid = forms.CharField(max_length=128, help_text="Please update your session ID here", required = False)
+    
+    def __init__(self, *args, **kwargs):
+        super(ResetSessID, self).__init__(*args, **kwargs)
+        print("init of ResetSessID")
+        #print("dir")#, self.fields.items['new_sessid'])
+        if kwargs.get('instance'):
+            new_sessid = kwargs['instance'].new_essid
+            print("inner kwargs loop")
+            #kwargs.setdefault('initial', {})['confirm_email'] = email
+        return super(ResetSessID, self).__init__(*args, **kwargs)
+    
+    class Meta:
+        model = PoeAccount
+        exclude = ("acc_name", "sessid")
+    
+    def clean(self):
+        if 'reg_button' in self.data:
+            print("amazing")
