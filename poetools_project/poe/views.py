@@ -48,7 +48,10 @@ def index(request):
         print("request.method", request.method)
         form = ResetSessID(request.POST)
         if form.is_valid():
+            print("form user", request.user)
             print("form is valid", form['new_sessid'].value())
+            me = poe.models.PoeAccount.objects.get(acc_name = request.user)
+            print("old sessid ", me.sessid)
             """
             if cat:
                 page = form.save(commit=False)
