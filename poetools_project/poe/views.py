@@ -359,11 +359,15 @@ def restricted(request):
 def ggg_characters(request, account_name_slug):
     stdlogger.debug("entering ggg_characters")
     context_dict = {}
+    # get the account
     context_dict["account_name"] = account_name_slug
-    print("hello world from gg_characters", account_name_slug)    
     this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)  
+    # get the characters
     context_dict['characters'] = poe.models.PoeCharacter.objects.filter(account = this_account)
-    
+    # make a table
+    table = poe.tables.CharTable(context_dict['characters'])   
+    RequestConfig(request).configure(table)
+    context_dict['table'] = table
     return render(request, 'poe/ggg_characters.html', context_dict)
 
 #poe.models.PoeAccount(acc_name = "greenmasterflick", sessid = "898fb2c004a5d6ecb0bfa5b1be72b1f4")

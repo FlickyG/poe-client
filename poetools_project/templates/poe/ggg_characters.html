@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 {% extends 'base.html' %}
 
 {% load staticfiles %}
@@ -7,14 +9,12 @@
 <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
 
 {% if user.poeuser.poe_account_name == account_name %}
-        <li> <strong >There are no category present.</strong></li>
+		{% load django_tables2 %}
+        {% render_table table %}
         <li> <strong >{{ user.username }}</strong></li>
     	<li> <strong >{{ user.poeuser.poe_sessid }}</strong></li>
     	<li> <strong >{{ user.poeuser.poe_account_name }}</strong></li>
-    	<for char in >
-    	{% for char in characters %}
-    		{{ char.name }}
-    	{% endfor %}
+ 	
 {% else %}
     user name {{user.poeuser.poe_account_name}}
     account name {{account_name}}

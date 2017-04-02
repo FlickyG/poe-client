@@ -73,4 +73,15 @@ class JewelTable(tables.Table):
                     'len_stats',
                     'stat_names',                    
                 )
+        
+        
+class CharTable(tables.Table):
+    class Meta:
+        model = poe.models.PoeCharacter
+        fields = (
+                  'name',
+                  'ggg_class',
+                  'league',
+                  'level',
+                  )
         attrs = {'width':'100%'}
