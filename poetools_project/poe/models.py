@@ -335,8 +335,6 @@ class PoeCharacter(models.Model):
                                    null = True,
                                    )
     
-
-
     Weapon2 = models.OneToOneField(PoeItem,
                                    null = True,
                                    related_name = "%(class)s_weapon2",
