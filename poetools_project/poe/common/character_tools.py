@@ -1,4 +1,7 @@
 #!/bin/python3
+from django.core.urlresolvers import reverse 
+
+
 import poe.models
 
 import logging
