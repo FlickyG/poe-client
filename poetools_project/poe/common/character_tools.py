@@ -73,7 +73,7 @@ def delete_all_characters():
         
 def register_flicky():
     """
-    Useful too to re-instate my own account after wiping the psql database
+    Useful tool to reinstate my own account after wiping the psql database
     """
     account = poe.models.PoeAccount.get(acc_name = "flickyg")
     
@@ -83,7 +83,7 @@ def get_char_items(poe_account, character):
     Downloads the items held in the characters slots and stash, retruns the
     equipped items 
     Accepts: the relevant account and character
-    Returns: the equipment held by this charcter
+    Returns: the equipment held by this character
     """
     print("getting character items")
     equiped_items_URL = ("http://www.pathofexile.com/character-window/get-items?"
@@ -93,7 +93,13 @@ def get_char_items(poe_account, character):
     equipment = resp.json()
     return equipment
 
-def get_tab_items(poe_account, tabIndex, character):
+def get_tab_items(poe_account, tabIndex):
+    """
+    Fetches from the website the contents of an account's stash tab
+    Accepts: the account details
+             the tab index of interest
+    Returns: the json for the API request
+    """
     print("getting items")
     league = "Legacy"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
@@ -105,6 +111,13 @@ def get_tab_items(poe_account, tabIndex, character):
     return stash_items
     
 def get_tab_details(poe_account, character):
+    """
+    Fetches from GGG the details of the users stash tabs (but not their contents)
+    This data includes the tab names, unique ID, player index, colour, etc.
+    Accepts: The account and character - do we need the character, can't we pick
+            one and remove this constraint when calling the function?
+    Returns: a list of dictionaries, one list item per tab
+    """
     print("getting items")
     league = "Legacy"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
