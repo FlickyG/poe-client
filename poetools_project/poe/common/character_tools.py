@@ -35,7 +35,8 @@ def get_characters(poe_account):
     saved_chars = poe.models.PoeCharacter.objects.all()
     saved_charnames = set([char.name for char in saved_chars])
     #get character names on the server right now
-    2
+    ggg_url = "https://www.pathofexile.com/character-window/get-characters"
+    resp = s.get(ggg_url, cookies = {'POESESSID': poe_account.sessid})
     data = resp.json()
     live_charnames = set([line['name'] for line in data])
     # delete stale characters
@@ -75,6 +76,7 @@ def register_flicky():
     """
     Useful tool to reinstate my own account after wiping the psql database
     """
+    print("== Registering Flicky ==")
     account = poe.models.PoeAccount.get(acc_name = "flickyg")
     
 
@@ -107,8 +109,17 @@ def get_tab_items(poe_account, tabIndex):
                     "accountName={acc}".format(lg = league, ind = tabIndex,
                                                acc = poe_account.acc_name))
     resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
-    stash_items = resp.json()
-    return stash_items
+    tab_data = resp.json()
+    tab_items = tab_data['items']
+    for each_item in tab_items:
+        print("name = ", each_item['typeLine'] , "ggg_id = ", each_item['id'])
+        entry = poe.models.PoeItem(name = each_item['typeLine'] , ggg_id = each_item['id'])
+        add a free text field and save the dictionary for each item, for the time being.  It will help debug later
+        items also need owners
+        add logic to save all items in all tabs
+        add logic to create new items type, and types generally
+        entry.save()
+    return tab_items
     
 def get_tab_details(poe_account, character):
     """
@@ -130,6 +141,11 @@ def get_tab_details(poe_account, character):
     # dict_keys(['selected', 'srcL', 'n', 'id', 'hidden', 'srcC', 'srcR', 'colour', 'type', 'i'])
     return stash_items['tabs']
 
+def delete_all_items():
+    all_items = poe.models.PoeItem.objects.all()
+    for each_item in all_items:
+        item.delete()
+
 """
 import poe.models
 import poe.common.character_tools
@@ -139,7 +155,11 @@ poe.common.character_tools.get_characters(account)
 char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
 data =  poe.common.character_tools.get_char_items(account, char)
 
-ggg_items = data['items']
+equiped_items = data['items']
+stash_tab_items = poe.common.character_tools.get_tab_items(account, 1)
+#>>> the_tab_items[1].keys()
+#dict_keys(['ilvl', 'icon', 'lockedToCharacter', 'properties', 'h', 'id', 'name', 'w', 'sockets', 'identified', 'verified', 'descrText', 'inventoryId', 'corrupted', 'frameType', 'x', 'league', 'socketedItems', 'y', 'typeLine'])
+
 
 the_tabs = poe.common.character_tools.get_tab_details(account, char)
 #the_tabs[0].keys()

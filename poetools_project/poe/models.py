@@ -20,20 +20,20 @@ class Category(models.Model):
     """
     An artifact from the tango with django tutorial
     """
-        name = models.CharField(max_length=128, unique=True)
-        views = models.IntegerField(default=0)
-        likes = models.IntegerField(default=0)
-        slug = models.SlugField()
+    name = models.CharField(max_length=128, unique=True)
+    views = models.IntegerField(default=0)
+    likes = models.IntegerField(default=0)
+    slug = models.SlugField()
 
-        def save(self, *args, **kwargs):
-            # Uncomment if you don't want the slug to change every time the name changes
-            #if self.id is None:
-                    #self.slug = slugify(self.name)
-            self.slug = slugify(self.name)
-            super(Category, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+                #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
 
-        def __unicode__(self):
-                return str(self.name)
+    def __unicode__(self):
+            return str(self.name)
 
 class Page(models.Model):
     """
@@ -210,9 +210,9 @@ class FixType(models.Model):
         super(FixType, self).save(*args, **kwargs)
 
 class FixName(models.Model):
-      """
+    """
     For explicit item mods, represents the in game name e.g. Infernal, Vicious
-    """  
+    """
     name = models.CharField(max_length=50)
     type = models.ForeignKey(FixType)
     slug = models.SlugField()
@@ -362,9 +362,53 @@ class PoeAccount(models.Model):
 class PoeItem(models.Model):
     """
     Links an in game loot item to it's owner
+    >>> pprint.pprint(the_tab_items[2])
+    {'corrupted': False,
+     'frameType': 0,
+     'h': 3,
+     'icon': 'https://web.poecdn.com/image/Art/2DItems/Weapons/OneHandWeapons/OneHandSwords/OneHandSword2.png?scale=1&w=1&h=3&v=a94ce74a6007ca561bb3a4bfa3abe15b3',
+     'id': '1f2c3ec221bb62af70981c8adb6b29d7984aac5ca1faa5b33cd0393a7961c6cc',
+     'identified': True,
+     'ilvl': 57,
+     'implicitMods': ['+400 to Accuracy Rating'],
+     'inventoryId': 'Stash3',
+     'league': 'Legacy',
+     'lockedToCharacter': False,
+     'name': '',
+     'properties': [{'displayMode': 0, 'name': 'One Handed Sword', 'values': []},
+                    {'displayMode': 0,
+                     'name': 'Quality',
+                     'type': 6,
+                     'values': [['+14%', 1]]},
+                    {'displayMode': 0,
+                     'name': 'Physical Damage',
+                     'type': 9,
+                     'values': [['44-95', 1]]},
+                    {'displayMode': 0,
+                     'name': 'Critical Strike Chance',
+                     'type': 12,
+                     'values': [['5.00%', 0]]},
+                    {'displayMode': 0,
+                     'name': 'Attacks per Second',
+                     'type': 13,
+                     'values': [['1.30', 0]]},
+                    {'displayMode': 0,
+                     'name': 'Weapon Range',
+                     'type': 14,
+                     'values': [['9', 0]]}],
+     'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['56', 0]]},
+                      {'displayMode': 1, 'name': 'Str', 'values': [['96', 0]]},
+                      {'displayMode': 1, 'name': 'Dex', 'values': [['96', 0]]}],
+     'socketedItems': [],
+     'sockets': [{'attr': 'S', 'group': 0}],
+     'typeLine': 'Superior Gemstone Sword',
+     'verified': False,
+     'w': 1,
+     'x': 10,
+     'y': 1} 
     """
-    name = models.CharField(max_length = 32, blank = False, )
-    ggg_id = models.CharField(max_length = 65, blank = True, )
+    name = models.CharField(max_length = 264, blank = False, )
+    ggg_id = models.CharField(max_length = 100, blank = True, )
 
 class PoeCharacter(models.Model):
     """
@@ -484,6 +528,5 @@ class PoeTab(models.Model):
         super(PoeTab, self).save(*args, **kwargs)
 
 
-    
     
     
