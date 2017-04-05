@@ -26,13 +26,16 @@ s.hooks = {'response': make_throttle_hook(0.1)}
 
 
 def get_characters(poe_account):
+    """
+    Downloads all Character infor from the API end point and saves this data 
+    to the database  
+    """
     stdlogger.debug("entering get_characters")
     # grab current character names from daabase
     saved_chars = poe.models.PoeCharacter.objects.all()
     saved_charnames = set([char.name for char in saved_chars])
     #get character names on the server right now
-    ggg_url = "https://www.pathofexile.com/character-window/get-characters"
-    resp = s.get(ggg_url, cookies = {'POESESSID': poe_account.sessid})
+    2
     data = resp.json()
     live_charnames = set([line['name'] for line in data])
     # delete stale characters
@@ -60,21 +63,118 @@ def get_characters(poe_account):
             new_char.save()
 
 def delete_all_characters():
+    """
+    Crudely deletes all characters from the table
+    """
     all_chars = poe.models.PoeCharacter.objects.all()
     for char in all_chars:
         stdlogger.debug(' '.join(("Deleting this character", char.name)))
         char.delete()
         
 def register_flicky():
+    """
+    Useful too to re-instate my own account after wiping the psql database
+    """
     account = poe.models.PoeAccount.get(acc_name = "flickyg")
     
 
-def get_items(poe_account, character):
-    print("hello")
+def get_char_items(poe_account, character):
+    """
+    Downloads the items held in the characters slots and stash, retruns the
+    equipped items 
+    Accepts: the relevant account and character
+    Returns: the equipment held by this charcter
+    """
+    print("getting character items")
     equiped_items_URL = ("http://www.pathofexile.com/character-window/get-items?"
                      "character={char}&accountName={acc}"
                      .format(char = character.name, acc = poe_account.acc_name))
     resp = s.get(equiped_items_URL, cookies = {'POESESSID': poe_account.sessid})
     equipment = resp.json()
     return equipment
+
+def get_tab_items(poe_account, tabIndex, character):
+    print("getting items")
+    league = "Legacy"
+    marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
+                    "league={lg}&tabs=1&tabIndex={ind}&"
+                    "accountName={acc}".format(lg = league, ind = tabIndex,
+                                               acc = poe_account.acc_name))
+    resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
+    stash_items = resp.json()
+    return stash_items
+    
+def get_tab_details(poe_account, character):
+    print("getting items")
+    league = "Legacy"
+    marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
+                    "league={lg}&tabs=1&tabIndex={ind}&"
+                    "accountName={acc}".format(lg = league, ind = 0,
+                                               acc = poe_account.acc_name))
+    resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
+    stash_items = resp.json()
+    # y['tabs'][0].keys()
+    # dict_keys(['selected', 'srcL', 'n', 'id', 'hidden', 'srcC', 'srcR', 'colour', 'type', 'i'])
+    return stash_items['tabs']
+
+"""
+import poe.models
+import poe.common.character_tools
+
+account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
+poe.common.character_tools.get_characters(account)
+char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
+data =  poe.common.character_tools.get_char_items(account, char)
+
+ggg_items = data['items']
+
+the_tabs = poe.common.character_tools.get_tab_details(account, char)
+#the_tabs[0].keys()
+#dict_keys(['colour', 'selected', 'srcL', 'id', 'n', 'srcR', 'hidden', 'srcC', 'i', 'type'])
+
+y = poe.common.character_tools.get_tab_items(account, 0, char)
+
+y = poe.common.character_tools.get_tab_items(account, 5, char)
+
+"""
+""" getting items
+
+pprint.pprint(y['items'][7])
+
+{'corrupted': False,
+ 'explicitMods': ['+1 to Level of Socketed Lightning Gems',
+                  '30% increased Critical Strike Chance for Spells',
+                  '+28% to Fire Resistance',
+                  '+6% Chance to Block'],
+ 'frameType': 2,
+ 'h': 2,
+ 'icon': 'https://web.poecdn.com/image/Art/2DItems/Armours/Shields/ShieldInt6.png?scale=1&w=2&h=2&v=c2c4daefcbef51dad8593cf61505a1933',
+ 'id': '9dcc6d7a4785aeeb45ad50eee4d37bcad4c1143ac83da59f2d4954f663bdb428',
+ 'identified': True,
+ 'ilvl': 72,
+ 'inventoryId': 'Stash6',
+ 'league': 'Legacy',
+ 'lockedToCharacter': False,
+ 'name': '<<set:MS>><<set:M>><<set:S>>Dread Wish',
+ 'properties': [{'displayMode': 0,
+                 'name': 'Chance to Block',
+                 'type': 15,
+                 'values': [['31%', 1]]},
+                {'displayMode': 0,
+                 'name': 'Energy Shield',
+                 'type': 18,
+                 'values': [['84', 0]]}],
+ 'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['68', 0]]},
+                  {'displayMode': 1, 'name': 'Int', 'values': [['159', 0]]}],
+ 'socketedItems': [],
+ 'sockets': [{'attr': 'I', 'group': 0},
+             {'attr': 'I', 'group': 0},
+             {'attr': 'I', 'group': 1}],
+ 'typeLine': 'Titanium Spirit Shield',
+ 'verified': False,
+ 'w': 2,
+ 'x': 8,
+ 'y': 4}
+"""
+
 

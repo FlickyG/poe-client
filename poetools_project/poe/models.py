@@ -17,6 +17,9 @@ stdlogger.warn("Entering poe.models")
 
 # Create your models here.
 class Category(models.Model):
+    """
+    An artifact from the tango with django tutorial
+    """
         name = models.CharField(max_length=128, unique=True)
         views = models.IntegerField(default=0)
         likes = models.IntegerField(default=0)
@@ -33,6 +36,9 @@ class Category(models.Model):
                 return str(self.name)
 
 class Page(models.Model):
+    """
+    An artifact from the tango with django tutorial
+    """
     category = models.ForeignKey(Category)
     title = models.CharField(max_length=128)
     url = models.URLField()
@@ -42,6 +48,15 @@ class Page(models.Model):
         return self.title
 
 class PoeUser(User):
+    """
+    Is the external version of an account with GGG.  It extends the the
+    authentication model (and database) by adding the account name so
+    that we can delete the psql 'item' db and leave the authentication one 
+    intact.  This way users do not need to re-register if we wipe the psql.
+    Extends: Django User Model
+    Accepts: The account name
+    Returns: None, it saves the model
+    """
     poe_account_name = models.CharField(max_length = 32)
         
     def __unicode__(self):
@@ -57,6 +72,9 @@ class PoeUser(User):
         x.save()
 
 class ItemCategory(models.Model):
+    """
+    Represents the highest level of loot categorisation.  E.G. Weapons, Armour
+    """
     name = models.CharField(unique = True, max_length = 50)
     slug = models.SlugField()
 
@@ -76,6 +94,9 @@ class ItemCategory(models.Model):
         super(ItemCategory, self).save(*args, **kwargs)
     
 class ItemType(models.Model):
+    """
+    Represents the type of an item, e.g. Dagger, Ring, Bow
+    """    
     name = models.CharField(unique = True, max_length = 50)
     type = models.ForeignKey(ItemCategory)
     slug = models.SlugField()
@@ -96,6 +117,9 @@ class ItemType(models.Model):
         super(ItemType, self).save(*args, **kwargs)
 
 class StatNames(models.Model):
+    """
+    For explicit item mods, represents the fundamental benefit, e.g. Added Life, + Attributes,
+    """
     name = models.CharField(unique=True, max_length=60)
     slug = models.SlugField(max_length = 75)
 
@@ -115,6 +139,9 @@ class StatNames(models.Model):
         super(StatNames, self).save(*args, **kwargs)
 
 class Stats(models.Model):
+    """
+    Numerates the extent of the fundamental benefit, e.g. +3! to Life
+    """
     name = models.ForeignKey(StatNames, models.DO_NOTHING)
     min_value = models.IntegerField()
     max_value = models.IntegerField()
@@ -136,6 +163,9 @@ class Stats(models.Model):
         super(Stats, self).save(*args, **kwargs)
         
 class FixCategory(models.Model):
+    """
+    E.G. Prefix or Suffix
+    """
     name = models.CharField(unique = True, blank = False, max_length = 50)
     slug = models.SlugField()
 
@@ -156,6 +186,10 @@ class FixCategory(models.Model):
         super(FixCategory, self).save(*args, **kwargs)
 
 class FixType(models.Model):
+    """
+    For prefix or suffixes, represents the fundamental benefit,
+    e.g. Added Life, + Attributes,
+    """
     name = models.CharField(max_length = 50)
     category = models.ForeignKey(FixCategory)
     slug = models.SlugField()
@@ -176,6 +210,9 @@ class FixType(models.Model):
         super(FixType, self).save(*args, **kwargs)
 
 class FixName(models.Model):
+      """
+    For explicit item mods, represents the in game name e.g. Infernal, Vicious
+    """  
     name = models.CharField(max_length=50)
     type = models.ForeignKey(FixType)
     slug = models.SlugField()
@@ -196,6 +233,10 @@ class FixName(models.Model):
         super(FixName, self).save(*args, **kwargs)
 
 class Fix(models.Model):
+    """
+    For Prefix and Suffixes, links together the fundamental benefit and the
+    numerical extent of this buff
+    """
     name = models.ForeignKey(FixName)
     stat = models.ForeignKey(Stats)
     i_level = models.IntegerField()
@@ -216,6 +257,9 @@ class Fix(models.Model):
 
 
 class ItemName(models.Model):
+    """
+    Represents an in game loot item
+    """
     stdlogger.debug("ItemName")
     name = models.CharField(unique=True, max_length=50)
     i_level = models.SmallIntegerField()
@@ -273,6 +317,9 @@ class ItemName(models.Model):
         super(ItemName, self).save(*args, **kwargs)
 
 class ItemStat(models.Model):
+    """
+    Links items with their stats.
+    """
     i = models.ForeignKey(ItemName, models.DO_NOTHING)
     s = models.ForeignKey(Stats, models.DO_NOTHING)
     
@@ -293,6 +340,14 @@ class ItemStat(models.Model):
 ### GGG Characters
 ###
 class PoeAccount(models.Model):
+    """
+    Is the internal version of an account with GGG.  It clumsily mirrors the
+    built in authentication model and adds the GGG session id required to access
+    the online API.
+    We use this approach so that we can delete the psql 'item' db and leave the
+    authentication one intact.  This way users do not need to re-register if we
+    wipe the psql.
+    """
     acc_name = models.CharField(max_length=32, blank=False, )
     sessid = models.CharField(max_length=32, blank=False, )
   
@@ -305,10 +360,16 @@ class PoeAccount(models.Model):
         return str(self.acc_name)
 
 class PoeItem(models.Model):
+    """
+    Links an in game loot item to it's owner
+    """
     name = models.CharField(max_length = 32, blank = False, )
     ggg_id = models.CharField(max_length = 65, blank = True, )
 
 class PoeCharacter(models.Model):
+    """
+    Represents the high level data of a PoE Character
+    """
     account = models.ForeignKey(PoeAccount) 
     name = models.CharField(max_length = 64, null=True)
     eg = {
@@ -385,4 +446,44 @@ class PoeCharacter(models.Model):
                                    null = True,
                                    related_name = "%(class)s_flask",
                                    )
+
+class PoeTab(models.Model):
+    """
+    Represents the info surrounding each stash tab in-game
+    """
+    index = models.IntegerField()
+    ggg_identifier = models.CharField(max_length = 64)
+    name = models.CharField(max_length = 32, blank = True)
+    owner = models.ForeignKey(PoeAccount)
+    """
+    >>> pprint.pprint(the_tabs[0])
+    {'colour': {'b': 0, 'g': 128, 'r': 99},
+     'hidden': False,
+     'i': 0,
+     'id': 'fd12b8d1efe0bc34fb8f84e8438d3ae16cd6b923b0e87c67dbea96d6871d2267',
+     'n': '$',
+     'selected': True,
+     'srcC': 'https://web.poecdn.com/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjI7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/d6161fcf22/Stash_TabC.png',
+     'srcL': 'https://web.poecdn.com/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjE7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/c64747b68d/Stash_TabL.png',
+     'srcR': 'https://web.poecdn.com/gen/image/YTozOntpOjA7aToyNDtp/OjE7czozMjoiMDJhMTk3/N2QxZDAzNDQzNmU3NzM5/ZjgzZDEzYjIwN2YiO2k6/MjthOjI6e2k6MDtpOjI7/aToxO2E6Mzp7czoxOiJ0/IjtpOjM7czoxOiJuIjtz/OjA6IiI7czoxOiJjIjtp/Oi0xMDI1NjM4NDt9fX0,/1185e76da6/Stash_TabR.png',
+     'type': 'CurrencyStash'}    
+    """
+    class Meta: 
+        managed = True
+        db_table = 'poe_tab'
+        app_label = 'poe'
+        
+    def __str__(self):
+        return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+                #self.slug = slugify(self.name)
+        self.name = slugify(self.name)
+        super(PoeTab, self).save(*args, **kwargs)
+
+
+    
+    
     
