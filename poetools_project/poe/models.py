@@ -408,7 +408,24 @@ class PoeItem(models.Model):
      'y': 1} 
     """
     name = models.CharField(max_length = 264, blank = False, )
+    owner = models.ForeignKey(PoeAccount) 
     ggg_id = models.CharField(max_length = 100, blank = True, )
+    raw_data = models.CharField(max_length = 2048, blank = True, )
+    ilvl = models.IntegerField()
+    tab_location = models.IntegerField()
+    x_location = models.IntegerField()
+    y_location = models.IntegerField()
+    req_lvl = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    req_str = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    req_int = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    req_dex = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    
+    @property
+    def location(self):
+        return (self.tab_location,
+                self.x_location,
+                self.y_location,)
+    
 
 class PoeCharacter(models.Model):
     """

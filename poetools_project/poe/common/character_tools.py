@@ -1,7 +1,7 @@
 #!/bin/python3
 from django.core.urlresolvers import reverse 
 
-
+import pprint
 import poe.models
 
 import logging
@@ -19,8 +19,7 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
             #print ('sleeping')
             time.sleep(timeout)
         return response
-    return hook
-
+    return hook 
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 
@@ -77,8 +76,12 @@ def register_flicky():
     Useful tool to reinstate my own account after wiping the psql database
     """
     print("== Registering Flicky ==")
-    account = poe.models.PoeAccount.get(acc_name = "flickyg")
-    
+    account = poe.models.PoeUser.objects.get(poe_account_name = "greenmasterflick")
+    x = poe.models.PoeAccount(
+                          acc_name = account.poe_account_name,
+                          sessid = "replaceMe",
+                          )
+    x.save()
 
 def get_char_items(poe_account, character):
     """
@@ -112,12 +115,52 @@ def get_tab_items(poe_account, tabIndex):
     tab_data = resp.json()
     tab_items = tab_data['items']
     for each_item in tab_items:
-        print("name = ", each_item['typeLine'] , "ggg_id = ", each_item['id'])
-        entry = poe.models.PoeItem(name = each_item['typeLine'] , ggg_id = each_item['id'])
-        add a free text field and save the dictionary for each item, for the time being.  It will help debug later
-        items also need owners
-        add logic to save all items in all tabs
-        add logic to create new items type, and types generally
+        #print("name = ", each_item['typeLine'])
+        if 'properties' in each_item.keys():
+            for each_prop in each_item['properties']:
+                print(each_prop['name'])
+        # calculate requirements
+        if 'requirements' in each_item.keys():
+            for each_req in each_item['requirements']:
+                # lvl
+                if 'Level' in each_req.values():
+                    rlvl = each_req['values'][0][0]
+                else:
+                    rlvl = 0
+                # str
+                if 'Str' in each_req.values():
+                    rstr = each_req['values'][0][0]
+                else:
+                    rstr = 0
+                # int
+                if 'Int' in each_req.values():
+                    rint = each_req['values'][0][0]
+                else:
+                    rint = 0
+                # dex
+                if 'Dex' in each_req.values():
+                    rdex = each_req['values'][0][0]
+                else:
+                    rdex = 0
+        else: # no requirements
+            rlvl = rstr = rint = rdex = 0
+        entry = poe.models.PoeItem(name = each_item['typeLine'],
+                                   owner = poe_account,
+                                   ggg_id = each_item['id'],
+                                   ilvl = each_item['ilvl'],
+                                   tab_location = tabIndex,
+                                   x_location = each_item['x'],
+                                   y_location = each_item['y'],
+                                   raw_data = each_item,
+                                   req_lvl = rlvl,
+                                   req_str = rstr,
+                                   req_int = rint,
+                                   req_dex = rdex,
+                                   )
+        #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
+        #items also need owners
+        #add logic to save all items in all tabs
+        #add logic to create new items type, and types generally
         entry.save()
     return tab_items
     
@@ -138,25 +181,118 @@ def get_tab_details(poe_account, character):
     resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
     stash_items = resp.json()
     # y['tabs'][0].keys()
-    # dict_keys(['selected', 'srcL', 'n', 'id', 'hidden', 'srcC', 'srcR', 'colour', 'type', 'i'])
-    return stash_items['tabs']
+    # dict_keys(['selected', 'srcL', 'n', 'id', 'hidden', 'srcC', 'srcR', 
+    # 'colour', 'type', 'i'])
+    for each_tab in stash_items['tabs']:
+            tab_details = poe.models.PoeTab(
+                              index = each_tab['i'], 
+                              ggg_identifier = each_tab['id'], 
+                              name = each_tab['n'],
+                              owner = each_tab[poe_account],
+                              )
+            tab_details.save()
+            print("saved tab")
+    return poe.models.PoeTab.objects.filter(owner = poe_account)
 
-def delete_all_items():
-    all_items = poe.models.PoeItem.objects.all()
-    for each_item in all_items:
+def delete_all_users_tabs(poe_account):
+    """
+    Deletes all entries in the tab table for the account given
+    """
+    tab_details = poe.models.PoeTab.objects.filter(owner = poe_account)
+    for each_tab in tab_details:
+        each_tab.delete()
+
+def delete_all_tabs():
+    """
+    Deletes all entries in the tab table
+    """
+    tab_details = poe.models.PoeTab.objects.all()
+    for each_tab in tab_details:
+        each_tab.delete()
+        
+def delete_all_user_items(poe_account):
+    """
+    Deletes all entries in the item table for the account given
+    """
+    all_user_items = poe.models.PoeItem.objects.filter(owner = poe_account)
+    for item in all_user_items:
         item.delete()
 
+def delete_all_items():
+    """
+    Deletes all entries in the item table
+    """
+    all_items = poe.models.PoeItem.objects.all()
+    for each_item in all_items:
+        each_item.delete()
+        
+def load_item_data_from_file(file):
+    """
+    Accepts: a json file
+    Returns: None
+    """
+    print("no code here yet when trying to add items from file")
+
+def get_location(id):
+    the_item = poe.models.PoeItem.objects.get(ggg_id = id)
+    return (the_item.location)
+
+def get_item_name(id):
+    the_item = poe.models.PoeItem.objects.get(ggg_id = id)
+    return (the_item.name)
+
+
 """
+import pprint
 import poe.models
 import poe.common.character_tools
+import ast # enable conversion of string to dictionary
 
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
+stash_tab_items = poe.common.character_tools.get_tab_items(account, 6)
+
 poe.common.character_tools.get_characters(account)
 char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
 data =  poe.common.character_tools.get_char_items(account, char)
 
 equiped_items = data['items']
+
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 1)
+
+== print properties
+currency_mods = ['Stack Size']
+map_mods = [ 'Map Tier',
+            'Item Quantity',
+            'Monster Pack Size',
+            ]
+items_unknown = []
+my_items = poe.models.PoeItem.all()
+for item in my_items:
+    data = ast.literal_eval(item.raw_data)
+    if 'properties' in data.keys():
+        for property in data['properties']:
+            x = poe.models.StatNames.objects.filter(name__search = property['name'])
+            if not x and property['name'] not in map_mods and property['name'] not in currency_mods:
+                pass
+                print("x was not found", property['name'])
+            elif x:
+                items_unknown.append(item)
+                #print("x was found", x[0].name)
+
+=== print requirements
+for x in all_items:
+    b = ast.literal_eval(x.raw_data)
+    if 'requirements' in b.keys():
+            print(b['requirements'])
+==
+
+for x in all_items:
+    b = ast.literal_eval(x.raw_data)
+    if 'requirements' in b.keys():
+            print(b['requirements'])
+
+===
+
 #>>> the_tab_items[1].keys()
 #dict_keys(['ilvl', 'icon', 'lockedToCharacter', 'properties', 'h', 'id', 'name', 'w', 'sockets', 'identified', 'verified', 'descrText', 'inventoryId', 'corrupted', 'frameType', 'x', 'league', 'socketedItems', 'y', 'typeLine'])
 

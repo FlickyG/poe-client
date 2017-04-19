@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     #'rango',
     'poe',
     'django_tables2', # for sorted tables
+    'django.contrib.postgres',
   
 ]
 
