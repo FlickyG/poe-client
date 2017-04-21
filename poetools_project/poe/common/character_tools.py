@@ -105,12 +105,18 @@ def get_tab_items(poe_account, tabIndex):
              the tab index of interest
     Returns: the json for the API request
     """
-    print("getting items")
+    # check there's a proper session id
+    try:
+        assert len(poe_account.sessid) == 32
+    except AssertionError as e:
+        print("Try updating the session id")
+        return(None)        
     league = "Legacy"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex,
                                                acc = poe_account.acc_name))
+    print("x ", poe_account.sessid)
     resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
     tab_data = resp.json()
     tab_items = tab_data['items']
@@ -164,7 +170,7 @@ def get_tab_items(poe_account, tabIndex):
         entry.save()
     return tab_items
     
-def get_tab_details(poe_account, character):
+def get_tab_details(poe_account):
     """
     Fetches from GGG the details of the users stash tabs (but not their contents)
     This data includes the tab names, unique ID, player index, colour, etc.
@@ -188,7 +194,7 @@ def get_tab_details(poe_account, character):
                               index = each_tab['i'], 
                               ggg_identifier = each_tab['id'], 
                               name = each_tab['n'],
-                              owner = each_tab[poe_account],
+                              owner = poe_account,
                               )
             tab_details.save()
             print("saved tab")
@@ -252,6 +258,7 @@ account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 6)
 
 poe.common.character_tools.get_characters(account)
+poe.common.character_tools.get_tab_details(account)
 char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
 data =  poe.common.character_tools.get_char_items(account, char)
 
@@ -266,18 +273,22 @@ map_mods = [ 'Map Tier',
             'Monster Pack Size',
             ]
 items_unknown = []
-my_items = poe.models.PoeItem.all()
+my_items = poe.models.PoeItem.objects.all()
 for item in my_items:
     data = ast.literal_eval(item.raw_data)
     if 'properties' in data.keys():
         for property in data['properties']:
             x = poe.models.StatNames.objects.filter(name__search = property['name'])
             if not x and property['name'] not in map_mods and property['name'] not in currency_mods:
-                pass
+                items_unknown.append(item)
                 print("x was not found", property['name'])
             elif x:
-                items_unknown.append(item)
-                #print("x was found", x[0].name)
+                print("x was found", x[0].name, item.name)
+            else:
+                print("weird else clause")
+    if 'explicitMods' in data.keys():
+        for mod in data['explicitMods']:
+            print(mod)
 
 === print requirements
 for x in all_items:
