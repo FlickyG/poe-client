@@ -111,7 +111,7 @@ def get_tab_items(poe_account, tabIndex):
     except AssertionError as e:
         print("Try updating the session id")
         return(None)        
-    league = "Legacy"
+    league = "Standard"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex,
@@ -179,7 +179,7 @@ def get_tab_details(poe_account):
     Returns: a list of dictionaries, one list item per tab
     """
     print("getting items")
-    league = "Legacy"
+    league = "Standard"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = 0,
@@ -197,7 +197,6 @@ def get_tab_details(poe_account):
                               owner = poe_account,
                               )
             tab_details.save()
-            print("saved tab")
     return poe.models.PoeTab.objects.filter(owner = poe_account)
 
 def delete_all_users_tabs(poe_account):
@@ -255,7 +254,7 @@ import poe.common.character_tools
 import ast # enable conversion of string to dictionary
 
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
-stash_tab_items = poe.common.character_tools.get_tab_items(account, 6)
+stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
 poe.common.character_tools.get_characters(account)
 poe.common.character_tools.get_tab_details(account)

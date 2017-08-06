@@ -514,7 +514,7 @@ class PoeTab(models.Model):
     """
     index = models.IntegerField()
     ggg_identifier = models.CharField(max_length = 64)
-    name = models.CharField(max_length = 32, blank = True)
+    name = models.CharField(max_length = 64, blank = True)
     owner = models.ForeignKey(PoeAccount)
     """
     >>> pprint.pprint(the_tabs[0])

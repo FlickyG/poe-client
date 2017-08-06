@@ -1,0 +1,273 @@
+ id  |                          name                           |                         slug                          
+-----+---------------------------------------------------------+-------------------------------------------------------
+ 219 | Accuracy Rating                                         | accuracy-rating
+ 214 | Accuracy Rating +%                                      | accuracy-rating
+ 262 | Add Frenzy Charge On Kill % Chance                      | add-frenzy-charge-on-kill-chance
+ 165 | Additional All Attributes                               | additional-all-attributes
+ 208 | Additional Dexterity                                    | additional-dexterity
+ 170 | Additional Dexterity And Intelligence                   | additional-dexterity-and-intelligence
+ 212 | Additional Intelligence                                 | additional-intelligence
+ 108 | Additional Staff Block %                                | additional-staff-block
+ 166 | Additional Strength                                     | additional-strength
+ 179 | Additional Strength And Dexterity                       | additional-strength-and-dexterity
+ 222 | Additional Strength And Intelligence                    | additional-strength-and-intelligence
+ 254 | Add Power Charge On Kill % Chance                       | add-power-charge-on-kill-chance
+ 249 | All Attributes +%                                       | all-attributes
+ 167 | All Damage                                              | all-damage
+ 198 | Area Damage +%                                          | area-damage
+ 191 | Attack And Cast Speed +%                                | attack-and-cast-speed
+ 265 | Attack Damage +%                                        | attack-damage
+  87 | Attack Maximum Added Cold Damage                        | attack-maximum-added-cold-damage
+  63 | Attack Maximum Added Fire Damage                        | attack-maximum-added-fire-damage
+ 129 | Attack Maximum Added Lightning Damage                   | attack-maximum-added-lightning-damage
+  65 | Attack Minimum Added Cold Damage                        | attack-minimum-added-cold-damage
+  20 | Attack Minimum Added Fire Damage                        | attack-minimum-added-fire-damage
+  39 | Attack Minimum Added Lightning Damage                   | attack-minimum-added-lightning-damage
+ 201 | Attack Speed +%                                         | attack-speed
+  50 | Attack Speed while Dual Wielding                        | attack-speed-while-dual-wielding
+   9 | Attack Speed +% While Holding Shield                    | attack-speed-while-holding-shield
+  88 | Attack Speed with Axes                                  | attack-speed-with-axes
+ 132 | Attack Speed with Bows                                  | attack-speed-with-bows
+  10 | Attack Speed with Claws                                 | attack-speed-with-claws
+ 112 | Attack Speed with Daggers                               | attack-speed-with-daggers
+  36 | Attack Speed with Maces                                 | attack-speed-with-maces
+  44 | Attack Speed with Staves                                | attack-speed-with-staves
+  70 | Attack Speed with Swords                                | attack-speed-with-swords
+ 122 | Attack Speed with Wands                                 | attack-speed-with-wands
+   6 | Axe Damage                                              | axe-damage
+ 264 | Base Additional Physical Damage Reduction %             | base-additional-physical-damage-reduction
+ 231 | Base Chance To Dodge %                                  | base-chance-to-dodge
+ 154 | Base Chance To Freeze %                                 | base-chance-to-freeze
+ 177 | Base Chance To Ignite %                                 | base-chance-to-ignite
+ 156 | Base Chance To Shock %                                  | base-chance-to-shock
+ 224 | Base Chaos Damage Resistance %                          | base-chaos-damage-resistance
+ 169 | Base Cold Damage Resistance %                           | base-cold-damage-resistance
+ 155 | Base Critical Strike Multiplier +%                      | base-critical-strike-multiplier
+  71 | Base Evasion Rating                                     | base-evasion-rating
+ 178 | Base Fire Damage Resistance %                           | base-fire-damage-resistance
+ 226 | Base Global Chance To Knockback %                       | base-global-chance-to-knockback
+  24 | Base Item Found Rarity +%                               | base-item-found-rarity
+ 168 | Base Life Gained On Enemy Death                         | base-life-gained-on-enemy-death
+ 199 | Base Lightning Damage Resistance %                      | base-lightning-damage-resistance
+ 193 | Base Mana Gained On Enemy Death                         | base-mana-gained-on-enemy-death
+  16 | Base Maximum Energy Shield                              | base-maximum-energy-shield
+ 109 | Base Maximum Life                                       | base-maximum-life
+ 149 | Base Maximum Mana                                       | base-maximum-mana
+  59 | Base Movement Velocity +%                               | base-movement-velocity
+ 255 | Base Number Of Skeletons Allowed                        | base-number-of-skeletons-allowed
+ 266 | Base Physical Damage Reduction and Evasion Rating       | base-physical-damage-reduction-and-evasion-rating
+  18 | Base Physical Damage Reduction Rating                   | base-physical-damage-reduction-rating
+ 197 | Base Projectile Speed +%                                | base-projectile-speed
+ 232 | Base Skill Area Of Effect +%                            | base-skill-area-of-effect
+ 162 | Base Spell Critical Strike Multiplier +                 | base-spell-critical-strike-multiplier
+ 217 | Base Stun Duration +%                                   | base-stun-duration
+ 134 | Base Stun Recovery +%                                   | base-stun-recovery
+ 215 | Base Stun Threshold Reduction +%                        | base-stun-threshold-reduction
+  95 | Blocking while Dual Wielding                            | blocking-while-dual-wielding
+ 239 | Block Recovery Increase                                 | block-recovery-increase
+  98 | Bow Damage                                              | bow-damage
+ 173 | Cast Speed +%                                           | cast-speed
+  53 | Cast Speed For Cold Skills +%                           | cast-speed-for-cold-skills
+  83 | Cast Speed For Fire Skills +%                           | cast-speed-for-fire-skills
+  93 | Cast Speed For Lightning Skills +%                      | cast-speed-for-lightning-skills
+  38 | Cast Speed While Dual Wielding +%                       | cast-speed-while-dual-wielding
+  30 | Cast Speed +% While Holding Shield                      | cast-speed-while-holding-shield
+  26 | Cast Speed +% While Holding Staff                       | cast-speed-while-holding-staff
+ 253 | Chance To Freeze Shock Ignite %                         | chance-to-freeze-shock-ignite
+  57 | Chaos Damage +%                                         | chaos-damage
+ 148 | Claw Damage                                             | claw-damage
+ 200 | Cold And Lightning Damage Resistance %                  | cold-and-lightning-damage-resistance
+  77 | Cold Critical Strike Chance +%                          | cold-critical-strike-chance
+  58 | Cold Critical Strike Multiplier +                       | cold-critical-strike-multiplier
+  67 | Cold Damage +%                                          | cold-damage
+ 245 | Cold Damage Taken % As Fire                             | cold-damage-taken-as-fire
+ 258 | Cold Damage Taken % As Lightning                        | cold-damage-taken-as-lightning
+ 164 | Critical Strike Chance +%                               | critical-strike-chance
+   1 | Critical Strike Chance While Dual Wielding +%           | critical-strike-chance-while-dual-wielding
+   8 | Dagger Damage                                           | dagger-damage
+ 194 | Damage Over Time +%                                     | damage-over-time
+ 218 | Elemental Critical Strike Chance +%                     | elemental-critical-strike-chance
+ 174 | Elemental Critical Strike Multiplier +                  | elemental-critical-strike-multiplier
+ 236 | Elemental Damage +%                                     | elemental-damage
+ 261 | Endurance Charge On Kill %                              | endurance-charge-on-kill
+  61 | Energy Shield Delay Recovery Increase                   | energy-shield-delay-recovery-increase
+ 210 | Energy Shield Gain Per Target                           | energy-shield-gain-per-target
+ 117 | Energy Shield Recharge Rate +%                          | energy-shield-recharge-rate
+ 157 | Fire And Cold Damage Resistance %                       | fire-and-cold-damage-resistance
+ 190 | Fire And Lightning Damage Resistance %                  | fire-and-lightning-damage-resistance
+ 123 | Fire Critical Strike Chance +%                          | fire-critical-strike-chance
+ 111 | Fire Critical Strike Multiplier +                       | fire-critical-strike-multiplier
+ 150 | Fire Damage +%                                          | fire-damage
+ 244 | Fire Damage Taken % As Cold                             | fire-damage-taken-as-cold
+ 257 | Fire Damage Taken % As Lightning                        | fire-damage-taken-as-lightning
+ 251 | Fishing Bite Sensitivity +%                             | fishing-bite-sensitivity
+ 176 | Flask Charges Gained +%                                 | flask-charges-gained
+ 188 | Flask Charges Used +%                                   | flask-charges-used
+ 189 | Flask Duration +%                                       | flask-duration
+  66 | Flask Life Recovery Rate +%                             | flask-life-recovery-rate
+  89 | Flask Mana Recovery Rate +%                             | flask-mana-recovery-rate
+ 171 | Freeze Duration Increase                                | freeze-duration-increase
+ 240 | From Armour Movement Speed +%                           | from-armour-movement-speed
+  19 | Global Critical Strike Multiplier While Dual Wielding + | global-critical-strike-multiplier-while-dual-wielding
+ 263 | Global Defences +%                                      | global-defences
+  96 | Global Evasion Rating +%                                | global-evasion-rating
+  14 | Global Maximum Energy Shield +%                         | global-maximum-energy-shield
+ 153 | Ignite Duration Increase                                | ignite-duration-increase
+ 161 | Life Gained On Hit                                      | life-gained-on-hit
+  54 | Life Leech From Physical Attack Damage Permyriad        | life-leech-from-physical-attack-damage-permyriad
+ 221 | Life Regeneration Rate per Minute                       | life-regeneration-rate-per-minute
+ 246 | Life Regeneration Rate Per Minute %                     | life-regeneration-rate-per-minute
+ 100 | Lightning Critical Strike Chance +%                     | lightning-critical-strike-chance
+ 133 | Lightning Critical Strike Multiplier +                  | lightning-critical-strike-multiplier
+ 113 | Lightning Damage +%                                     | lightning-damage
+ 243 | Lightning Damage Taken % As Cold                        | lightning-damage-taken-as-cold
+ 247 | Lightning Damage Taken % As Fire                        | lightning-damage-taken-as-fire
+ 172 | Light Radius +%                                         | light-radius
+  81 | Local Accuracy Rating                                   | local-accuracy-rating
+ 160 | Local Accuracy Rating +%                                | local-accuracy-rating
+ 185 | Local Additional Block Chance %                         | local-additional-block-chance
+ 116 | Local Armour And Energy Shield +%                       | local-armour-and-energy-shield
+  64 | Local Armour And Evasion +%                             | local-armour-and-evasion
+ 146 | Local Armour And Evasion And Energy Shield +%           | local-armour-and-evasion-and-energy-shield
+ 213 | Local Attack Speed +%                                   | local-attack-speed
+ 227 | Local Attribute Requirements +%                         | local-attribute-requirements
+ 107 | Local Base Evasion Rating                               | local-base-evasion-rating
+  33 | Local Base Physical Damage Reduction Rating             | local-base-physical-damage-reduction-rating
+ 235 | Local Chance To Bleed On Hit %                          | local-chance-to-bleed-on-hit
+   7 | Local Charges Added +%                                  | local-charges-added
+  17 | Local Charges Used +%                                   | local-charges-used
+ 204 | Local Critical Strike Chance +%                         | local-critical-strike-chance
+  99 | Local Energy Shield                                     | local-energy-shield
+  51 | Local Energy Shield +%                                  | local-energy-shield
+   3 | Local Evasion And Energy Shield +%                      | local-evasion-and-energy-shield
+  55 | Local Evasion Rating +%                                 | local-evasion-rating
+  92 | Local Extra Charges                                     | local-extra-charges
+ 151 | Local Flask Adds Knockback While Healing                | local-flask-adds-knockback-while-healing
+  52 | Local Flask Amount To Recover +%                        | local-flask-amount-to-recover
+  56 | Local Flask Amount To Recover +% When On Low Life       | local-flask-amount-to-recover-when-on-low-life
+ 184 | Local Flask Armour +% While Healing                     | local-flask-armour-while-healing
+ 229 | Local Flask Bleeding Immunity While Healing             | local-flask-bleeding-immunity-while-healing
+ 223 | Local Flask Chill And Freeze Immunity While Healing     | local-flask-chill-and-freeze-immunity-while-healing
+ 228 | Local Flask Curse Immunity While Healing                | local-flask-curse-immunity-while-healing
+ 145 | Local Flask Duration +%                                 | local-flask-duration
+  76 | Local Flask Effect +%                                   | local-flask-effect
+ 192 | Local Flask Evasion +% While Healing                    | local-flask-evasion-while-healing
+ 207 | Local Flask Ignite Immunity While Healing               | local-flask-ignite-immunity-while-healing
+ 203 | Local Flask Life Leech Permyriad While Healing          | local-flask-life-leech-permyriad-while-healing
+ 206 | Local Flask Life Leech % While Healing                  | local-flask-life-leech-while-healing
+ 135 | Local Flask Life to Recover +%                          | local-flask-life-to-recover
+ 152 | Local Flask Mana Leech Permyriad While Healing          | local-flask-mana-leech-permyriad-while-healing
+   2 | Local Flask Mana to Recover +%                          | local-flask-mana-to-recover
+ 216 | Local Flask Minion Heal %                               | local-flask-minion-heal
+ 195 | Local Flask Movement Speed +% While Healing             | local-flask-movement-speed-while-healing
+ 180 | Local Flask Poison Immunity During Flask Effect         | local-flask-poison-immunity-during-flask-effect
+ 140 | Local Flask Recover Instantly When On Low Life          | local-flask-recover-instantly-when-on-low-life
+  91 | Local Flask Recovers Instantly                          | local-flask-recovers-instantly
+ 119 | Local Flask Recovery Amount % To Recover Instantly      | local-flask-recovery-amount-to-recover-instantly
+  40 | Local Flask Recovery Speed +%                           | local-flask-recovery-speed
+  74 | Local Flask Removes % Of Life Recovery From Mana On Use | local-flask-removes-of-life-recovery-from-mana-on-use
+  69 | Local Flask Removes % Of Mana Recovery From Life On Use | local-flask-removes-of-mana-recovery-from-life-on-use
+ 182 | Local Flask Resistances +% While Healing                | local-flask-resistances-while-healing
+ 175 | Local Flask Shock Immunity While Healing                | local-flask-shock-immunity-while-healing
+ 209 | Local Flask Stun Recovery +% While Healing              | local-flask-stun-recovery-while-healing
+ 259 | Local Has X Sockets                                     | local-has-x-sockets
+ 183 | Local Life Gain Per Target                              | local-life-gain-per-target
+ 234 | Local Life Leech From Physical Damage Permyriad         | local-life-leech-from-physical-damage-permyriad
+ 238 | Local Mana Gain Per Target                              | local-mana-gain-per-target
+  48 | Local Maximum Added Chaos Damage                        | local-maximum-added-chaos-damage
+ 144 | Local Maximum Added Cold Damage                         | local-maximum-added-cold-damage
+  12 | Local Maximum Added Fire Damage                         | local-maximum-added-fire-damage
+  42 | Local Maximum Added Lightning Damage                    | local-maximum-added-lightning-damage
+  11 | Local Maximum Added Physical Damage                     | local-maximum-added-physical-damage
+   4 | Local Minimum Added Chaos Damage                        | local-minimum-added-chaos-damage
+  28 | Local Minimum Added Cold Damage                         | local-minimum-added-cold-damage
+ 147 | Local Minimum Added Fire Damage                         | local-minimum-added-fire-damage
+ 138 | Local Minimum Added Lightning Damage                    | local-minimum-added-lightning-damage
+ 125 | Local Minimum Added Physical Damage                     | local-minimum-added-physical-damage
+ 121 | Local Physical Damage +%                                | local-physical-damage
+  32 | Local Physical Damage Reduction Rating +%               | local-physical-damage-reduction-rating
+ 130 | Local Recharge On Crit %                                | local-recharge-on-crit
+  27 | Local Recharge On Take Crit                             | local-recharge-on-take-crit
+ 110 | Local Socketed Bow Gem Level +                          | local-socketed-bow-gem-level
+  94 | Local Socketed Chaos Gem Level +                        | local-socketed-chaos-gem-level
+  97 | Local Socketed Cold Gem Level +                         | local-socketed-cold-gem-level
+ 142 | Local Socketed Fire Gem Level +                         | local-socketed-fire-gem-level
+  72 | Local Socketed Gem Level +                              | local-socketed-gem-level
+  46 | Local Socketed Lightning Gem Level +                    | local-socketed-lightning-gem-level
+  86 | Local Socketed Melee Gem Level +                        | local-socketed-melee-gem-level
+ 141 | Local Socketed Minion Gem Level +                       | local-socketed-minion-gem-level
+  34 | Local Socketed Spell Gem Level +                        | local-socketed-spell-gem-level
+ 252 | Local Stat Monsters Pick Up Item                        | local-stat-monsters-pick-up-item
+ 106 | Mace Damage                                             | mace-damage
+ 220 | Mana Cost Reduction                                     | mana-cost-reduction
+ 163 | Mana gained on Hit                                      | mana-gained-on-hit
+ 103 | Mana Leech From Physical Attack Damage Permyriad        | mana-leech-from-physical-attack-damage-permyriad
+ 104 | Mana Regeneration Rate +%                               | mana-regeneration-rate
+ 102 | Maximum Added Chaos Damage                              | maximum-added-chaos-damage
+  80 | Maximum Added Physical Damage                           | maximum-added-physical-damage
+  31 | Maximum Life +%                                         | maximum-life
+  78 | Maximum Mana +%                                         | maximum-mana
+ 158 | Melee Critical Strike Chance +%                         | melee-critical-strike-chance
+ 181 | Melee Damage +%                                         | melee-damage
+  73 | Melee Physical Damage +% While Holding Shield           | melee-physical-damage-while-holding-shield
+ 205 | Melee Weapon Critical Strike Multiplier +               | melee-weapon-critical-strike-multiplier
+  45 | Mine Damage +%                                          | mine-damage
+  25 | Mine Laying Speed increase                              | mine-laying-speed-increase
+ 136 | Minimum Added Chaos Damage                              | minimum-added-chaos-damage
+ 124 | Minimum Added Physical Damage                           | minimum-added-physical-damage
+ 186 | Minion Block %                                          | minion-block
+ 126 | Minion Damage increase                                  | minion-damage-increase
+ 225 | Minion Elemental Resistance %                           | minion-elemental-resistance
+ 131 | Minion Life Increase                                    | minion-life-increase
+ 230 | Monster Base Block %                                    | monster-base-block
+  23 | One Handed Melee Attack Speed +%                        | one-handed-melee-attack-speed
+  13 | One Handed Melee Critical Strike Chance +%              | one-handed-melee-critical-strike-chance
+  84 | One Handed Melee Critical Strike Multiplier +           | one-handed-melee-critical-strike-multiplier
+  49 | One Handed Melee Physical Damage +%                     | one-handed-melee-physical-damage
+  79 | Physical Damage +%                                      | physical-damage
+   5 | Physical Damage Reduction Rating +%                     | physical-damage-reduction-rating
+ 256 | Physical Damage % To Add As Random Element              | physical-damage-to-add-as-random-element
+ 242 | Physical Damage To Return To Melee Attacker             | physical-damage-to-return-to-melee-attacker
+ 120 | Physical Damage While Dual Wielding +%                  | physical-damage-while-dual-wielding
+ 241 | Projectile Attack Damage +%                             | projectile-attack-damage
+ 187 | Projectile Damage +%                                    | projectile-damage
+ 248 | Projectile Pierce chance                                | projectile-pierce-chance
+ 233 | Reduce Enemy Elemental Resistance %                     | reduce-enemy-elemental-resistance
+ 211 | Resist all Elements                                     | resist-all-elements
+ 127 | Shield Block Chance                                     | shield-block-chance
+  75 | Shield Spell Block %                                    | shield-spell-block
+ 159 | Shock Duration Increase                                 | shock-duration-increase
+ 250 | Spectre Quantity                                        | spectre-quantity
+ 101 | Spell Block While Dual Wielding %                       | spell-block-while-dual-wielding
+  37 | Spell Block With Staff %                                | spell-block-with-staff
+ 196 | Spell Critical Strike Chance +%                         | spell-critical-strike-chance
+  68 | Spell Damage +%                                         | spell-damage
+  21 | Spell Damage +% While Dual Wielding                     | spell-damage-while-dual-wielding
+  35 | Spell Damage +% While Holding Shield                    | spell-damage-while-holding-shield
+ 105 | Spell Maximum Added Cold Damage                         | spell-maximum-added-cold-damage
+ 118 | Spell Maximum Added Fire Damage                         | spell-maximum-added-fire-damage
+  22 | Spell Maximum Added Lightning Damage                    | spell-maximum-added-lightning-damage
+  41 | Spell Minimum Added Cold Damage                         | spell-minimum-added-cold-damage
+  60 | Spell Minimum Added Fire Damage                         | spell-minimum-added-fire-damage
+  62 | Spell Minimum Added Lightning Damage                    | spell-minimum-added-lightning-damage
+  47 | Spell Staff Damage +%                                   | spell-staff-damage
+ 237 | Staff Block %                                           | staff-block
+ 114 | Staff Damage                                            | staff-damage
+  43 | Sword Damage                                            | sword-damage
+ 137 | Totem Damage +%                                         | totem-damage
+ 202 | Totem Elemental Resistance %                            | totem-elemental-resistance
+  85 | Totem Life increase                                     | totem-life-increase
+  15 | Trap Damage +%                                          | trap-damage
+ 139 | Trap Throwing Speed increase                            | trap-throwing-speed-increase
+  29 | Two Handed Melee Attack Speed +%                        | two-handed-melee-attack-speed
+  82 | Two Handed Melee Critical Strike Chance +%              | two-handed-melee-critical-strike-chance
+ 128 | Two Handed Melee Critical Strike Multiplier +           | two-handed-melee-critical-strike-multiplier
+  90 | Two Handed Melee Physical Damage +%                     | two-handed-melee-physical-damage
+ 143 | Wand Damage                                             | wand-damage
+ 115 | Weapon Elemental Damage +%                              | weapon-elemental-damage
+ 260 | Zombie Quantity                                         | zombie-quantity
+(266 rows)
+
+~
+~
+~
