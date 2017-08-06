@@ -150,7 +150,14 @@ def get_tab_items(poe_account, tabIndex):
                     rdex = 0
         else: # no requirements
             rlvl = rstr = rint = rdex = 0
-        entry = poe.models.PoeItem(name = each_item['typeLine'],
+        print(len(each_item['typeLine']), len(each_item['id']),
+        len(str(each_item)),
+        )
+        # check the new type field already exists in the database
+        # need to add other item categories e.g. gems, maps
+        # then need to add item type, 
+        entry = poe.models.PoeItem(name = each_item['typeLine'], #change this to type and link to ItemName.name
+                                   #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
                                    owner = poe_account,
                                    ggg_id = each_item['id'],
                                    ilvl = each_item['ilvl'],
