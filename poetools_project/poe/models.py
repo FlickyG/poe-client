@@ -68,6 +68,7 @@ class PoeUser(User):
 
     def save(self, *args, **kwargs):
         super(PoeUser, self).save(*args, **kwargs)
+        print("self.poe_account_name", self.poe_account_name)
         x = PoeAccount(acc_name = self.poe_account_name)
         x.save()
 

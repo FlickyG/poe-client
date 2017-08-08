@@ -5,7 +5,7 @@ from . import models
 # Create your tests here.
 
 class SimpleTestCase(TestCase):
-    def test_registration(self):
+    '''def test_registration(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
             "username":'mike2001',
@@ -18,6 +18,7 @@ class SimpleTestCase(TestCase):
         #self.assertEqual(response.status_code, 302) 
         models.PoeUser.objects.get(username = "mike2001")
         session = self.client.session
+        '''
    
     def test_index_page(self):
         url = reverse("index")
@@ -30,7 +31,7 @@ class SimpleTestCase(TestCase):
             "username":'mike2001',
             "password1":"password123",
             "password2":"password123",
-            "poe_sessid": "lkjhkjh23",
+            "poe_sessid": "12345678901234567890123456789012",
             "poe_account_name": "mikesaccount",
             "email": "s@s.com"
         })
@@ -39,8 +40,48 @@ class SimpleTestCase(TestCase):
         session_key = self.client.session.session_key
         ####
         url = reverse('index')
-        response = self.client.post(url)
+        print("url", url)
+        response = self.client.post(url, {"new_sessid" :'sdsdsdsd'})
+        self.assertEqual(response.status_code, 200)
+        print("sessid resp", response)
+        
+    def test_registration_set_sessid(self):
+        url = reverse("registration_register")
+        response = self.client.post(url, {
+            "username":'mike2001',
+            "password1":"password123",
+            "password2":"password123",
+            "poe_sessid": "12345678901234567890123456789012",
+            "poe_account_name": "mikesaccount",
+            "email": "s@s.com"
+        })
+        self.assertEqual(response.status_code, 302) 
+        models.PoeUser.objects.get(username = "mike2001")
+        session_key = self.client.session.session_key
+        ####
+        url = reverse('index')
+        print("url", url)
+        response = self.client.post(url, {"new_sessid" :'sdsdsdsd'})
+        self.assertEqual(response.status_code, 200)
+        print("sessid resp", response)
 
+                
+    def test_login(self):
+        url = reverse("registration_register")
+        response = self.client.post(url, {
+            "username":'mike2001',
+            "password1":"password123",
+            "password2":"password123",
+            "poe_sessid": "12345678901234567890123456789012",
+            "poe_account_name": "mikesaccount",
+            "email": "s@s.com"
+        })
+        url= '/accounts/login/'
+        response = self.client.post(url, {"username": "mike2001",
+                                          "password" :'password123'})
+        print(response, " ", response.status_code)
+        self.assertEqual(response.status_code, 302) # login worked!
+        
 
 class GenericDataTableLengths(TestCase):
     print("GenericDataTestCase")
