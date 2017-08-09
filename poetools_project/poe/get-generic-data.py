@@ -160,7 +160,7 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
         return response
     return hook
 
-requests_cache.install_cache('first_go', expires_after = 1)
+requests_cache.install_cache('ggg_web_cache', expires_after = 1)
 requests_cache.clear()
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
