@@ -1034,8 +1034,21 @@ fetch_clothes()
 fetch_jewelry()
 
 # use RePOE for the rest
-# import gems
 # import stat mappings
+# iport uniques + stats
+# import gem types
+# import map types
+"""
+import json
+df = open("stat_translations.json").read()
+a = json.loads(df)
+for x in a:
+    database_string = str(x["ids"][0])
+    download_string = str(x["English"][0]["string"])
+    print(database_string, download_string)
+
+
+"""
 
 
 """
