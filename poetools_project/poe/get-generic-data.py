@@ -10,6 +10,8 @@ import sys #for excepotion handling and printing
 import datetime, time #to analyuse how long things take
 from xml.dom import minidom
 
+import json #for RePoe files
+
 from django.core.management.sql import sql_flush
 
 
@@ -31,7 +33,7 @@ from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
 from poe.models import StatNames, FixName, Stats, ItemName, ItemType, ItemStat
-
+from poe.models import StatTranslation
 
 STATS = 0
 STAT_NAMES = 0
@@ -1021,7 +1023,31 @@ def write_jewelry_stats(list):
                     logger.debug("error when commiting jewelry stats (%s)", e)
     return(z)
 
+def load_stat_translations():
+    #Load the RePoe JSON File
+    data_path = proj_path+"poe/data/"
+    df = open(data_path+"stat_translations.json").read()
+    a = json.loads(df)
     
+    # scrape the file and add the model entries
+    for x in a:
+        # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
+        database_string = str(x["ids"][0])
+        database_string = (database_string.replace('{0}','+%')).title().replace('_', ' ')
+        # download_string is the string appended to the item in the api download from ggg
+        download_string = str(x["English"][0]["string"]).replace('{0}','+')
+        
+        try:
+            database_version = poe.models.StatNames.objects.get(name = database_string)
+            print("success", database_string, download_string)
+            # save mapping
+            mapping = StatTranslation.objects.get_or_create(
+                        name = download_string,
+                        web_name = database_version
+                        )
+            #mapping.save()
+        except poe.models.StatNames.DoesNotExist:
+            pass # not expecting all lookups to work
 
 write_item_categories()
 write_fix_categories()
@@ -1035,20 +1061,26 @@ fetch_jewelry()
 
 # use RePOE for the rest
 # import stat mappings
+load_stat_translations()
 # iport uniques + stats
 # import gem types
 # import map types
-"""
-import json
-df = open("stat_translations.json").read()
-a = json.loads(df)
-for x in a:
-    database_string = str(x["ids"][0])
-    download_string = str(x["English"][0]["string"])
-    print(database_string, download_string)
+
+
+
 
 
 """
+delete_these = poe.models.StatTranslation.objects.all()
+for this_one in delete_these:
+    this_one.delete()
+
+"""
+# import uniques + stats
+# import gem types
+# import map types
+
+
 
 
 """

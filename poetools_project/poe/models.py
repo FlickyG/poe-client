@@ -118,6 +118,7 @@ class ItemType(models.Model):
         self.slug = slugify(self.name)
         super(ItemType, self).save(*args, **kwargs)
 
+
 class StatNames(models.Model):
     """
     For explicit item mods, represents the fundamental benefit, e.g. Added Life, + Attributes,
@@ -139,6 +140,30 @@ class StatNames(models.Model):
         #self.slug = slugify(self.name)
         self.slug = slugify(self.name)
         super(StatNames, self).save(*args, **kwargs)
+
+class StatTranslation(models.Model):
+    """
+    maps the stat names appended to items in the API download to the ones
+    given in the webpage 
+    """
+    name = models.CharField(unique = False, max_length = 128)
+    slug = models.SlugField(max_length = 132)
+    web_name = models.ForeignKey(StatNames)
+
+    class Meta:
+        managed = True
+        db_table = 'stat_translation'
+        app_label = "poe" 
+
+    def __str__(self):
+        return str(self.name)
+    
+    def save(self, *args, **kwargs):
+        # Uncomment if you don't want the slug to change every time the name changes
+        #if self.id is None:
+        #self.slug = slugify(self.name)
+        self.slug = slugify(self.name)
+        super(StatTranslation, self).save(*args, **kwargs)
 
 class Stats(models.Model):
     """

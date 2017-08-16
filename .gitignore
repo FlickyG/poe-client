@@ -13,6 +13,7 @@
 #databases
 first_go.sqlite
 rango.db
+ggg_web_cache.sqlite
 
 #logfile
 logfile*
