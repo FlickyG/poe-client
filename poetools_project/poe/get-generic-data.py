@@ -1038,7 +1038,7 @@ def load_stat_translations():
         download_string = str(x["English"][0]["string"]).replace('{0}','+')
         
         try:
-            database_version = poe.models.StatNames.objects.get(name = database_string)
+            database_version = StatNames.objects.get(name = database_string)
             print("success", database_string, download_string)
             # save mapping
             mapping = StatTranslation.objects.get_or_create(
@@ -1046,7 +1046,7 @@ def load_stat_translations():
                         web_name = database_version
                         )
             #mapping.save()
-        except poe.models.StatNames.DoesNotExist:
+        except StatNames.DoesNotExist:
             pass # not expecting all lookups to work
 
 write_item_categories()
@@ -1062,8 +1062,14 @@ fetch_jewelry()
 # use RePOE for the rest
 # import stat mappings
 load_stat_translations()
-# iport uniques + stats
+# import uniques + stats
 # import gem types
+# import gems
+import sys, json
+proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
+data_path = proj_path+"poe/data/"
+df = open(data_path+"gems.json").read()
+a = json.loads(df)
 # import map types
 
 

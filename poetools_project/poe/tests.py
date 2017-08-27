@@ -28,15 +28,15 @@ class SimpleTestCase(TestCase):
     def test_registration_login(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
-            "username":'mike2001',
+            "username":'mike2002',
             "password1":"password123",
             "password2":"password123",
             "poe_sessid": "12345678901234567890123456789012",
-            "poe_account_name": "mikesaccount",
+            "poe_account_name": "mikesaccount2",
             "email": "s@s.com"
         })
         self.assertEqual(response.status_code, 302) 
-        models.PoeUser.objects.get(username = "mike2001")
+        models.PoeUser.objects.get(username = "mike2002")
         session_key = self.client.session.session_key
         ####
         url = reverse('index')
@@ -48,15 +48,15 @@ class SimpleTestCase(TestCase):
     def test_registration_set_sessid(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
-            "username":'mike2001',
+            "username":'mike2003',
             "password1":"password123",
             "password2":"password123",
             "poe_sessid": "12345678901234567890123456789012",
-            "poe_account_name": "mikesaccount",
+            "poe_account_name": "mikesaccount3",
             "email": "s@s.com"
         })
         self.assertEqual(response.status_code, 302) 
-        models.PoeUser.objects.get(username = "mike2001")
+        models.PoeUser.objects.get(username = "mike2003")
         session_key = self.client.session.session_key
         ####
         url = reverse('index')
@@ -69,15 +69,15 @@ class SimpleTestCase(TestCase):
     def test_login(self):
         url = reverse("registration_register")
         response = self.client.post(url, {
-            "username":'mike2001',
+            "username":'mike2004',
             "password1":"password123",
             "password2":"password123",
             "poe_sessid": "12345678901234567890123456789012",
-            "poe_account_name": "mikesaccount",
+            "poe_account_name": "mikesaccount4",
             "email": "s@s.com"
         })
         url= '/accounts/login/'
-        response = self.client.post(url, {"username": "mike2001",
+        response = self.client.post(url, {"username": "mike2004",
                                           "password" :'password123'})
         print(response, " ", response.status_code)
         self.assertEqual(response.status_code, 302) # login worked!
@@ -96,18 +96,18 @@ class GenericDataTableLengths(TestCase):
     def test_length_prefix_types(self):
         #length of prefix_types =  33
         data = models.FixType.objects.select_related().filter(category_id__name = "Prefix")
-        self.assertEqual(len(data), 33)
+        self.assertEqual(len(data), 42)
         
     def test_length_prefix_names(self):
         #length of prefix names  480, raised to 484 on r2.6
         data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Prefix")
-        self.assertEqual(len(data), 484)
+        self.assertEqual(len(data), 577)
    
     def test_length_prefixes(self):
         #length of prefixes 1035, raised to 1042 a r2.6
         #length of z once the inner stat dictionary of the higher list is known
         data = models.Fix.objects.select_related().filter(name_id__type_id__category_id__name = "Prefix")
-        self.assertEqual(len(data), 1042)
+        self.assertEqual(len(data), 1204)
 ## Suffixes      
     def test_length_suffix_types(self):
         #length of suffix_types =  24
@@ -117,13 +117,13 @@ class GenericDataTableLengths(TestCase):
     def test_length_suffix_names(self):
         #length of suffix names 270
         data = models.FixName.objects.select_related().filter(type_id__category_id__name = "Suffix")
-        self.assertEqual(len(data), 270)
+        self.assertEqual(len(data), 279)
    
     def test_length_suffixes(self):
         #length of suffixes 420
         #length of z once the inner stat dictionary of the higher list is known
         data = models.Fix.objects.select_related().filter(name_id__type_id__category_id__name = "Suffix")
-        self.assertEqual(len(data), 420)
+        self.assertEqual(len(data), 431)
 
 ## weapons
     def test_length_weapon_names(self):
@@ -145,7 +145,7 @@ class GenericDataTableLengths(TestCase):
     def test_length_clothes_stats(self):
         #length of clothesweapon stats 244
         data = models.ItemStat.objects.select_related().filter(i_id__type_id__type_id__name = "Clothes")
-        self.assertEqual(len(data), 244)
+        self.assertEqual(len(data), 276)
 
 ## jewelry
     def test_length_jewelry_names(self):
@@ -163,13 +163,13 @@ class GenericDataTableLengths(TestCase):
         #length of stats  1515 (sued to be 1530 before model reduction)
         #raised to 1548 at r2.6
         data = models.Stats.objects.all()
-        self.assertEqual(len(data), 1548)
+        self.assertEqual(len(data), 1662)
         
     def test_length_stat_names(self):
         #length of stat_names 266
         #length of z once the inner stat dictionary of the higher list is known
         data = models.StatNames.objects.all()
-        self.assertEqual(len(data), 266)
+        self.assertEqual(len(data), 273)
 
 class GenericDataTableContents(TestCase):
     print("GenericDataTablecontents")
@@ -202,7 +202,7 @@ class GenericDataTableContents(TestCase):
         self.assertEqual(data[0].i.min_dmg, 17)
         self.assertEqual(data[0].i.max_dmg, 66)
         self.assertEqual(data[0].i.i_level, 50)
-        self.assertEqual(data[0].s.name.name, "Weapon Elemental Damage +%")
+        self.assertEqual(data[0].s.name.name, "Elemental Damage With Attack Skills +%")
         self.assertEqual(data[0].s.min_value, 20)
         self.assertEqual(data[0].s.max_value, 24)
         #
@@ -225,7 +225,7 @@ class GenericDataTableContents(TestCase):
     def test_cloth_stat(self):
         data = models.ItemStat.objects.select_related().filter(i_id__name = "Plate Vest")
         self.assertEqual(data[0].i.evasion, 0)
-        self.assertEqual(data[0].i.armour, 14)
+        self.assertEqual(data[0].i.armour, 19)
         self.assertEqual(data[0].i.energy_shield, 0)
         self.assertEqual(data[0].s.name.name, "From Armour Movement Speed +%")
         self.assertEqual(data[0].s.min_value, -3)
@@ -233,9 +233,9 @@ class GenericDataTableContents(TestCase):
         
         data = models.ItemStat.objects.select_related().filter(i_id__name = "Two-Toned Boots")
         self.assertEqual(data[0].i.i_level, 72)
-        self.assertEqual(data[0].i.evasion, 109)
+        self.assertEqual(data[0].i.evasion, 126)
         self.assertEqual(data[0].i.armour, 0)
-        self.assertEqual(data[0].i.energy_shield, 32)
+        self.assertEqual(data[0].i.energy_shield, 24)
         self.assertEqual(data[0].s.name.name, "Cold And Lightning Damage Resistance %")
         self.assertEqual(data[0].s.min_value, 15)
         self.assertEqual(data[0].s.max_value, 20)
