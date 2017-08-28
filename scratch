@@ -8,8 +8,103 @@ https://www.pathofexile.com/character-window/get-stash-items?league=Standard&tab
 
 http://www.pathofexile.com/character-window/get-items?character= [Charname] &accountName= [AccountName]
 
-
-
+####
+{'corrupted': False,
+ 'explicitMods': ['21% increased Spell Damage',
+                  '78% increased Physical Damage',
+                  '+20% to Global Critical Strike Multiplier',
+                  '+17 to maximum Mana',
+                  '+19% to Fire Resistance',
+                  '+45 to Accuracy Rating'],
+ 'frameType': 2,
+ 'h': 3,
+ 'icon': 'https://web.poecdn.com/image/Art/2DItems/Weapons/OneHandWeapons/Daggers/Dagger5.png?scale=1&w=1&h=3&v=a1651ea7d4666506eba99122f5b927e43',
+ 'id': '1cf31f3ef89b73161939064e4ebb26adc367f74f5c7473ef148f409bae29e46d',
+ 'identified': True,
+ 'ilvl': 46,
+ 'implicitMods': ['30% increased Global Critical Strike Chance'],
+ 'inventoryId': 'Stash3',
+ 'league': 'Standard',
+ 'lockedToCharacter': False,
+ 'name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
+ 'properties': [{'displayMode': 0, 'name': 'Dagger', 'values': []},
+                {'displayMode': 0,
+                 'name': 'Physical Damage',
+                 'type': 9,
+                 'values': [['27-105', 1]]},
+                {'displayMode': 0,
+                 'name': 'Critical Strike Chance',
+                 'type': 12,
+                 'values': [['6.30%', 0]]},
+                {'displayMode': 0,
+                 'name': 'Attacks per Second',
+                 'type': 13,
+                 'values': [['1.40', 0]]},
+                {'displayMode': 0,
+                 'name': 'Weapon Range',
+                 'type': 14,
+                 'values': [['8', 0]]}],
+ 'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['48', 0]]},
+                  {'displayMode': 1, 'name': 'Dex', 'values': [['63', 0]]},
+                  {'displayMode': 1, 'name': 'Int', 'values': [['109', 0]]}],
+ 'socketedItems': [{'additionalProperties': [{'displayMode': 2,
+                                              'name': 'Experience',
+                                              'progress': 0.9377298951148987,
+                                              'values': [['1067959/1138877',
+                                                          0]]}],
+                    'colour': 'I',
+                    'corrupted': False,
+                    'descrText': 'Place into an item socket of the right '
+                                 'colour to gain this skill. Right click to '
+                                 'remove from a socket.',
+                    'explicitMods': ['+4 to radius',
+                                     'Base duration is 9.80 seconds',
+                                     'Cursed enemies have -28% to Elemental '
+                                     'Resistances'],
+                    'frameType': 4,
+                    'h': 1,
+                    'icon': 'https://web.poecdn.com/image/Art/2DItems/Gems/ElementalWeakness.png?scale=1&w=1&h=1&v=37d7c0d6764d631c4de927ffa72e2b193',
+                    'id': 'be31a9b976e24c30159407b0720a7f7172ff88b8445a8e3a39808d1aae144d3e',
+                    'identified': True,
+                    'ilvl': 0,
+                    'lockedToCharacter': False,
+                    'name': '',
+                    'properties': [{'displayMode': 0,
+                                    'name': 'Curse, Spell, AoE, Duration',
+                                    'values': []},
+                                   {'displayMode': 0,
+                                    'name': 'Level',
+                                    'type': 5,
+                                    'values': [['9', 0]]},
+                                   {'displayMode': 0,
+                                    'name': 'Mana Cost',
+                                    'values': [['37', 0]]},
+                                   {'displayMode': 0,
+                                    'name': 'Cast Time',
+                                    'values': [['0.50 sec', 0]]}],
+                    'requirements': [{'displayMode': 0,
+                                      'name': 'Level',
+                                      'values': [['48', 0]]},
+                                     {'displayMode': 1,
+                                      'name': 'Int',
+                                      'values': [['109', 0]]}],
+                    'secDescrText': 'Curses all targets in an area, making '
+                                    'them less resistant to elemental damage.',
+                    'socket': 0,
+                    'socketedItems': [],
+                    'sockets': [],
+                    'support': False,
+                    'typeLine': 'Elemental Weakness',
+                    'verified': False,
+                    'w': 1}],
+ 'sockets': [{'attr': 'I', 'group': 0},
+             {'attr': 'I', 'group': 0},
+             {'attr': 'D', 'group': 1}],
+ 'typeLine': 'Boot Blade',
+ 'verified': False,
+ 'w': 1,
+ 'x': 10,
+ 'y': 3}
 >>> pprint.pprint(x['tabs'][121])
 {'colour': {'b': 0, 'g': 128, 'r': 99},
  'hidden': False,
@@ -298,4 +393,38 @@ $$;
         for key, value in account_name.items():
             print("print account!", key, value)
             ACCOUNTS.append(account(value))
+
+
+== dump data not working
+
+works in print("poe_db" == db, "model_name", model_name, "app_label", app_label)
+
+
+
+== change sessid form from index page
+<tr>
+	<th>
+		<label for="id_new_sessid">New sessid:</label>
+	</th>
+	<td>
+		<input id="id_new_sessid" maxlength="128" name="new_sessid" type="text" value="asdasd" />
+			<br /><span class="helptext">Please update your session ID here</span><
+	/td>
+</tr>
+
+====
+
+import poe.models
+import poe.common.character_tools
+
+account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
+char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')
+data =  poe.common.character_tools.get_items(account, char)
+
+ggg_items = data['items']
+
+==
+
+
+
 

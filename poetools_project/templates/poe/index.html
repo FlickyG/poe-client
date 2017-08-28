@@ -5,40 +5,35 @@
 {% block title %}Index{% endblock %}
 
         {% block body_block %}
-{% if user.is_authenticated %}
+{% if not user.is_authenticated %}
     <div class="page-header">
-                <h1>Rango says... hello {{ user.username }}!</h1>
-            {% else %}
-                <h1>Rango says... hello world!</h1>
-            {% endif %}
-</div>
+                <h1>Flicky says... hello world!</h1>
 
+	</div>
          <div class="row placeholders">
-            <div class="col-xs-12 col-sm-6 placeholder">
-                   <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Item Categories</h3>
-                        </div>
-                    </div>
-
-              {% if item_categories %}
-                    <ul class="list-group">
-                        {% for category in item_categories %}
-                         <li  class="list-group-item"><a href="{% url 'item'  category.slug %}">{{ category.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <strong>There are no categories present.</strong>
-                {% endif %}
-
-            </div>
-            <div class="col-xs-12 col-sm-6 placeholder">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Modifications</h3>
-                    </div>
-                </div>
-
+            	<div class="col-xs-12 col-sm-6 placeholder">
+                	   <div class="panel panel-primary">
+                    	    <div class="panel-heading">
+                        	    <h3 class="panel-title">Item Categories</h3>
+                        	</div>
+                    	</div>
+				{% if item_categories %}
+	                    <ul class="list-group">
+	                        {% for category in item_categories %}
+	                         <li  class="list-group-item"><a href="{% url 'item'  category.slug %}">{{ category.name }}</a></li>
+	                        {% endfor %}
+	                    </ul>
+	            {% else %}
+	                    <strong>There are no categories present.</strong>
+	        	{% endif %}
+            	</div>
+            	
+            	<div class="col-xs-12 col-sm-6 placeholder">
+                	<div class="panel panel-primary">
+	                    <div class="panel-heading">
+    	                    <h3 class="panel-title">Modifications</h3>
+        	            </div>
+            	    </div>
                 {% if mods %}
                     <ul>
                         {% for mod in mods %}
@@ -48,10 +43,30 @@
                 {% else %}
                     <strong>There are no categories present.</strong>
                 {% endif %}
+{% else %}
+	<h1>Flicky says... hello {{user.username}}</h1>
+		 <div class="container">
+			Current Session ID: {{ old_sessid }}
+  			<form action="" method="POST" >
+  			{% csrf_token %}
+
+    			{{ form }}
+				<input type="submit" value="Save" />
+  			</form>
+		</div>
+			<p>&nbsp;</p>
+		</div>
+		<div class="col-xs-12 col-sm-6 placeholder">
+        	<div class="panel panel-primary">
+            	<div class="panel-heading">
+                	<h3 class="panel-title">Account Tools</h3>
+                </div>
             </div>
-
-          </div>
-
+			<ul>
+            	<li  class="list-group-item"><a href="{% url 'ggg_characters' user.poeuser.poe_account_name %}" >List Characters</a></li>
+            </ul>
+            
+{% endif %}
 
        <p> visits: {{ visits }}</p>
         {% endblock %}

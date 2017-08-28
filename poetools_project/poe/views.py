@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from poe.models import FixCategory, Fix
 
@@ -10,7 +10,11 @@ from poe.models import FixType
 from poe.models import ItemType
 from poe.models import ItemName
 
+from poe.models import PoeAccount, PoeCharacter
+
 from poe.forms import CategoryForm #section 8
+
+import poe.common.character_tools
 
 #from poe.forms import UserForm, UserProfileForm #sectio9n 9
 from django.contrib.auth import authenticate, login #sectio9n 9
@@ -21,17 +25,69 @@ from django.contrib.auth import logout #section 9
 # Create your views here.
 from django.http import HttpResponse
 import datetime
-#from datetime import datetime
+import sys
 
-from poe.forms import PageForm
+
+from poe.forms import PageForm, ResetSessID
+import poe.tables
+from django_tables2.config import RequestConfig
+
+import logging
+stdlogger = logging.getLogger("poe_generic")
+
+
+
 
 def index(request):
-
+    #print("hello", request.new_sessid)
     request.session.set_test_cookie()
     item_category_list = ItemCategory.objects.all()
     modifications_list = FixCategory.objects.all()
-
-    context_dict = {'item_categories': item_category_list, 'mods': modifications_list}
+    context_dict = {}
+    if request.user.is_authenticated:
+        print("user", type(request.user))
+        if request.method == 'POST':
+            form = ResetSessID(request.POST)
+            if form.is_valid():
+                # get the right account
+                me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+                
+                # commit new sessid passed to here
+                me.sessid = form['new_sessid'].value()
+                me.save(update_fields=['sessid'])
+                context_dict["old_sessid"] = me.sessid
+                context_dict['form'] = ResetSessID
+                response = render(request,'poe/index.html', context_dict)
+                return response
+            else:
+                print("form has errors", form.fields)
+                #form = PageForm(request.POST)
+                
+                for x in form.errors:
+                      for y in x:
+                          print(x, y)
+                response = render(request,'poe/index.html', context_dict)
+    
+                return response
+    
+        else:
+            context_dict = {'form': ResetSessID}
+            me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
+            context_dict["old_sessid"] = me.sessid
+            """
+                print("in the else clause", request.method)
+                if form.is_valid():
+                    print("form is valid")
+                       # probably better to use a redirect here.
+                    return category(request, category_name_slug)
+                else:
+                    print("form has errors")
+                    print(form.errors)
+                """
+                
+    
+    
+    context_dict.update({'item_categories': item_category_list, 'mods': modifications_list})
 
     visits = request.session.get('visits')
     if not visits:
@@ -56,10 +112,12 @@ def index(request):
         request.session['visits'] = visits
     context_dict['visits'] = visits
 
-
+    #print("context_dict", context_dict)
     response = render(request,'poe/index.html', context_dict)
 
     return response
+
+
 
 def index_rango(request):
 
@@ -99,42 +157,6 @@ def index_rango(request):
 
     return response
 
-def index2(request):
-
-    request.session.set_test_cookie()
-    
-    category_list = Category.objects.order_by('-likes')[:5]
-    page_list = Page.objects.order_by('-views')[:5]
-
-    context_dict = {'categories': category_list, 'pages': page_list}
-
-    visits = request.session.get('visits')
-    if not visits:
-        visits = 1
-    reset_last_visit_time = False
-
-    last_visit = request.session.get('last_visit')
-    if last_visit:
-        last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-
-        if (datetime.datetime.now() - last_visit_time).seconds > 0:
-            # ...reassign the value of the cookie to +1 of what it was before...
-            visits = visits + 1
-            # ...and update the last visit cookie, too.
-            reset_last_visit_time = True
-    else:
-        # Cookie last_visit doesn't exist, so create it to the current date/time.
-        reset_last_visit_time = True
-
-    if reset_last_visit_time:
-        request.session['last_visit'] = str(datetime.datetime.now())
-        request.session['visits'] = visits
-    context_dict['visits'] = visits
-
-
-    response = render(request,'poe/index.html', context_dict)
-
-    return response
 
 def about(request):
     
@@ -160,7 +182,6 @@ def item(request, category_name_slug, sub_category_slug = None):
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
-
     try:
         # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
@@ -169,6 +190,7 @@ def item(request, category_name_slug, sub_category_slug = None):
         # Retrieve all of the associated item categories e.g. all the weapon type.
         # Add the results 
         context_dict['items'] = ItemType.objects.filter(type_id=item_category.id)
+        #context_dict['table'] = poe.tables.ItemTable(ItemType.objects.filter(type_id=item_category.id))
         # We also add the category object from the database to the context
         # dictionary We'll use this in the template to verify that the category exists.
         context_dict['category'] = item_category
@@ -184,6 +206,17 @@ def item(request, category_name_slug, sub_category_slug = None):
                 context_dict['sub_item_category'] = sub_item_category
                 context_dict['sub_item_name'] = sub_item_category.name
                 context_dict['sub_items'] = ItemName.objects.filter(type_id=sub_item_category.id)
+                if item_category.name == "Weapons":
+                    table = poe.tables.WeaponTable(ItemName.objects.filter(type_id=sub_item_category.id))   
+                elif item_category.name == 'Clothes':
+                    table = poe.tables.ClothingTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                elif item_category.name == 'Jewelry':
+                    table = poe.tables.JewelTable(ItemName.objects.filter(type_id=sub_item_category.id))
+                else:
+                    print("something went wrong", item_category)
+                    sys.exit()
+                RequestConfig(request).configure(table)
+                context_dict['table'] = table
             except:
                 pass
         else:
@@ -322,4 +355,26 @@ def add_page(request, category_name_slug):
 def restricted(request):
     return HttpResponse("Since you're logged in, you can see this text!")
 
+@login_required
+def ggg_characters(request, account_name_slug):
+    stdlogger.debug("entering ggg_characters")
+    context_dict = {}
+    # get the account
+    context_dict["account_name"] = account_name_slug
+    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)  
+    # get the characters
+    context_dict['characters'] = poe.models.PoeCharacter.objects.filter(account = this_account)
+    # make a table
+    table = poe.tables.CharTable(context_dict['characters'])   
+    RequestConfig(request).configure(table)
+    context_dict['table'] = table
+    return render(request, 'poe/ggg_characters.html', context_dict)
 
+#poe.models.PoeAccount(acc_name = "greenmasterflick", sessid = "898fb2c004a5d6ecb0bfa5b1be72b1f4")
+
+
+def get_data(request, account_name_slug):
+    print("hello get data", account_name_slug)
+    this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
+    poe.common.character_tools.get_characters(this_account)
+    return redirect(index)

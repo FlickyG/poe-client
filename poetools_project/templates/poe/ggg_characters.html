@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block body_block %}
+
+<link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
+
+{% if user.poeuser.poe_account_name == account_name %}
+		{% load django_tables2 %}
+        {% render_table table %}
+        <li> <strong >{{ user.username }}</strong></li>
+    	<li> <strong >{{ user.poeuser.poe_sessid }}</strong></li>
+    	<li> <strong >{{ user.poeuser.poe_account_name }}</strong></li>
+ 	
+{% else %}
+    user name {{user.poeuser.poe_account_name}}
+    account name {{account_name}}
+    <h1>This isn't your account! </h1>
+{% endif %}
+
+{% endblock %}

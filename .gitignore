@@ -13,6 +13,15 @@
 #databases
 first_go.sqlite
 rango.db
+ggg_web_cache.sqlite
+
+#logfile
+logfile*
+
+#eclipse setting files 
+.settings
+#user database
+poe_tools_auth.db
 
 #migrations
 poetools_project/rango/migrations/*

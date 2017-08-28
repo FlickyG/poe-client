@@ -189,7 +189,7 @@ s.hooks = {'response': make_throttle_hook(0.1)}
 # set session cookie
 
 
-COOKIES = {'greenmasterflick': '473b997f3d48dd7e2851cdff4a79de57'}
+COOKIES = {'greenmasterflick': '898fb2c004a5d6ecb0bfa5b1be72b1f4'}
 
 
 

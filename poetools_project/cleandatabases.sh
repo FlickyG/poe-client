@@ -1,7 +1,7 @@
 #/bin/bash
 rm -r poe/migrations/*
 rm -r rango/migrations/*
-rm rango.db
+#rm poe_tools_auth.db
 dropdb poe_data
 createdb poe_data
 python /home/adam/workspace1/poe-client/poetools_project/manage.py makemigrations poe

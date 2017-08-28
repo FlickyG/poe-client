@@ -9,10 +9,31 @@ import logging, logging.config
 import sys #for excepotion handling and printing
 import datetime, time #to analyuse how long things take
 from xml.dom import minidom
-import numpy as np  # for a set from a list of dicts
+
+import json #for RePoe files
+
 from django.core.management.sql import sql_flush
 
 
+###
+### So we can use our django models here in this script
+###
+import os
+#proj_path = '/home/adam/workspace1/poe-client/poetools_project/'
+proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
+#"/home/adam/workspace1/poe-client/poetools_project/"
+
+# This is so Django knows where to find stuff.
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poetools_project.settings")
+sys.path.append(proj_path)
+# This is so my local_settings.py gets loaded.
+os.chdir(proj_path)
+# This is so models get loaded.
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
+from poe.models import StatNames, FixName, Stats, ItemName, ItemType, ItemStat
+from poe.models import StatTranslation
 
 STATS = 0
 STAT_NAMES = 0
@@ -24,7 +45,12 @@ logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
 
 def slugify(s):
-    #force lower case
+    """
+    Forces a string into lower case, replaces spaces with hyphens
+    and removes special characters.
+    Accepts: a string
+    Returns: a string
+    """
     s = s.lower()
     #replaces spaces with hyphens
     s = s.replace(" ", "-")
@@ -40,113 +66,97 @@ def slugify(s):
     return s
 
 def write_item_categories():
+    """
+    Creates ItemCategory model instances from a pre-defined list and writes
+    them to the database
+    Accepts: None
+    Returns: None
+    """
     logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
             print("write_item_categories", x, slugify(x))
-            currQ.execute("INSERT INTO item_category (name, slug) "
-                        "VALUES (%s, %s)",
-             (x, slugify(x),))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            y = ItemCategory(name = x)
+            y.save()
+        except:
             logger.debug("psql integrity error when commiting catagory types type (%s)", x)
-            connQ.rollback()
+
 
 def write_fix_categories():
+    """
+    Creates FixCategory model instances from a pre-defined list and saves
+    them to the database.
+    Accepts: None
+    Returns: None
+    """        
     logger.debug("entering write_fix_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     list = ['Prefix', 'Suffix']
     for x in list:
         try:
-            currQ.execute("INSERT INTO fix_category (name, slug) "
-                        "VALUES (%s, %s)",
-             (x, slugify(x),))           
-            connQ.commit()
+            y = FixCategory(name = x)
+            y.save()
         except psycopg2.IntegrityError:
             logger.debug("psql integrity error when commiting fix types type (%s)", x)
-            connQ.rollback()  
-
-            
-def get_item_category(string):
-    logger.debug("entering write_item_categories ",)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    #print("string", string)
-    #print("SELECT * FROM item_categorys WHERE name = {0}".format(string))
-    try:
-        currQ.execute("SELECT * FROM item_category WHERE name = '{0}'".format(string))
-        a = currQ.fetchone()[0] #one()[0]
-        return(a)
-    except:
-        print("entering exception case in get_item_categorys", sys.exc_info()[0])
-        #print("exception string in get_item_categorys", string)
-    currQ.close()
-
+  
             
 def write_item_type(the_type, list):
+    """ 
+    Creates ItemType model instances from a list and writes them to the database
+    Accepts: A list of ItemType names
+    Returns: None
+    """    
     logger.debug("entering write_item_type (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
+    
     for x in list:
         try:
             #print("name", x)
-            currQ.execute("INSERT INTO item_type (name, type_id, slug) "
-                        "VALUES (%s, %s, %s)",
-             (x, the_type, slugify(x),))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
-            print("psql integrity error when commiting item types type (%s) (%s)", (the_type, x, ))
-            connQ.rollback()
-            
-def get_item_type_id(item):
-    logger.debug("entering write_item_type_id (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    #for x in list:
-    try:
-        currQ.mogrify("SELECT id FROM item_type WHERE name = '{0}' ".
-            format(item))           
-        a = currQ.fetchone()
-    except psycopg2.IntegrityError:
-        logger.debug("psql integrity error when getting item type ID type (%s)" % item)
-
-    
-    
+            y = ItemType(
+                         name = x,
+                         type = the_type,
+                         )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
+            print("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
+                 
 def write_prefix_types(list):
+    """ Creates PrefixType model instances from a list and writes them to 
+        the database.  Has and intermediate step where it identifies the Prefix 
+        model object.
+        Accepts: A list of PrefixType names
+        Returns: None
+    """   
     logger.debug("entering write_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in list:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-            type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
-                        "VALUES ('{0}', {1}, '{2}')".format(x, type, slugify(x)))
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting prefix types type (%s)", x)
-            connQ.rollback()
+            type = FixCategory.objects.get(name = 'Prefix')
+            type.fixtype_set.create(name = x)
+        except:
+            logger.debug("write_prefix_types - Unexpected error:", sys.exc_info()[0], x)
+            sys.exit()
             
 def write_suffix_types(list):
-    logger.debug("entering write_suffix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
+    """
+    Creates SuffixType model instances from a list and writes them to 
+    the database.  Has and intermediate step where it identifies the Suffix 
+    model object.
+    Accepts: A list of SuffixType names
+    Returns: None
+    """  
     for x in list:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-            type = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_type (name, category_id, slug) "
-                        "VALUES ('{0}', {1}, '{2}')".format(x,type, slugify(x)))
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            type = FixCategory.objects.get(name = 'Suffix')
+            type.fixtype_set.create(name = x)
+        except:
             print("psql integrity error when commiting suffix types type (%s)", x)
-            logger.debug("psql integrity error when commiting suffix types type (%s)", x)
-            connQ.rollback()  
+            logger.debug("write_suffix_types - Unexpected error:", sys.exc_info()[0], x)
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
@@ -159,7 +169,7 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
         return response
     return hook
 
-requests_cache.install_cache('first_go', expires_after = 1)
+requests_cache.install_cache('ggg_web_cache', expires_after = 1)
 requests_cache.clear()
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
@@ -269,25 +279,15 @@ def parse_jewelry(item_data):
         item["implicit_mod_values_"+str(x)+"_max"] = mod_values[x][1]
  
 
-def get_prefix_types(key):
-    prefix_types = {}
-    logger.debug("entering get_prefix_types (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    try:
-        currQ.execute("SELECT * FROM prefix_types")
-        a = currQ.fetchall()
-        temp_prefixes = []
-        for x in a:
-            temp_prefixes.append(x[::-1])
-        prefix_types = dict(temp_prefixes)
-        return(prefix_types[key])
-    except:
-        print("entering exception case in get_prefix_types", sys.exc_info()[0])
-    currQ.close()
+
                
 def fetch_prefixes(): #layout is different - implicit mods are on the same line
-    logger.debug("entering fetch_refix_2 (%s)", list)
+    """ 
+    Downloads, parses and calls other methods to save this prefix data from the POE website.
+    Accepts: None
+    Returns None but prints data
+    """
+    logger.debug("entering fetch_prefix (%s)", list)
     prefix_types = set()
     stats = set()
     prefixes = []
@@ -378,108 +378,128 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
 
 
 def write_prefixes(the_list):
+    """
+    Saves prefix model instances to the database
+    Accepts: List of prefix names and values
+    Returns: None but prints some data
+    """
     logger.debug("entering write_prefixes (%s)", the_list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()  
+ 
     z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-        category = currQ.fetchall()[0][0]
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
-        prefix_type = currQ.fetchone()[0]
+        the_category = FixCategory.objects.get(name = 'Prefix')
+        prefix_type = FixType.objects.get(name = x['type'], category = the_category)
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], prefix_type,))
-        name_id = currQ.fetchone()[0]
+        name_id = FixName.objects.get(name = x['name'], type = prefix_type)
         for y in x["stats"]:
             for keys, values in y.items():
                 if "implicit_mod_key" in keys:
-                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    stat_name_id = currQ.fetchone()[0]  #HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
+                    stat_name_id = StatNames.objects.get(name = values)#HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the prefix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
-            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (stat_name_id, minimum, maximum))
-            stat_id = currQ.fetchone()[0]
+            stat_id = Stats.objects.get(name = stat_name_id, min_value = minimum, max_value = maximum)
             try:
                 z = z + 1 #  to count number of database entries
-                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))           
-                connQ.commit()
-            except psycopg2.IntegrityError:     
+                x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+                x2.save()
+            except Exception as e:     
                 z = z - 1 #  remove duplicates
-                print("unable to INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))
-                #logger.info("psql integrity error when commiting prefixes (%s)", x)
-                connQ.rollback() 
+                logger.debug(" error when commiting prefixes (%s)", x, e)
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
+    """
+    Write the prefixes to the fix_name table
+    Accepts: a set of 
+    Returns: nothing but prints the number of entries written
+    """
     logger.debug("entering write_prefix_names (%s)", the_set)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     z = 0
     for x in the_set:
         try:
             z = z + 1
-            currQ.execute("SELECT id from fix_category WHERE name = 'Prefix'")
-            category = currQ.fetchall()[0][0]
-            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
-            type_id = currQ.fetchone()[0]
-            #type_id = currQ.fetchall()[0][0]
-            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
-                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))     
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            try:
+                the_category = FixCategory.objects.get(name = 'Prefix')
+            except Fix.DoesNotExist as e:
+                logger.debug("Fix.DoesNotExist ", e)
+            try:
+                type_id = FixType.objects.get(name = x[0], category = the_category)
+            except FixType.DoesNotExist as e:
+                logger.debug("FixType.DoesNotExist ", e)     
+            y = FixName(name = x[1], type = type_id)
+            y.save()
+        except Exception as e:
             z = z - 1
-            logger.info("psql integrity error when commiting prefix names (%s)", x)
-            print("psql integrity error when commiting prefix names (%s)", x)
-            connQ.rollback()
+            logger.info("error commiting prefix names (%s)", x)
     print("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
+    """
+    Creates StatName model instances and saves them to the database. Keeps track
+    of the number of stats names successfully saved
+    Accepts: a set of prefix names
+    Returns: None
+    """
     global STAT_NAMES
     logger.debug("entering write_stat_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
-            STAT_NAMES = STAT_NAMES + 1
-            currQ.execute("INSERT INTO stat_names (name, slug) "
-                        "VALUES (%s, %s)",
-                       (x, slugify(x)))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            STAT_NAMES = STAT_NAMES - 1
-            logger.debug("psql integrity error when commiting stat names (%s)", x)
-            connQ.rollback()     
+            y = StatNames.objects.get(name = x) #the entry already exists
+            pass
+        except StatNames.DoesNotExist as e:
+            try:
+                STAT_NAMES = STAT_NAMES + 1
+                y = StatNames(name = x)
+                y.save()
+            except:
+                STAT_NAMES = STAT_NAMES - 1
+                logger.debug("write_stat_names - Unexpected error:", sys.exc_info()[0], x)
+                sys.exit()
+            
+         
     
 def write_stats(the_set):
+    """
+    Creates stat model instances and saves them to the database
+    Accepts: a set of stats
+    Returns: None but keeps track of the number of Stats successfully written to the database 
+    """
     global STATS
     logger.debug("entering write_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()
     for x in the_set:
         try:
             STATS = STATS + 1
             # get id of the stat neame
-            currQ.execute("SELECT id FROM stat_names WHERE name = %s", 
-                          (x[0],))
-            stat_name = currQ.fetchone()
-            currQ.execute("INSERT INTO stats (name_id, min_value, max_value) "
-                        "VALUES (%s, %s, %s)",
-                        (stat_name, x[1], x[2]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
+            the_statname = StatNames.objects.get(name = x[0])
+            try:
+                y = Stats.objects.get(name = the_statname, min_value = x[1], max_value = x[2])
+                pass
+            except Stats.DoesNotExist as e:
+                y = Stats(name = the_statname, min_value = x[1], max_value = x[2])
+                y.save()
+                STATS = STATS + 1
+        except Exception as e:
             STATS = STATS - 1
-            logger.debug("psql integrity error when commiting stats  (%s)", x)
-            connQ.rollback()  
+            logger.info("write_stats - Unexpected error:")
+            sys.exit()
+
     
 
 def fetch_suffixes(): #layout is different - implicit mods are on the same line
+    """
+    Downloads the suffix data from the GGG website, extracts the useful info and
+    calls other methods in order to save this data to the database
+    Accepts: None
+    Returns: None but prints useful data along the way
+    """
     logger.debug("entering fetch_refix_2 (%s)", list)
     suffix_types = set()
     stats = set()
@@ -565,62 +585,72 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     write_suffix_names(names) #unique
     write_suffixes(suffixes)
 
-def write_suffix_names(names):
+def write_suffix_names(the_set):
+    """
+    Creates suffix name model instances and saves them to the databae
+    Accepts: a list of suffix names
+    Returns: None
+    """
     logger.debug("entering write_sufffix_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    for x in names:
+    z = 0
+    for x in the_set:
         try:
-            currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-            category = currQ.fetchall()[0][0]
-            currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x[0], category,))
-            type_id = currQ.fetchone()[0]
-            currQ.execute("INSERT INTO fix_name (name, type_id, slug) "
-                        """VALUES (%s, %s, %s)""",(x[1], type_id, slugify(x[1])))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.info("psql integrity error when commiting suffix names (%s)", x)
-            connQ.rollback() 
+            z = z + 1
+            try:
+                the_category = FixCategory.objects.get(name = 'Suffix')
+            except Fix.DoesNotExist as e:
+                logger.debug("Fix.DoesNotExist ", e)
+            try:
+                type_id = FixType.objects.get(name = x[0], category = the_category)
+            except FixType.DoesNotExist as e:
+                logger.debug("FixType.DoesNotExist ", e)     
+            y = FixName(name = x[1], type = type_id)
+            y.save()
+        except Exception as e:
+            z = z - 1
+            logger.info("error commiting suffix names (%s)", x)
+    print("write_suffixnames z", z) 
 
 def write_suffixes(the_list):
+    """
+    Creates suffix model instances and saves them to the database.  
+    Accepts: a list of suffixes
+    Returns: None but prints useful info along the way
+    """
     logger.debug("entering write_suffixes (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    z = 0
+    z = 0 #  to count number of database entries
     for x in the_list:
-        currQ.execute("SELECT id from fix_category WHERE name = 'Suffix'")
-        category = currQ.fetchall()[0][0]
-        currQ.execute("SELECT id FROM fix_type WHERE name = (%s) AND category_id = (%s)", (x["type"], category,))
-        suffix_type = currQ.fetchone()[0]
+        the_category = FixCategory.objects.get(name = 'Suffix')
+        suffix_type = FixType.objects.get(name = x['type'], category = the_category)
         #need to decide if we want a seperate stats table, and make the above sql
-        currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], suffix_type,)) 
-        name_id = currQ.fetchone()[0]
+        #currQ.execute("SELECT id FROM fix_name WHERE name = (%s) AND type_id = (%s)", (x["name"], suffix_type,))
+        name_id = FixName.objects.get(name = x['name'], type = suffix_type)
         for y in x["stats"]:
             for keys, values in y.items():
                 if "implicit_mod_key" in keys:
-                    currQ.execute("SELECT id FROM stat_names WHERE name = (%s)", (values,))
-                    stat_name_id = currQ.fetchone()[0]
+                    stat_name_id = StatNames.objects.get(name = values)#HERE we are overighting the name_id, here it is the description name of the stat, but earlier it was the name of the suffix.  Probably need to add column to the table?
                 if "min" in keys:
                     minimum = values
                 if "max" in keys:
                     maximum = values
-            currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                          (stat_name_id, minimum, maximum))
-            stat_id = currQ.fetchone()[0]
+            stat_id = Stats.objects.get(name = stat_name_id, min_value = minimum, max_value = maximum)
             try:
-                z = z + 1
-                currQ.execute("INSERT INTO fix (name_id, stat_id, i_level, m_crafted) "
-                              "VALUES (%s, %s, %s, %s)",
-                              (name_id, stat_id, x["i_level"], str(x["master_crafted"]), ))          
-                connQ.commit()
-            except psycopg2.IntegrityError:
-                z = z - 1
-                logger.debug("psql integrity error when commiting suffixes (%s)", x)
-                connQ.rollback()
-    print("length of suffixes written to datase ", z) 
+                z = z + 1 #  to count number of database entries
+                x2 = Fix(name = name_id, stat = stat_id, i_level = x["i_level"], m_crafted = str(x["master_crafted"]))
+                x2.save()
+            except Exception as e:     
+                z = z - 1 #  remove duplicates
+                logger.debug(" error when commiting suffixes (%s)", x, e)
+    print("length of suffixes written to database ", z)
      
    
 def fetch_weapons():
+    """
+    Downloads the weapon data from the GGG website, extracts the useful info
+    and then calls additional methods in order to save this to the database
+    Accepts: None
+    Returns: None but prints useful info along the way
+    """
     weapon_types = []
     all_stats = set()
     all_weapons = []
@@ -640,18 +670,14 @@ def fetch_weapons():
         weapon_types.append(w_type)
     #write_weapon_types(weapon_types)
     # write weapon types to item_type table, look up the item_category
-    type = get_item_category("Weapons")
+    type = ItemCategory.objects.get(name = 'Weapons')
     write_item_type(type, weapon_types)
-    # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Weapons'")
-    w_id = currQ.fetchall()
-    weapon_types = dict((y, x) for x, y in w_id)
+    # retrieve the item type ids for the weapons 
+    w_id = ItemType.objects.select_related().filter(type__name = "Weapons").values_list('id', 'name')
+    weapon_types = dict((y, x) for x, y in w_id) # dictionary of ids and strings
     for item_type in all_items:
         items = item_type.find_all("table", {"class": "itemDataTable"}) #gets ALL the raw data for each item class
+        # extract from the dictonary the id for the weapon
         w_type = weapon_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
         for item_data in items: # for each weaspon class
             data = item_data.find_all("tr") #get the raw data
@@ -724,42 +750,48 @@ def fetch_weapons():
     
 def write_weapon_names(list):
     logger.debug("entering write_weapon_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
+
     z = 0  
     for x in list:
         try:
-            z = z + 1
-            currQ.execute("INSERT INTO item_name (name, i_level, min_dmg, max_dmg,"
-                          "aps, dps, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["min_dmg"], x["max_dmg"],
-                           x["aps"], x["dps"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"], x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError as e:
+            y = ItemName(
+                    name = x["name"],
+                    i_level = x["i_level"], 
+                    min_dmg = x["min_dmg"],
+                    max_dmg = x["max_dmg"],
+                    aps = x['aps'],
+                    dps = x['dps'],
+                    req_str = x['req_str'],
+                    req_dex = x['req_dex'],
+                    req_int = x['req_int'],
+                    large_url = x["large_url"],
+                    small_url = x["small_url"],
+                    type = x["type_id"]
+                )
+            y.save()
+            z = z + 1          
+        except Exception as e:
             z = z - 1
-            logger.debug("psql integrity error when commiting weapon names (%s)", x)
-            connQ.rollback()
+            logger.debug("error when commiting weapon names (%s)", e)
     print("number of weapon names writtent to database", z) 
 
 def write_weapon_stats(list):
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
     logger.debug("entering write_weapon_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
+  
     z = 0
     for x in list:
-        query = currQ.execute("""SELECT id FROM item_name WHERE name = %s""", (x["name"],))
-        #print("query")
-        #currQ.execute(query)
-        w_id = currQ.fetchone()
+        w_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
                         currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
@@ -772,17 +804,25 @@ def write_weapon_stats(list):
                                   (stat_id,))
                         max = currQ.fetchone()[0]
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # w_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = w_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
+                except Exception as e:
+                    print("error when commiting weapon stats (%s)", e)
                     z = z - 1
-                    logger.debug("psql integrity error when commiting weapon stats (%s)", x)
+                    logger.debug("error when commiting weapon stats (%s)", e)
     return(z)
    
 def fetch_clothes():
@@ -805,15 +845,10 @@ def fetch_clothes():
         c_type = item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text #gets all item catagory names
         clothes_types.append(c_type)
     #write clothes types
-    type = get_item_category("Clothes")
+    type = type = ItemCategory.objects.get(name = 'Clothes')
     write_item_type(type, clothes_types)   
     # connect to database
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Clothes'")
-    c_id = currQ.fetchall()
+    c_id = ItemType.objects.select_related().filter(type__name = "Clothes").values_list('id', 'name')
     clothing_types = dict((y, x) for x, y in c_id)
     for item_type in all_items:
         #write_clothes_types(clothes_types)
@@ -895,60 +930,69 @@ def fetch_clothes():
     
 def write_clothes_names(list):
     logger.debug("entering write_clothes_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()  
+
     for x in list:
         try:
-            pass
-            currQ.execute("INSERT INTO item_name (name, i_level, armour, evasion,"
-                          "energy_shield, req_str, req_dex, req_int, large_url, small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["armour"], x["evasion"],
-                           x["energy_shield"], x["req_str"], x["req_dex"], x["req_int"], x["large_url"],
-                           x["small_url"],x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting clothes names (%s)", x)
-            connQ.rollback() 
+            pass        
+            y = ItemName(name = x["name"],
+                        i_level = x["i_level"],
+                        armour = x["armour"],
+                        evasion = x["evasion"],
+                        energy_shield = x["energy_shield"],
+                        req_str = x["req_str"],
+                        req_dex = x["req_dex"],
+                        req_int = x["req_int"],
+                        large_url = x["large_url"],
+                        small_url = x["small_url"],
+                        type_id = x["type_id"],
+                        )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting clothes names (%s)", e)
 
 def write_clothes_stats(list):
-    logger.debug("entering write_clothes_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()  
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
+    logger.debug("entering write_clothes_stats (%s)", list)  
     z = 0
     for x in list:
-        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
-        w_id = currQ.fetchone()
+        c_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
-                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        min = currQ.fetchone()[0]
+
                         min = values
                 for keys, values in y.items():   
                     if "max" in keys:
-                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        max = currQ.fetchone()[0]
+
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # c_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = c_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
-                    z = z -1
-                    logger.debug("psql integrity error when commiting clothes stats (%s)", x)
+                except Exception as e:
+                    print("error when commiting clothes stats (%s)", e)
+                    z = z - 1
+                    logger.debug("error when commiting clothes stats (%s)", e)
     return(z)
 
 def fetch_jewelry():
@@ -972,14 +1016,9 @@ def fetch_jewelry():
         jewelry_types.append(j_type)
     #write_jewelry_types(jewelry_types)
     # write item types
-    type = get_item_category("Jewelry")
+    type = type = ItemCategory.objects.get(name = 'Jewelry')
     write_item_type(type, jewelry_types)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
-    currQ.execute("SELECT item_type.id, item_type.name FROM item_type "
-                    "JOIN item_category on item_category.id = item_type.type_id "
-                    "WHERE item_category.name = 'Jewelry'")
-    j_id = currQ.fetchall()
+    j_id = ItemType.objects.select_related().filter(type__name = "Jewelry").values_list('id', 'name')
     jewelry_types = dict((y, x) for x, y in j_id)
     for item_type in all_items:
         j_type = jewelry_types[item_type.find_all("h1", {"class": "topBar last layoutBoxTitle"})[0].text] #gets all item catagory names
@@ -1053,72 +1092,155 @@ def fetch_jewelry():
     
 def write_jewelry_names(list):
     logger.debug("entering write_jewelry_names (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
+    connQ = psycopg2.connect("dbname='poe_data'  user='adam' password='green'")
     currQ = connQ.cursor()  
     for x in list:
         try:
-            pass
-            currQ.execute("INSERT INTO item_name (name, i_level, large_url, "
-                                "small_url, type_id, slug)"
-                          "VALUES (%s, %s, %s, %s, %s, %s)",
-                          (x["name"], x["i_level"], x["large_url"],
-                                x["small_url"],x["type_id"], x["slug"]))           
-            connQ.commit()
-        except psycopg2.IntegrityError:
-            logger.debug("psql integrity error when commiting jewelry names (%s)", x)
-            connQ.rollback() 
+            y = ItemName(
+                        name = x["name"], 
+                        i_level = x["i_level"],
+                        large_url = x["large_url"],
+                        small_url = x["small_url"],
+                        type_id = x["type_id"],
+                        )
+            y.save()
+        except Exception as e:
+            logger.debug("error when commiting jewelry names (%s)", e)
 
 def write_jewelry_stats(list):
+    """
+    Selects the correct stat objects for each item and links them together in
+    the item_stat table
+    Accepts: a list for each item, of all the item's data
+    Returns: the number of stats written 
+    """
     logger.debug("entering write_jewelry_stats (%s)", list)
-    connQ = psycopg2.connect("dbname='poe_data'  user='poetools' password='monkey62'")
-    currQ = connQ.cursor()
     z = 0 
     for x in list:
-        currQ.execute("SELECT id FROM item_name WHERE name = %s", (x["name"],))
-        w_id = currQ.fetchone()
+        j_id = ItemName.objects.get(name = x['name'])
         if "implicits" in x:
             for y in x["implicits"]:
                 for keys, values in y.items():
                     if "implicit_mod_key" in keys:
-                        currQ.execute("SELECT id FROM stat_names WHERE name = (%s)",
-                                  (values,))
-                        stat_id = currQ.fetchone()[0]
+                        stat_id = StatNames.objects.get(name = values)
                 for keys, values in y.items():   
                     if "min" in keys:
-                        currQ.execute("SELECT min_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        min = currQ.fetchone()[0]
+
                         min = values
                 for keys, values in y.items():   
                     if "max" in keys:
-                        currQ.execute("SELECT max_value FROM stats WHERE name_id = (%s)",
-                                  (stat_id,))
-                        max = currQ.fetchone()[0]
+
                         max = values
-                currQ.execute("SELECT id FROM stats WHERE name_id = (%s) AND min_value = (%s) AND max_value = (%s)",
-                              (stat_id, min, max,))
-                s_id = currQ.fetchone()[0]
+                stat = Stats.objects.get(
+                                        name = stat_id,
+                                        min_value = min,
+                                        max_value = max
+                                        )
                 try:
+                    # j_id = ItemName.objects.get(name = "Profane Wand")
+                    # stat_id = StatNames.objects.get(name = "Spell Damage +%")
+                    # stat = Stats.objects.get(name = stat_id, min_value = 57, max_value = 62)
+                    aa = ItemStat(
+                                  i = j_id,
+                                  s = stat
+                                  )
+                    aa.save()
                     z = z + 1
-                    currQ.execute("INSERT INTO item_stat (i_id, s_id) VALUES (%s, %s)",
-                        (w_id, s_id,))           
-                    connQ.commit()
-                except psycopg2.IntegrityError:
+                except Exception as e:
+                    print("error when commiting jewelry stats (%s)", e)
                     z = z - 1
-                    logger.debug("psql integrity error when commiting jewelry stats (%s)", x)
+                    logger.debug("error when commiting jewelry stats (%s)", e)
     return(z)
 
+def load_stat_translations():
+    #Load the RePoe JSON File
+    data_path = proj_path+"poe/data/"
+    df = open(data_path+"stat_translations.json").read()
+    a = json.loads(df)
     
+    # scrape the file and add the model entries
+    for x in a:
+        # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
+        database_string = str(x["ids"][0])
+        database_string = (database_string.replace('{0}','+%')).title().replace('_', ' ')
+        # download_string is the string appended to the item in the api download from ggg
+        download_string = str(x["English"][0]["string"]).replace('{0}','+')
+        
+        try:
+            database_version = StatNames.objects.get(name = database_string)
+            print("success", database_string, download_string)
+            # save mapping
+            mapping = StatTranslation.objects.get_or_create(
+                        name = download_string,
+                        web_name = database_version
+                        )
+            #mapping.save()
+        except StatNames.DoesNotExist:
+            pass # not expecting all lookups to work
 
 write_item_categories()
 write_fix_categories()
 
+# grab stuff from GGG
 fetch_prefixes()
 fetch_suffixes()
 fetch_weapons()
 fetch_clothes()
 fetch_jewelry()
 
+# use RePOE for the rest
+# import stat mappings
+load_stat_translations()
+# import uniques + stats
+# import gem types
+# import gems
+import sys, json
+proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
+data_path = proj_path+"poe/data/"
+df = open(data_path+"gems.json").read()
+a = json.loads(df)
+# import map types
+
+
+
+
+
+"""
+delete_these = poe.models.StatTranslation.objects.all()
+for this_one in delete_these:
+    this_one.delete()
+
+"""
+# import uniques + stats
+# import gem types
+# import map types
+
+
+
+
+"""
+my_fixname = FixName.objects.get(id = 11)
+my_stat = Stats.objects.get(id = 1)
+my_fix  = Fix(name = my_fixname, stat = my_stat, i_level = 1, m_crafted = True)
+
+my_fixcategory = FixCategory(name = "adam")
+my_fixcategory.save()
+
+my_fixType = FixType(category = my_fixcategory, name = "green")
+my_fixType.save()
+
+my_statnames = StatNames(name = "andy")
+my_statnames.save()
+
+the_stat = Stats(min_value = 1, max_value = 111, name = my_statnames)
+the_stat.save()
+
+the_name = FixName(type = my_fixType, name = "watson")
+the_name.save()
+
+the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
+the_fix.save()
+"""
 print("number of stats written to database", STATS)
 print("number of stat_names written to database", STAT_NAMES)
 
