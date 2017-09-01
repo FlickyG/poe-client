@@ -487,7 +487,12 @@ class PoeItem(models.Model):
  'x': 10,
  'y': 3}
     """
-    name = models.CharField(max_length = 264, blank = False, )
+    #HERE
+    item_type = models.ForeignKey(ItemType, models.DO_NOTHING) #typeline
+    #explicits and their stats
+    #doesn't handle uniques
+    # 'name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
+    name = models.CharField(max_length = 264, blank = False, ) 
     owner = models.ForeignKey(PoeAccount) 
     ggg_id = models.CharField(max_length = 100, blank = True, )
     raw_data = models.CharField(max_length = 4096, blank = True, )
@@ -499,6 +504,10 @@ class PoeItem(models.Model):
     req_str = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     req_int = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     req_dex = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    w_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True)
+    x_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True) 
+    y_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True)
+    
     
     @property
     def location(self):
