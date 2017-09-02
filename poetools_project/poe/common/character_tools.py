@@ -263,6 +263,37 @@ import ast # enable conversion of string to dictionary
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
+## parse items
+
+for item in stat_tab_items:
+    item_type = poe.models.ItemType.object.get(name = item['typeline']|)
+    name_str = item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
+    #name = poe.models.ItemType.objects.get(name = name_str)
+    name = name_str #models.CharField(max_length = 264, blank = False, ) 
+    owner = models.ForeignKey(PoeAccount) 
+    ggg_id = item['id']
+    raw_data = item
+    ilvl = item['ilvl']
+    tab_location = models.IntegerField()
+    x_location = item['x']
+    y_location = item['y']
+    w_location = item['w']
+    for req in requirements:
+        if req['name'] == "Level":
+            req_lvl = req['values'][0][0]
+        elif if req['name'] == "Str":
+            req_lvl = req['values'][0][0]
+        elif if req['name'] == "Int":
+            req_lvl = req['values'][0][0]
+        elif if req['name'] == "Dex":
+            req_lvl = req['values'][0][0]
+        else:
+            print("unknown requirement! Exiting . . . ")
+            sys.exit(0)
+    this_item = poe.models.PoeItem(
+                item_type = 
+
+
 poe.common.character_tools.get_characters(account)
 poe.common.character_tools.get_tab_details(account)
 char = poe.models.PoeCharacter.objects.get(name = 'LetsGetPhysicalRanger')

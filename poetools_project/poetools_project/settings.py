@@ -208,8 +208,8 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': "logfile",
-            'maxBytes': 50000,
-            'backupCount': 2,
+            'maxBytes': 50000000,
+            'backupCount': 20,
             'formatter': 'standard',
         },
         'console':{
@@ -222,7 +222,7 @@ LOGGING = {
         'django': {
             'handlers':['console'],
             'propagate': True,
-            'level':'WARN',
+            'level':'DEBUG',
         },
         'django.db.backends': {
             'handlers': ['console'],
