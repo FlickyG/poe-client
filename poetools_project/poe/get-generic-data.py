@@ -38,8 +38,9 @@ from poe.models import StatTranslation
 STATS = 0
 STAT_NAMES = 0
 
-logging.config.fileConfig('poe_tools_logging.conf')
-logger = logging.getLogger(__name__)
+#logging.config.fileConfig('poe_tools_logging.conf')
+#logger = logging.getLogger(__name__)
+logger = logging.getLogger("poe_generic")
 start_time = datetime.datetime.now()
 logger.info("Staring POE Tools at "+str(start_time))
 print(__name__)
@@ -301,7 +302,7 @@ def write_prefixes(the_list):
                 x2.save()
             except Exception as e:     
                 z = z - 1 #  remove duplicates
-                logger.debug(" error when commiting prefixes (%s)", x, e)
+                logger.debug(" error when commiting prefixes (%s)", exc_info=True)
     print("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
@@ -327,7 +328,7 @@ def write_prefix_names(the_set):
             y.save()
         except Exception as e:
             z = z - 1
-            logger.info("error commiting prefix names (%s)", x)
+            logger.info("error commiting prefix names (%s)", exc_info=True)
     print("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
@@ -528,7 +529,7 @@ def write_suffixes(the_list):
                 x2.save()
             except Exception as e:     
                 z = z - 1 #  remove duplicates
-                logger.debug(" error when commiting suffixes (%s)", x, e)
+                logger.debug(" error when commiting suffixes (%s)", e)
     print("length of suffixes written to database ", z)
      
    
@@ -987,7 +988,7 @@ def write_jewelry_stats(list):
     Accepts: a list for each item, of all the item's data
     Returns: the number of stats written 
     """
-    logger.debug("entering write_jewelry_stats (%s)", list)
+    #logger.warn("entering write_jewelry_stats (%s)", list)
     z = 0 
     for x in list:
         j_id = ItemName.objects.get(name = x['name'])

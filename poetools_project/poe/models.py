@@ -14,7 +14,7 @@ import logging
 
 stdlogger = logging.getLogger(__name__)
 stdlogger.warn("Entering poe.models")
-print("__name__ in models.py is", __name__)
+#print("__name__ in models.py is", __name__)
 
 # Create your models here.
 class Category(models.Model):
