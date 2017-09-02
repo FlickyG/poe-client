@@ -4,11 +4,10 @@
 
 {% block title %}Index{% endblock %}
 
-        {% block body_block %}
+{% block body_block %}
 {% if not user.is_authenticated %}
     <div class="page-header">
                 <h1>Flicky says... hello world!</h1>
-
 	</div>
          <div class="row placeholders">
             	<div class="col-xs-12 col-sm-6 placeholder">
