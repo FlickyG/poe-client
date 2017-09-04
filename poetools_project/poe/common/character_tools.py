@@ -79,8 +79,15 @@ def register_flicky():
     account = poe.models.PoeUser.objects.get(poe_account_name = "greenmasterflick")
     x = poe.models.PoeAccount(
                           acc_name = account.poe_account_name,
-                          sessid = "replaceMe",
+                          sessid = "df2fee550dae55266a9b48972e57ff7f",
                           )
+    x.save()
+    
+def register_greenmasterflick():
+    print("== Registering greenmasterflick ==")
+    x = poe.models.PoeUser(
+                           poe_account_name = "greenmasterflick"
+                           )
     x.save()
 
 def get_char_items(poe_account, character):
@@ -156,20 +163,22 @@ def get_tab_items(poe_account, tabIndex):
         # check the new type field already exists in the database
         # need to add other item categories e.g. gems, maps
         # then need to add item type, 
-        entry = poe.models.PoeItem(name = each_item['typeLine'], #change this to type and link to ItemName.name
-                                   #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
-                                   owner = poe_account,
-                                   ggg_id = each_item['id'],
-                                   ilvl = each_item['ilvl'],
-                                   tab_location = tabIndex,
-                                   x_location = each_item['x'],
-                                   y_location = each_item['y'],
-                                   raw_data = each_item,
-                                   req_lvl = rlvl,
-                                   req_str = rstr,
-                                   req_int = rint,
-                                   req_dex = rdex,
-                                   )
+        entry = poe.models.PoeItem(
+                    name = (poe.models.ItemName.objects
+                            .get(name = each_item['typeLine'], #change this to type and link to ItemName.name
+                    #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
+                    owner = poe_account,
+                    ggg_id = each_item['id'],
+                    ilvl = each_item['ilvl'],
+                    tab_location = tabIndex,
+                    x_location = each_item['x'],
+                    y_location = each_item['y'],
+                    raw_data = each_item,
+                    req_lvl = rlvl,
+                    req_str = rstr,
+                    req_int = rint,
+                    req_dex = rdex,
+                    )
         #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
         #items also need owners
         #add logic to save all items in all tabs
