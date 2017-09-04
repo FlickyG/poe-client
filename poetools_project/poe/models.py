@@ -488,7 +488,7 @@ class PoeItem(models.Model):
  'y': 3}
     """
     #HERE
-    item_type = models.ForeignKey(ItemType, models.DO_NOTHING) #typeline
+    base_type = models.ForeignKey(ItemName, models.DO_NOTHING) #typeline
     #explicits and their stats
     #doesn't handle uniques
     # 'name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
