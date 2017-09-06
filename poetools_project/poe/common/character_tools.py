@@ -7,6 +7,8 @@ import poe.models
 import logging
 import time
 import requests
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import DatabaseError,IntegrityError
 stdlogger = logging.getLogger("poe_generic")
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
@@ -123,7 +125,6 @@ def get_tab_items(poe_account, tabIndex):
                     "league={lg}&tabs=1&tabIndex={ind}&"
                     "accountName={acc}".format(lg = league, ind = tabIndex,
                                                acc = poe_account.acc_name))
-    print("x ", poe_account.sessid)
     resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
     tab_data = resp.json()
     tab_items = tab_data['items']
@@ -131,7 +132,7 @@ def get_tab_items(poe_account, tabIndex):
         #print("name = ", each_item['typeLine'])
         if 'properties' in each_item.keys():
             for each_prop in each_item['properties']:
-                print(each_prop['name'])
+                stdlogger.debug("each_prop %s", each_prop)
         # calculate requirements
         if 'requirements' in each_item.keys():
             for each_req in each_item['requirements']:
@@ -157,38 +158,45 @@ def get_tab_items(poe_account, tabIndex):
                     rdex = 0
         else: # no requirements
             rlvl = rstr = rint = rdex = 0
-        print(len(each_item['typeLine']), len(each_item['id']),
-        len(str(each_item)),
-        )
-        # check the new type field already exists in the database
-        # need to add other item categories e.g. gems, maps
+        stdlogger.debug("%s, %s, %s",
+                        len(each_item['typeLine']),
+                        len(each_item['id']),
+                        len(str(each_item)),
+                        )
+        # check the new type field already exists in the database        # need to add other item categories e.g. gems, maps
         # then need to add item type, 
-        print("typeLine", each_item['typeLine'])
-        stdlogger.info("rstr ")
-        print("rstr ", rstr)
-        entry = poe.models.PoeItem(
-                    base_type = poe.models.ItemName.objects.get(name = each_item['typeLine']),
-                    #name = (poe.models.ItemName.objects
-                    #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
-                    #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
-                    name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
-                    owner = poe_account,
-                    ggg_id = each_item['id'],
-                    ilvl = each_item['ilvl'],
-                    tab_location = tabIndex,
-                    x_location = each_item['x'],
-                    y_location = each_item['y'],
-                    raw_data = each_item,
-                    req_lvl = rlvl,
-                    req_str = rstr,
-                    req_int = rint,
-                    req_dex = rdex,
-                    )
-        #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
-        #items also need owners
-        #add logic to save all items in all tabs
-        #add logic to create new items type, and types generally
-        entry.save()
+        # if superior, remove from nam
+HERE
+        try:
+            entry = poe.models.PoeItem(
+                        base_type = poe.models.ItemName.objects.get(name = each_item['typeLine']),
+                        #name = (poe.models.ItemName.objects
+                        #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
+                        #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
+                        name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
+                        owner = poe_account,
+                        ggg_id = each_item['id'],
+                        ilvl = each_item['ilvl'],
+                        tab_location = tabIndex,
+                        equipped = False,
+                        char_stash = False,
+                        x_location = each_item['x'],
+                        y_location = each_item['y'],
+                        raw_data = each_item,
+                        req_lvl = rlvl,
+                        req_str = rstr,
+                        req_int = rint,
+                        req_dex = rdex,
+                        )
+            #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
+            #items also need owners
+            #add logic to save all items in all tabs
+            #add logic to create new items type, and types generally
+            entry.save()
+        except ObjectDoesNotExist as e:
+            stdlogger.info("item not found %s", each_item['typeLine'])
+        except IntegrityError as e:
+            stdlogger.info("duplicate entry %s", each_item['typeLine'])
     return tab_items
     
 def get_tab_details(poe_account):
@@ -268,12 +276,14 @@ def get_item_name(id):
     return (the_item.name)
 
 
+
 """
 import pprint
 import poe.models
 import poe.common.character_tools
 import ast # enable conversion of string to dictionary
 
+#poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
