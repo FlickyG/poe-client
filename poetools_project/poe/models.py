@@ -69,7 +69,7 @@ class PoeUser(User):
 
     def save(self, *args, **kwargs):
         super(PoeUser, self).save(*args, **kwargs)
-        print("self.poe_account_name", self.poe_account_name)
+        stdlogger.info("self.poe_account_name %s", self.poe_account_name)
         x = PoeAccount(acc_name = self.poe_account_name)
         x.save()
 
@@ -326,7 +326,7 @@ class ItemName(models.Model):
             pass
             #stdlogger.debug("Entering index method")
         except Exception:
-            print("eeee")    
+            stdlogger.info("eeee")    
         self.clsslogger.debug(names)
         return names #len(self.stats.all())
 #poe.models.ItemName.objects.filter(name = "Avian Twins Talisman")[0].stat_names[0]

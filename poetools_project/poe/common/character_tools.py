@@ -25,6 +25,8 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 
+def contains_word(s, w):
+    return (' ' + w + ' ') in (' ' + s + ' ')
 
 def get_characters(poe_account):
     """
@@ -45,7 +47,7 @@ def get_characters(poe_account):
     delete_chars = saved_charnames.difference(live_charnames)
     for char in saved_chars:
         if char.name in delete_chars: 
-            print("character names that need to be deleted", char)
+            stdlogger.info("character names that need to be deleted", char)
             char.delete()
     # insert new characters
     # in live_charnames but not in saved_charnames
@@ -77,7 +79,7 @@ def register_flicky():
     """
     Useful tool to reinstate my own account after wiping the psql database
     """
-    print("== Registering Flicky ==")
+    stdlogger.info("== Registering Flicky ==")
     account = poe.models.PoeUser.objects.get(poe_account_name = "greenmasterflick")
     x = poe.models.PoeAccount(
                           acc_name = account.poe_account_name,
@@ -86,7 +88,7 @@ def register_flicky():
     x.save()
     
 def register_greenmasterflick():
-    print("== Registering greenmasterflick ==")
+    stdlogger.info("== Registering greenmasterflick ==")
     x = poe.models.PoeUser(
                            poe_account_name = "greenmasterflick"
                            )
@@ -99,7 +101,7 @@ def get_char_items(poe_account, character):
     Accepts: the relevant account and character
     Returns: the equipment held by this character
     """
-    print("getting character items")
+    stdlogger.info("getting character items")
     equiped_items_URL = ("http://www.pathofexile.com/character-window/get-items?"
                      "character={char}&accountName={acc}"
                      .format(char = character.name, acc = poe_account.acc_name))
@@ -118,7 +120,7 @@ def get_tab_items(poe_account, tabIndex):
     try:
         assert len(poe_account.sessid) == 32
     except AssertionError as e:
-        print("Try updating the session id")
+        stdlogger.info("Try updating the session id")
         return(None)        
     league = "Standard"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
@@ -166,14 +168,16 @@ def get_tab_items(poe_account, tabIndex):
         # check the new type field already exists in the database        # need to add other item categories e.g. gems, maps
         # then need to add item type, 
         # if superior, remove from nam
-HERE
+        item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
+        if contains_word(item_name, "Superior"):
+            item_name = item_name.split(' ', 1)[1]
         try:
             entry = poe.models.PoeItem(
                         base_type = poe.models.ItemName.objects.get(name = each_item['typeLine']),
                         #name = (poe.models.ItemName.objects
                         #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
                         #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
-                        name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
+                        name = item_name
                         owner = poe_account,
                         ggg_id = each_item['id'],
                         ilvl = each_item['ilvl'],
@@ -207,7 +211,7 @@ def get_tab_details(poe_account):
             one and remove this constraint when calling the function?
     Returns: a list of dictionaries, one list item per tab
     """
-    print("getting items")
+    stdlogger.info("getting items")
     league = "Standard"
     marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
                     "league={lg}&tabs=1&tabIndex={ind}&"
@@ -265,7 +269,7 @@ def load_item_data_from_file(file):
     Accepts: a json file
     Returns: None
     """
-    print("no code here yet when trying to add items from file")
+    stdlogger.info("no code here yet when trying to add items from file")
 
 def get_location(id):
     the_item = poe.models.PoeItem.objects.get(ggg_id = id)

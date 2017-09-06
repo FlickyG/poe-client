@@ -19,6 +19,7 @@ from django.core.management.sql import sql_flush
 ### So we can use our django models here in this script
 ###
 import os
+from poetools_project.poe.common.character_tools import stdlogger
 #proj_path = '/home/adam/workspace1/poe-client/poetools_project/'
 proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
 #"/home/adam/workspace1/poe-client/poetools_project/"
@@ -77,7 +78,7 @@ def write_item_categories():
     list = ['Weapons', 'Clothes', 'Jewelry']
     for x in list:
         try:
-            print("write_item_categories", x, slugify(x))
+            stdlogger.info("write_item_categories", x, slugify(x))
             y = ItemCategory(name = x)
             y.save()
         except:
@@ -118,7 +119,7 @@ def write_item_type(the_type, list):
             y.save()
         except Exception as e:
             logger.debug("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
-            print("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
+            stdlogger.info("error when commiting item types type (%s) (%s) (%s)", (the_type, x, e,))
                  
 def write_prefix_types(list):
     """ Creates PrefixType model instances from a list and writes them to 
@@ -149,7 +150,7 @@ def write_suffix_types(list):
             type = FixCategory.objects.get(name = 'Suffix')
             type.fixtype_set.create(name = x)
         except:
-            print("psql integrity error when commiting suffix types type (%s)", x)
+            stdlogger.info("psql integrity error when commiting suffix types type (%s)", x)
             logger.debug("write_suffix_types - Unexpected error:", sys.exc_info()[0], x)
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
@@ -252,7 +253,7 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
                 y = y+1
                 prefixes.append(prefix)
     #prefixes = set(prefixes)
-    print("length of prefix_types = ", len(prefix_types))
+    stdlogger.info("length of prefix_types = ", len(prefix_types))
     write_prefix_types(prefix_types)
     stat_names = set()
     for stat in stats:
@@ -262,7 +263,7 @@ def fetch_prefixes(): #layout is different - implicit mods are on the same line
     names = set()
     for x in prefixes:
         names.add((x["type"], x["name"]))
-    print("length of prefix names", len(names))
+    stdlogger.info("length of prefix names", len(names))
     write_prefix_names(names) # unique
     # make prefixes unique, to stop copying over duplicates from the website
     unique_prefixes = []
@@ -303,7 +304,7 @@ def write_prefixes(the_list):
             except Exception as e:     
                 z = z - 1 #  remove duplicates
                 logger.debug(" error when commiting prefixes (%s)", exc_info=True)
-    print("length of prefixes written to database ", z)
+    stdlogger.info("length of prefixes written to database ", z)
       
 def write_prefix_names(the_set):
     """
@@ -329,7 +330,7 @@ def write_prefix_names(the_set):
         except Exception as e:
             z = z - 1
             logger.info("error commiting prefix names (%s)", exc_info=True)
-    print("write_prefix_names z", z) 
+    stdlogger.info("write_prefix_names z", z) 
     
 def write_stat_names(the_set):
     """
@@ -461,7 +462,7 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     for stat in stats:
         stat_names.add(stat[0])
     ####
-    print("length of suffix_types = ", len(suffix_types))
+    stdlogger.info("length of suffix_types = ", len(suffix_types))
     stat_names = set()
     for stat in stats:
         stat_names.add(stat[0])
@@ -470,7 +471,7 @@ def fetch_suffixes(): #layout is different - implicit mods are on the same line
     names = set()
     for x in suffixes:
         names.add((x['type'], x["name"]))
-    print("length of suffix names", len(names))
+    stdlogger.info("length of suffix names", len(names))
     write_suffix_names(names) #unique
     write_suffixes(suffixes)
 
@@ -498,7 +499,7 @@ def write_suffix_names(the_set):
         except Exception as e:
             z = z - 1
             logger.info("error commiting suffix names (%s)", x)
-    print("write_suffixnames z", z) 
+    stdlogger.info("write_suffixnames z", z) 
 
 def write_suffixes(the_list):
     """
@@ -530,7 +531,7 @@ def write_suffixes(the_list):
             except Exception as e:     
                 z = z - 1 #  remove duplicates
                 logger.debug(" error when commiting suffixes (%s)", e)
-    print("length of suffixes written to database ", z)
+    stdlogger.info("length of suffixes written to database ", z)
      
    
 def fetch_weapons():
@@ -632,8 +633,8 @@ def fetch_weapons():
     write_stat_names(stat_names)
     write_stats(all_stats)
     write_weapon_names(all_weapons)
-    print("length of weapon_names", len(all_weapons))
-    print("length of weapon_stats", write_weapon_stats(all_weapons))
+    stdlogger.info("length of weapon_names", len(all_weapons))
+    stdlogger.info("length of weapon_stats", write_weapon_stats(all_weapons))
     
 def write_weapon_names(list):
     logger.debug("entering write_weapon_names (%s)", list)
@@ -699,7 +700,7 @@ def write_weapon_stats(list):
                     aa.save()
                     z = z + 1
                 except Exception as e:
-                    print("error when commiting weapon stats (%s)", e)
+                    stdlogger.info("error when commiting weapon stats (%s)", e)
                     z = z - 1
                     logger.debug("error when commiting weapon stats (%s)", e)
     return(z)
@@ -804,8 +805,8 @@ def fetch_clothes():
     #write_clothes_types(clothes_types)
     write_clothes_names(all_clothes)
     #write_clothes_stats(all_clothes)
-    print("length of clothes_names", len(all_clothes))
-    print("length of clothes_stats", write_clothes_stats(all_clothes))
+    stdlogger.info("length of clothes_names", len(all_clothes))
+    stdlogger.info("length of clothes_stats", write_clothes_stats(all_clothes))
     
 def write_clothes_names(list):
     logger.debug("entering write_clothes_names (%s)", list)
@@ -866,7 +867,7 @@ def write_clothes_stats(list):
                     aa.save()
                     z = z + 1
                 except Exception as e:
-                    print("error when commiting clothes stats (%s)", e)
+                    stdlogger.info("error when commiting clothes stats (%s)", e)
                     z = z - 1
                     logger.debug("error when commiting clothes stats (%s)", e)
     return(z)
@@ -962,9 +963,9 @@ def fetch_jewelry():
     jew_names = set()
     for x in all_jewelry:
         jew_names.add(x["name"]) 
-    print("jewerly names written to database", len(jew_names))
+    stdlogger.info("jewerly names written to database", len(jew_names))
     #write_jewelry_stats(all_jewelry)
-    print("jewelry stats written to data base", write_jewelry_stats(all_jewelry))
+    stdlogger.info("jewelry stats written to data base", write_jewelry_stats(all_jewelry))
     
 def write_jewelry_names(list):
     logger.debug("entering write_jewelry_names (%s)", list)
@@ -1019,7 +1020,7 @@ def write_jewelry_stats(list):
                     aa.save()
                     z = z + 1
                 except Exception as e:
-                    print("error when commiting jewelry stats (%s)", e)
+                    stdlogger.info("error when commiting jewelry stats (%s)", e)
                     z = z - 1
                     logger.debug("error when commiting jewelry stats (%s)", e)
     return(z)
@@ -1040,7 +1041,7 @@ def load_stat_translations():
         
         try:
             database_version = StatNames.objects.get(name = database_string)
-            print("success", database_string, download_string)
+            stdlogger.info("success", database_string, download_string)
             # save mapping
             mapping = StatTranslation.objects.get_or_create(
                         name = download_string,
@@ -1113,8 +1114,8 @@ the_name.save()
 the_fix = Fix(name = the_name, stat = the_stat, i_level = 1, m_crafted = False)
 the_fix.save()
 """
-print("number of stats written to database", STATS)
-print("number of stat_names written to database", STAT_NAMES)
+stdlogger.info("number of stats written to database", STATS)
+stdlogger.info("number of stat_names written to database", STAT_NAMES)
 
 logger.info("Exiting POE Tools, it took "+str(datetime.datetime.now() - start_time))
 
