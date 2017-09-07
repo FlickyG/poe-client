@@ -9,7 +9,10 @@ import time
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError,IntegrityError
+import json
+
 stdlogger = logging.getLogger("poe_generic")
+
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
@@ -177,7 +180,7 @@ def get_tab_items(poe_account, tabIndex):
                         #name = (poe.models.ItemName.objects
                         #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
                         #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
-                        name = item_name
+                        name = item_name,
                         owner = poe_account,
                         ggg_id = each_item['id'],
                         ilvl = each_item['ilvl'],
@@ -281,6 +284,34 @@ def get_item_name(id):
 
 
 
+def get_tab_items_file(poe_account, tabIndex):
+    """
+    Fetches from the website the contents of an account's stash tab
+    Accepts: the account details
+             the tab index of interest
+    Returns: the json for the API request
+    """
+    # check there's a proper session id
+    x = 0
+    while x < 50:
+        try:
+            assert len(poe_account.sessid) == 32
+        except AssertionError as e:
+            stdlogger.info("Try updating the session id")
+            return(None)        
+        league = "Standard"
+        marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
+                        "league={lg}&tabs=1&tabIndex={ind}&"
+                        "accountName={acc}".format(lg = league, ind = x,
+                                                   acc = poe_account.acc_name))
+        resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
+        tab_data = resp.json()
+        file = "data_"+str(x)
+        with open(file, 'w') as outfile:
+            json.dump(tab_data, outfile)
+        x = x+1
+        
+
 """
 import pprint
 import poe.models
@@ -289,6 +320,8 @@ import ast # enable conversion of string to dictionary
 
 #poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
+    poe.common.character_tools.get_tab_items_file(account, 2)
+
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
 ## parse items
