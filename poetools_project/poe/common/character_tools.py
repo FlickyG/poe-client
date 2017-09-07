@@ -130,7 +130,7 @@ def get_tab_items(poe_account, tabIndex):
         return(None)        
     league = "Standard"
     try:
-        marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
+        marketStatUrl = ("https://www.ppathofexile.com/character-window/get-stash-items?"
                         "league={lg}&tabs=1&tabIndex={ind}&"
                         "accountName={acc}".format(lg = league, ind = tabIndex,
                                                    acc = poe_account.acc_name))

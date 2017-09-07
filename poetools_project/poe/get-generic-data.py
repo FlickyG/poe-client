@@ -76,7 +76,7 @@ def write_item_categories():
     """
     logger.debug("entering write_item_categories ",)
     list = ['Weapons', 'Clothes', 'Jewelry', 'Flasks', 'Maps', 'Essences',
-            'Gems']
+            'Gems', 'Jewel', 'Leaguestone', 'Card']
     for x in list:
         try:
             logger.info("write_item_categories %s", x)
