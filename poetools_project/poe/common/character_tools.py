@@ -25,10 +25,13 @@ def make_throttle_hook(timeout=1.0):  # for eve market api calls
             time.sleep(timeout)
         return response
     return hook 
+
 s =  requests.Session()
 s.hooks = {'response': make_throttle_hook(0.1)}
 
 def contains_word(s, w):
+    #stdlogger.info("string %s", s)
+    #stdlogger.info("word %s", w)
     return (' ' + w + ' ') in (' ' + s + ' ')
 
 def get_characters(poe_account):
@@ -126,13 +129,25 @@ def get_tab_items(poe_account, tabIndex):
         stdlogger.info("Try updating the session id")
         return(None)        
     league = "Standard"
-    marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
-                    "league={lg}&tabs=1&tabIndex={ind}&"
-                    "accountName={acc}".format(lg = league, ind = tabIndex,
-                                               acc = poe_account.acc_name))
-    resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
-    tab_data = resp.json()
-    tab_items = tab_data['items']
+    try:
+        marketStatUrl = ("https://www.pathofexile.com/character-window/get-stash-items?"
+                        "league={lg}&tabs=1&tabIndex={ind}&"
+                        "accountName={acc}".format(lg = league, ind = tabIndex,
+                                                   acc = poe_account.acc_name))
+        resp = s.get(marketStatUrl, cookies = {'POESESSID': poe_account.sessid})
+        tab_data = resp.json()
+        tab_items = tab_data['items']
+    except requests.exceptions.ConnectionError:
+        stdlogger.info("URL Connection Error Attempting to load from file")
+        try:
+            data_file = "poe/data/tab_data/data_"+str(tabIndex)
+            with open(data_file, 'r') as file:
+                all_data = json.load(file)
+                tab_items = all_data['items']
+                stdlogger.info("Loading from file success")
+        except FileNotFoundError:
+            stdlogger.info("file not found %s", data_file)
+            return(None)
     for each_item in tab_items:
         #print("name = ", each_item['typeLine'])
         if 'properties' in each_item.keys():
@@ -171,12 +186,26 @@ def get_tab_items(poe_account, tabIndex):
         # check the new type field already exists in the database        # need to add other item categories e.g. gems, maps
         # then need to add item type, 
         # if superior, remove from nam
-        item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1],
+        stdlogger.debug("item is %s", each_item)
+        stdlogger.debug("item name is %s", each_item['name'])
+        # deal with white objects
+        if len(each_item['name']) == 0:
+            item_name = each_item["typeLine"]
+            base_name = each_item["typeLine"]
+            #if contains_word(item_name, "Superior"):
+            #   item_name = item_name.split(' ', 1)[1]
+            #  base_name = item_name
+        else:
+            item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
+            base_name = each_item['typeLine']
+        # deal with white superior items
         if contains_word(item_name, "Superior"):
             item_name = item_name.split(' ', 1)[1]
+        if contains_word(base_name, "Superior"):
+            base_name = base_name.split(' ', 1)[1]
         try:
             entry = poe.models.PoeItem(
-                        base_type = poe.models.ItemName.objects.get(name = each_item['typeLine']),
+                        base_type = poe.models.ItemName.objects.get(name = base_name),
                         #name = (poe.models.ItemName.objects
                         #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
                         #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
@@ -201,9 +230,9 @@ def get_tab_items(poe_account, tabIndex):
             #add logic to create new items type, and types generally
             entry.save()
         except ObjectDoesNotExist as e:
-            stdlogger.info("item not found %s", each_item['typeLine'])
+            stdlogger.info("item not found %s", base_name)
         except IntegrityError as e:
-            stdlogger.info("duplicate entry %s", each_item['typeLine'])
+            stdlogger.debug("duplicate entry %s", each_item['typeLine'])
     return tab_items
     
 def get_tab_details(poe_account):
@@ -320,7 +349,7 @@ import ast # enable conversion of string to dictionary
 
 #poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
-    poe.common.character_tools.get_tab_items_file(account, 2)
+x = poe.common.character_tools.get_tab_items(account, 2)
 
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
