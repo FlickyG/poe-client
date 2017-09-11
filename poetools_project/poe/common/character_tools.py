@@ -130,6 +130,7 @@ def get_tab_items(poe_account, tabIndex):
         return(None)        
     league = "Standard"
     try:
+        raise requests.exceptions.ConnectionError
         marketStatUrl = ("https://www.ppathofexile.com/character-window/get-stash-items?"
                         "league={lg}&tabs=1&tabIndex={ind}&"
                         "accountName={acc}".format(lg = league, ind = tabIndex,
@@ -230,10 +231,13 @@ def get_tab_items(poe_account, tabIndex):
             #add logic to create new items type, and types generally
             entry.save()
         except ObjectDoesNotExist as e:
-            stdlogger.info("item not found %s", base_name)
+            stdlogger.info("item not found base_name = %s each_item['name'] = %s", base_name, each_item['name'])
+            if base_name == "<<set:MS>><<set:M>><<set:S>>Robust Lapis Amulet of the Thunderhead":
+                print("HELLO !!!!!!!!")
+                return(each_item)
         except IntegrityError as e:
             stdlogger.debug("duplicate entry %s", each_item['typeLine'])
-    return tab_items
+    #return tab_items
     
 def get_tab_details(poe_account):
     """
@@ -349,9 +353,33 @@ import ast # enable conversion of string to dictionary
 
 #poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
-x = poe.common.character_tools.get_tab_items(account, 2)
+x = poe.common.character_tools.get_tab_items(account, 15)
 
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
+
+
+{'corrupted': False,
+ 'explicitMods': ['+53 to maximum Life', '+26% to Lightning Resistance'],
+ 'frameType': 1,
+ 'h': 1,
+ 'icon': 'https://web.poecdn.com/image/Art/2DItems/Amulets/Amulet5.png?scale=1&scaleIndex=0&w=1&h=1&v=574b38016f547495a51268177882d5cc3',
+ 'id': 'ddde9268a97d2fe7d254f647eb35c5209aa9846c047cb0f659bff5ffef7da663',
+ 'identified': True,
+ 'ilvl': 53,
+ 'implicitMods': ['+21 to Intelligence'],
+ 'inventoryId': 'Stash16',
+ 'league': 'Standard',
+ 'lockedToCharacter': False,
+ 'name': '',
+ 'requirements': [{'displayMode': 0, 'name': 'Level', 'values': [['29', 0]]}],
+ 'socketedItems': [],
+ 'sockets': [],
+ 'typeLine': '<<set:MS>><<set:M>><<set:S>>Robust Lapis Amulet of the '
+             'Thunderhead',
+ 'verified': False,
+ 'w': 1,
+ 'x': 9,
+ 'y': 4}
 
 ## parse items
 
