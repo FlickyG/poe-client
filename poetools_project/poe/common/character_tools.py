@@ -192,12 +192,14 @@ def parse_items(each_item, poe_account, tab_index):
     if contains_word(each_item["typeLine"], "Superior"):
         item_name = each_item["typeLine"].split(' ', 1)[1]
         base_name = item_name
-        stdlogger.info("item_name contains superior")
+        stdlogger.debug("item_name contains superior")
+        rarity = "normal"
     # Magic items
     elif len(each_item['name']) == 0 and '<<set' in each_item["typeLine"]:
         try:
             base_name = each_item["typeLine"].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
             item_name = base_name
+            rarity = "magic"
         except IndexError as e:
             stdlogger.info("The index of base_name didn't work when trying to" 
                            "parse a magic item %s", each_item["typeLine"])
@@ -205,10 +207,12 @@ def parse_items(each_item, poe_account, tab_index):
     elif len(each_item['name']) == 0 and '<<set' not in each_item["typeLine"]:
         item_name = each_item["typeLine"]
         base_name = item_name
-    # Rare items
+        rarity = "rare"
+    # Rare items    
     else:
         item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
         base_name = each_item['typeLine']
+        rarity = "rare"
     try:
         the_base_type = poe.models.ItemName.objects.get(name = base_name)
     except ObjectDoesNotExist as e:
@@ -218,6 +222,33 @@ def parse_items(each_item, poe_account, tab_index):
             print("HELLO !!!!!!!!")
             pprint.pprint(each_item)
             return(each_item)
+    # Quality
+    """ 'properties': [{'displayMode': 0,
+             'name': 'Quality',
+             'type': 6,
+             'values': [['+10%', 1]]},
+            {'displayMode': 0,
+             'name': 'Chance to Block',
+             'type': 15,
+             'values': [['25%', 0]]},
+            {'displayMode': 0,
+             'name': 'Evasion Rating',
+             'type': 17,
+             'values': [['217', 1]]}],
+    """
+    if 'properties' in each_item:
+        for each_property in each_item['properties']:
+            if each_property['name'] == "Quality":
+                #stdlogger.info("quality item detected %s", each_property["values"][0][0].strip('+%'))
+                the_quality =  each_property["values"][0][0].strip('+%')
+                break
+            else:
+                #stdlogger.info("quality detected but setting to 0")
+                the_quality = 0
+    else:
+        #stdlogger.info("no quality detected")
+        the_quality = 0
+    # Save Item
     try:
         entry = poe.models.PoeItem(
                     base_type = the_base_type,
@@ -238,6 +269,8 @@ def parse_items(each_item, poe_account, tab_index):
                     req_str = rstr,
                     req_int = rint,
                     req_dex = rdex,
+                    rarity = rarity,
+                    quality = the_quality,
                     )
         #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
         #items also need owners
