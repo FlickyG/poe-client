@@ -509,13 +509,16 @@ class PoeItem(models.Model):
     w_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True)
     x_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True) 
     y_loc = models.PositiveSmallIntegerField(default =0, blank = True, null = True)
-    
+    rarity = models.CharField(max_length = 12, blank = True, null = True)
+    quality = models.SmallIntegerField(blank = True, null = False)
     
     @property
     def location(self):
         return (self.tab_location,
                 self.x_location,
                 self.y_location,)
+    
+
     
 
 class PoeCharacter(models.Model):

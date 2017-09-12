@@ -150,94 +150,103 @@ def get_tab_items(poe_account, tabIndex):
             stdlogger.info("file not found %s", data_file)
             return(None)
     for each_item in tab_items:
-        #print("name = ", each_item['typeLine'])
-        if 'properties' in each_item.keys():
-            for each_prop in each_item['properties']:
-                stdlogger.debug("each_prop %s", each_prop)
-        # calculate requirements
-        if 'requirements' in each_item.keys():
-            for each_req in each_item['requirements']:
-                # lvl
-                if 'Level' in each_req.values():
-                    rlvl = each_req['values'][0][0]
-                else:
-                    rlvl = 0
-                # str
-                if 'Str' in each_req.values():
-                    rstr = each_req['values'][0][0]
-                else:
-                    rstr = 0
-                # int
-                if 'Int' in each_req.values():
-                    rint = each_req['values'][0][0]
-                else:
-                    rint = 0
-                # dex
-                if 'Dex' in each_req.values():
-                    rdex = each_req['values'][0][0]
-                else:
-                    rdex = 0
-        else: # no requirements
-            rlvl = rstr = rint = rdex = 0
-        stdlogger.debug("%s, %s, %s",
-                        len(each_item['typeLine']),
-                        len(each_item['id']),
-                        len(str(each_item)),
-                        )
-        # check the new type field already exists in the database        # need to add other item categories e.g. gems, maps
-        # then need to add item type, 
-        # if superior, remove from nam
-        stdlogger.debug("item is %s", each_item)
-        stdlogger.debug("item name is %s", each_item['name'])
-        # deal with white objects
-        if len(each_item['name']) == 0:
-            item_name = each_item["typeLine"]
-            base_name = each_item["typeLine"]
-            #if contains_word(item_name, "Superior"):
-            #   item_name = item_name.split(' ', 1)[1]
-            #  base_name = item_name
-        else:
-            item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
-            base_name = each_item['typeLine']
-        # deal with white superior items
-        if contains_word(item_name, "Superior"):
-            item_name = item_name.split(' ', 1)[1]
-        if contains_word(base_name, "Superior"):
-            base_name = base_name.split(' ', 1)[1]
+        parse_items(each_item, poe_account, tabIndex)
+        
+        
+def parse_items(each_item, poe_account, tab_index):
+#print("name = ", each_item['typeLine'])
+    if 'properties' in each_item.keys():
+        for each_prop in each_item['properties']:
+            stdlogger.debug("each_prop %s", each_prop)
+    # calculate requirements
+    if 'requirements' in each_item.keys():
+        for each_req in each_item['requirements']:
+            # lvl
+            if 'Level' in each_req.values():
+                rlvl = each_req['values'][0][0]
+            else:
+                rlvl = 0
+            # str
+            if 'Str' in each_req.values():
+                rstr = each_req['values'][0][0]
+            else:
+                rstr = 0
+            # int
+            if 'Int' in each_req.values():
+                rint = each_req['values'][0][0]
+            else:
+                rint = 0
+            # dex
+            if 'Dex' in each_req.values():
+                rdex = each_req['values'][0][0]
+            else:
+                rdex = 0
+    else: # no requirements
+        rlvl = rstr = rint = rdex = 0
+    # check the new type field already exists in the database        # need to add other item categories e.g. gems, maps
+    # then need to add item type, 
+    # if superior, remove from nam
+    stdlogger.debug("item is %s", each_item)
+    stdlogger.debug("item name is %s", each_item['name'])
+    # White superior items
+    if contains_word(each_item["typeLine"], "Superior"):
+        item_name = each_item["typeLine"].split(' ', 1)[1]
+        base_name = item_name
+        stdlogger.info("item_name contains superior")
+    # Magic items
+    elif len(each_item['name']) == 0 and '<<set' in each_item["typeLine"]:
         try:
-            entry = poe.models.PoeItem(
-                        base_type = poe.models.ItemName.objects.get(name = base_name),
-                        #name = (poe.models.ItemName.objects
-                        #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
-                        #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
-                        name = item_name,
-                        owner = poe_account,
-                        ggg_id = each_item['id'],
-                        ilvl = each_item['ilvl'],
-                        tab_location = tabIndex,
-                        equipped = False,
-                        char_stash = False,
-                        x_location = each_item['x'],
-                        y_location = each_item['y'],
-                        raw_data = each_item,
-                        req_lvl = rlvl,
-                        req_str = rstr,
-                        req_int = rint,
-                        req_dex = rdex,
-                        )
-            #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
-            #items also need owners
-            #add logic to save all items in all tabs
-            #add logic to create new items type, and types generally
-            entry.save()
-        except ObjectDoesNotExist as e:
-            stdlogger.info("item not found base_name = %s each_item['name'] = %s", base_name, each_item['name'])
-            if base_name == "<<set:MS>><<set:M>><<set:S>>Robust Lapis Amulet of the Thunderhead":
-                print("HELLO !!!!!!!!")
-                return(each_item)
-        except IntegrityError as e:
-            stdlogger.debug("duplicate entry %s", each_item['typeLine'])
-    #return tab_items
+            base_name = each_item["typeLine"].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
+            item_name = base_name
+        except IndexError as e:
+            stdlogger.info("The index of base_name didn't work when trying to" 
+                           "parse a magic item %s", each_item["typeLine"])
+    # Rare Items
+    elif len(each_item['name']) == 0 and '<<set' not in each_item["typeLine"]:
+        item_name = each_item["typeLine"]
+        base_name = item_name
+    # Rare items
+    else:
+        item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
+        base_name = each_item['typeLine']
+    try:
+        the_base_type = poe.models.ItemName.objects.get(name = base_name)
+    except ObjectDoesNotExist as e:
+        the_base_type = None
+        stdlogger.info("item not found base_name = %s item_name = %s", base_name, item_name)
+        if base_name == "<<set:MS>><<set:M>><<set:S>>Robust Lapis Amulet of the Thunderhead":
+            print("HELLO !!!!!!!!")
+            pprint.pprint(each_item)
+            return(each_item)
+    try:
+        entry = poe.models.PoeItem(
+                    base_type = the_base_type,
+                    #name = (poe.models.ItemName.objects
+                    #ß        .get(name = each_item['typeLine'])), #change this to type and link to ItemName.name
+                    #add a name e.g. Grim Skewer which is taken from name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
+                    name = item_name,
+                    owner = poe_account,
+                    ggg_id = each_item['id'],
+                    ilvl = each_item['ilvl'],
+                    tab_location = tab_index,
+                    equipped = False,
+                    char_stash = False,
+                    x_location = each_item['x'],
+                    y_location = each_item['y'],
+                    raw_data = each_item,
+                    req_lvl = rlvl,
+                    req_str = rstr,
+                    req_int = rint,
+                    req_dex = rdex,
+                    )
+        #add a free text field and save the dictionary for each item, for the time being.  It will help debug later
+        #items also need owners
+        #add logic to save all items in all tabs
+        #add logic to create new items type, and types generally
+        entry.save()
+    except IntegrityError as e:
+        stdlogger.debug("duplicate entry %s", each_item['typeLine'])
+#return tab_items
     
 def get_tab_details(poe_account):
     """
@@ -347,13 +356,13 @@ def get_tab_items_file(poe_account, tabIndex):
 
 """
 import pprint
-import poe.models
 import poe.common.character_tools
+import poe.models
 import ast # enable conversion of string to dictionary
 
 #poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
-x = poe.common.character_tools.get_tab_items(account, 15)
+x = poe.common.character_tools.get_tab_items(account, 3)
 
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
