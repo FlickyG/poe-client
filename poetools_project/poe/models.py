@@ -11,6 +11,7 @@ from django.dispatch import receiver #for custom user profile
 from autoslug import AutoSlugField
 
 import logging
+from django.db.models.fields import SmallIntegerField
 
 stdlogger = logging.getLogger(__name__)
 stdlogger.warn("Entering poe.models")
@@ -487,11 +488,9 @@ class PoeItem(models.Model):
  'x': 10,
  'y': 3}
     """
-    #HERE
     base_type = models.ForeignKey(ItemName, models.DO_NOTHING) #typeline
     #explicits and their stats
     #doesn't handle uniques
-    # 'name': '<<set:MS>><<set:M>><<set:S>>Grim Skewer',
     name = models.CharField(max_length = 264, blank = False, ) 
     owner = models.ForeignKey(PoeAccount) 
     ggg_id = models.CharField(max_length = 100, blank = True, unique = True)
@@ -518,7 +517,21 @@ class PoeItem(models.Model):
                 self.x_location,
                 self.y_location,)
     
+    class Meta:
+        managed = True
+        db_table = 'poe_poeitem'
+        app_label = "poe"
+    
+    
+class PoeItemStat(models.Model):
+    stat_name = models.ForeignKey(StatTranslation, models.DO_NOTHING)
+    min = SmallIntegerField(default = False, blank = False)
+    max = SmallIntegerField(default = False, blank = False)
 
+    class Meta:
+        managed = True
+        db_table = 'poe_poeitemstat'
+        app_label = "poe"
     
 
 class PoeCharacter(models.Model):

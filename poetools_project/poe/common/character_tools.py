@@ -9,6 +9,7 @@ import time
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError,IntegrityError
+from django.core.exceptions import MultipleObjectsReturned
 import json
 
 stdlogger = logging.getLogger("poe_generic")
@@ -203,12 +204,23 @@ def parse_items(each_item, poe_account, tab_index):
         except IndexError as e:
             stdlogger.info("The index of base_name didn't work when trying to" 
                            "parse a magic item %s", each_item["typeLine"])
-    # Rare Items
+        for i in range(0,len(base_name.split()) - 1):
+            stdlogger.info("i %s %s", i, base_name)
+            try:
+                lookup = base_name.split()[i] + " " + base_name.split()[i+1]
+            except AttributeError as e:
+                stdlogger.info("Attribute Error lookup %s", lookup)
+            try:
+                base_name = poe.models.ItemName.objects.get(name = lookup)
+                break
+            except ObjectDoesNotExist as e:
+                stdlogger.info("magic base name not found, as expected, %s", lookup)
+    # Rare Items pt 1 of 2
     elif len(each_item['name']) == 0 and '<<set' not in each_item["typeLine"]:
         item_name = each_item["typeLine"]
         base_name = item_name
         rarity = "rare"
-    # Rare items    
+    # Rare items pt 2 of 2
     else:
         item_name = each_item['name'].split('<<set:MS>><<set:M>><<set:S>>',1)[1]
         base_name = each_item['typeLine']
@@ -248,6 +260,41 @@ def parse_items(each_item, poe_account, tab_index):
     else:
         #stdlogger.info("no quality detected")
         the_quality = 0
+    # Parse Mods
+    """
+    +9 to Dexterity
+    +29 to Intelligence
+    10% increased Evasion and Energy Shield
+    +19 to maximum Energy Shield
+    7% increased Stun and Block Recovery
+    +19 to maximum Energy Shield
+    +27% to Fire Resistance
+    32% increased Stun Duration on Enemies
+    24% increased Stun and Block Recovery
+    Adds 1 to 2 Physical Damage to Attacks
+    """
+    if 'explicitMods' in each_item:
+        for each_mod in each_item['explicitMods']:
+            stdlogger.info("==")
+            stdlogger.info("Here is an explicitMod %s", each_mod)
+            # replace all +, % and numbers
+            numbers = "0123456789"
+            for n in numbers:
+                if n in each_mod:
+                    each_mod = each_mod.replace(n, '')
+            if '%' in each_mod:
+                each_mod = each_mod.replace('%', '+%')
+            try:
+                database_lookup = poe.models.StatTranslation.objects.get(name = each_mod)
+                stdlogger.debug("And here is the databse lookup %s", database_lookup)
+            except ObjectDoesNotExist as e:
+                stdlogger.info("This mod wasn't found %s", each_mod)
+            except ValueError as e:
+                stdlogger.info("Value Error %s", each_mod)
+            except IndexError as e:
+                stdlogger.info("Value Error %s", each_mod)
+            except MultipleObjectsReturned as e:
+                stdlogger.info("Multiple Objects Returned %s", each_mod)
     # Save Item
     try:
         entry = poe.models.PoeItem(
