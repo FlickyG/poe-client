@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError,IntegrityError
 from django.core.exceptions import MultipleObjectsReturned
 import json
+import re
 
 stdlogger = logging.getLogger("poe_generic")
 
@@ -275,25 +276,39 @@ def parse_items(each_item, poe_account, tab_index):
     """
     if 'explicitMods' in each_item:
         for each_mod in each_item['explicitMods']:
-            stdlogger.info("==")
-            stdlogger.info("Here is an explicitMod %s", each_mod)
+            original_mod = each_mod
             # replace all +, % and numbers
             numbers = "0123456789"
             for n in numbers:
                 if n in each_mod:
-                    each_mod = each_mod.replace(n, '')
-            if '%' in each_mod:
-                each_mod = each_mod.replace('%', '+%')
+                    each_mod = each_mod.replace(n, '+')
+            each_mod = re.sub('\++','+', each_mod)
+            if '+%' in each_mod:
+                stdlogger.info("plus percent in each_mod %s", each_mod)
+                #each_mod = each_mod.replace('+%', '+')
+                use the format entry in the stat translations file to work out if it should be +
+                for physical damage or +% for resistances
+                pass
+            elif '%' in each_mod:
+                each_mod = each_mod.replace('%', '+%') 
             try:
                 database_lookup = poe.models.StatTranslation.objects.get(name = each_mod)
                 stdlogger.debug("And here is the databse lookup %s", database_lookup)
             except ObjectDoesNotExist as e:
+                stdlogger.info("==")
+                stdlogger.info("Here is an explicitMod %s", original_mod)
                 stdlogger.info("This mod wasn't found %s", each_mod)
             except ValueError as e:
+                stdlogger.info("==")
+                stdlogger.info("Here is an explicitMod %s", original_mod)
                 stdlogger.info("Value Error %s", each_mod)
             except IndexError as e:
+                stdlogger.info("==")
+                stdlogger.info("Here is an explicitMod %s", original_mod)
                 stdlogger.info("Value Error %s", each_mod)
             except MultipleObjectsReturned as e:
+                stdlogger.info("==")
+                stdlogger.info("Here is an explicitMod %s", original_mod)
                 stdlogger.info("Multiple Objects Returned %s", each_mod)
     # Save Item
     try:
@@ -442,7 +457,7 @@ import ast # enable conversion of string to dictionary
 
 #poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
-x = poe.common.character_tools.get_tab_items(account, 3)
+x = poe.common.character_tools.get_tab_items(account, 15)
 
 stash_tab_items = poe.common.character_tools.get_tab_items(account, 2)
 
