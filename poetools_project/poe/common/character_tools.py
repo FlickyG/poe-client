@@ -13,8 +13,13 @@ from django.core.exceptions import MultipleObjectsReturned
 import json
 import re
 
-stdlogger = logging.getLogger("poe_generic")
 
+from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
+from poe.models import StatNames, FixName, Stats, ItemName, ItemType, ItemStat
+from poe.models import StatTranslation
+
+stdlogger = logging.getLogger("poe_generic")
+proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
 
 def make_throttle_hook(timeout=1.0):  # for eve market api calls
     """
@@ -281,16 +286,17 @@ def parse_items(each_item, poe_account, tab_index):
             numbers = "0123456789"
             for n in numbers:
                 if n in each_mod:
-                    each_mod = each_mod.replace(n, '+')
-            each_mod = re.sub('\++','+', each_mod)
-            if '+%' in each_mod:
+                    each_mod = each_mod.replace(n, '#')
+            each_mod = re.sub('#+','#', each_mod)
+            '''if '+%' in each_mod:
                 stdlogger.info("plus percent in each_mod %s", each_mod)
                 #each_mod = each_mod.replace('+%', '+')
-                use the format entry in the stat translations file to work out if it should be +
-                for physical damage or +% for resistances
+                #use the format entry in the stat translations file to work out if it should be +
+                #for physical damage or +% for resistances
                 pass
             elif '%' in each_mod:
-                each_mod = each_mod.replace('%', '+%') 
+                each_mod = each_mod.replace('%', '+%')
+            ''' 
             try:
                 database_lookup = poe.models.StatTranslation.objects.get(name = each_mod)
                 stdlogger.debug("And here is the databse lookup %s", database_lookup)
@@ -447,7 +453,46 @@ def get_tab_items_file(poe_account, tabIndex):
         with open(file, 'w') as outfile:
             json.dump(tab_data, outfile)
         x = x+1
-        
+
+def print_stat_trans():
+    proj_path = '/Users/adam.green/Documents/workspace/poe-client/poetools_project/'
+    data_path = proj_path+"poe/data/"
+    df = open(data_path+"stat_translations.json").read()
+    a = json.loads(df)
+    for x in a:
+        database_string = x['ids'][0]
+        stdlogger.info("Loading from file success")     
+
+def load_stat_translations():
+    #Load the RePoe JSON File
+    data_path = proj_path+"poe/data/"
+    df = open(data_path+"stat_translations.json").read()
+    a = json.loads(df)
+    
+    # scrape the file and add the model entries
+    for x in a:
+        # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
+        database_string = str(x["ids"][0])
+        database_string = (database_string.replace('_', ' ').title())
+        # download_string is the string appended to the item in the api download from ggg
+        download_string = str(x["English"][0]["string"]).replace('{0}','+')
+        download_string = str(x["English"][0]["string"]).replace('{1}','+')
+        try:
+            database_version = StatNames.objects.get(name = database_string)
+            stdlogger.info("success %s         %s", database_string, download_string)
+            # save mapping
+            mapping = StatTranslation.objects.get_or_create(
+                        name = download_string,
+                        web_name = database_version
+                        )
+            #mapping.save()
+        except StatNames.DoesNotExist:
+            pass # not expecting all lookups to work
+
+
+#trans = poe.models.StatTranslation.objects.all()
+#for x in trans:
+#    x.delete() 
 
 """
 import pprint

@@ -1036,9 +1036,12 @@ def load_stat_translations():
     for x in a:
         # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
         database_string = str(x["ids"][0])
-        database_string = (database_string.replace('{0}','+%')).title().replace('_', ' ')
+        logger.info("database_string %s", database_string)
+        database_string = (database_string).title().replace('_', ' ')
         # download_string is the string appended to the item in the api download from ggg
-        download_string = str(x["English"][0]["string"]).replace('{0}','+')
+        the_f = str(x["English"][0]["format"][0])
+        download_string = str(x["English"][0]["string"]).replace('{0}',the_f)
+        download_string = download_string.replace('{1}',the_f)
         
         try:
             database_version = StatNames.objects.get(name = database_string)
