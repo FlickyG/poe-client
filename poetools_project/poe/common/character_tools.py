@@ -313,9 +313,10 @@ def parse_items(each_item, poe_account, tab_index):
                 stdlogger.info("Here is an explicitMod %s", original_mod)
                 stdlogger.info("Value Error %s", each_mod)
             except MultipleObjectsReturned as e:
-                stdlogger.info("==")
-                stdlogger.info("Here is an explicitMod %s", original_mod)
-                stdlogger.info("Multiple Objects Returned %s", each_mod)
+                pass
+                #stdlogger.info("==")
+                #stdlogger.info("Here is an explicitMod %s", original_mod)
+                #stdlogger.info("Multiple Objects Returned %s", each_mod)
     # Save Item
     try:
         entry = poe.models.PoeItem(
