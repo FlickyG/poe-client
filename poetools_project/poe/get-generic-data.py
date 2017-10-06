@@ -1031,29 +1031,66 @@ def load_stat_translations():
     data_path = proj_path+"poe/data/"
     df = open(data_path+"stat_translations.json").read()
     a = json.loads(df)
-    
     # scrape the file and add the model entries
     for x in a:
         # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
         database_string = str(x["ids"][0])
-        logger.info("database_string %s", database_string)
-        database_string = (database_string).title().replace('_', ' ')
-        # download_string is the string appended to the item in the api download from ggg
-        the_f = str(x["English"][0]["format"][0])
-        download_string = str(x["English"][0]["string"]).replace('{0}',the_f)
-        download_string = download_string.replace('{1}',the_f)
-        
-        try:
-            database_version = StatNames.objects.get(name = database_string)
-            logger.info("success %s %s", database_string, download_string)
-            # save mapping
-            mapping = StatTranslation.objects.get_or_create(
-                        name = download_string,
-                        web_name = database_version
-                        )
-            #mapping.save()
-        except StatNames.DoesNotExist:
-            pass # not expecting all lookups to work
+        #stdlogger.debug("database_string %s", database_string)
+        database_string = (database_string).title().replace('_', ' ')  
+        if len(x["ids"]) == 1:
+            # in case there are more than one mapping
+            for y in range(0, len(x["English"])):
+                # download_string is the string appended to the item in the api download from ggg
+                the_f = str(x["English"][y]["format"][0])
+                download_string = str(x["English"][y]["string"]).replace('{0}',the_f)
+                #download_string = download_string.replace('{1}',the_f)
+                try:
+                    database_version = StatNames.objects.get(name = database_string)
+                    stdlogger.debug("success %s %s", database_string, download_string)
+                    # save mapping
+                    mapping = StatTranslation.objects.get_or_create(
+                                name = download_string,
+                                web_name = database_version
+                                )
+                    #mapping.save()
+                except StatNames.DoesNotExist:
+                    stdlogger.info("StatNames.DoesNotExist %s", database_string) # not expecting all lookups to work
+                except Exception:
+                    stdlogger.info("something else went wrong")
+        if len(x["ids"]) == 2:
+            stdlogger.info("length of ids is 2")
+            for y in range(0,2):
+                # download_string is the string appended to the item in the api download from ggg
+                the_f = str(x["English"][0]["format"][y])
+                index_string = ''.join(['{',str(y),'}'])
+                #stdlogger.info("raw download_string %s", str(x["English"][0]["string"]))
+                #stdlogger.info("index_string %s", index_string)
+                download_string = str(x["English"][0]["string"]) #.replace(index_string,the_f)
+                download_string = download_string.replace('{0}',the_f)
+                download_string = download_string.replace('{1}',the_f)
+                #stdlogger.info("download_string %s", download_string)
+                # database string is the equivalent version on the poe/items page
+                database_string = str(x["ids"][y])
+                database_string = (database_string).title().replace('_', ' ')
+                stdlogger.info("NEW database_string %s", database_string)
+                try:
+                    database_version = StatNames.objects.get(name = database_string)
+                    #stdlogger.info("success %s %s", database_string, download_string)
+                    # save mapping
+                    mapping = StatTranslation.objects.get_or_create(
+                                name = download_string,
+                                web_name = database_version
+                                )
+                    #mapping.save()
+                except StatNames.DoesNotExist:
+                    stdlogger.info("StatNames.DoesNotExist %s", database_string) # not expecting all lookups to work
+                except Exception:
+                    stdlogger.info("something else went wrong")
+        if len(x["ids"]) > 2:
+            # ['bleed_on_hit_with_attacks_%', 'global_bleed_on_hit', 'cannot_cause_bleeding']
+            # ['unique_chaos_damage_to_reflect_to_self_on_attack_%_chance', 'unique_minimum_chaos_damage_to_reflect_to_self_on_attack', 'unique_maximum_chaos_damage_to_reflect_to_self_on_attack']
+            # ['map_fishy_effect_0', 'map_fishy_effect_1', 'map_fishy_effect_2', 'map_fishy_effect_3']
+            stdlogger.info("length of ids is greater than 2 %s", str(x["ids"]))
 
 write_item_categories()
 write_fix_categories()
@@ -1067,7 +1104,7 @@ fetch_jewelry()
 
 # use RePOE for the rest
 # import stat mappings
-load_stat_translations()
+#load_stat_translations()
 # import uniques + stats
 # import gem types
 # import gems

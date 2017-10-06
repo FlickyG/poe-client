@@ -1,0 +1,26 @@
+[
+  {
+    "English": [
+      {
+        "condition": [
+          {},
+          {}
+        ],
+        "format": [
+          "#",
+          "#"
+        ],
+        "index_handlers": [
+          [],
+          []
+        ],
+        "string": "Adds {0} to {1} Physical Damage"
+      }
+    ],
+    "ids": [
+      "local_minimum_added_physical_damage",
+      "local_maximum_added_physical_damage"
+    ]
+  }
+]
+

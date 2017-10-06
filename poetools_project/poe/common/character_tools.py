@@ -157,7 +157,15 @@ def get_tab_items(poe_account, tabIndex):
             stdlogger.info("file not found %s", data_file)
             return(None)
     for each_item in tab_items:
-        parse_items(each_item, poe_account, tabIndex)
+        #stdlogger.info("name %s, type line %s", each_item["name"], each_item["typeLine"])
+        if contains_word( each_item["typeLine"], "Map"):
+            stdlogger.info("Map Found")
+        elif contains_word(each_item["typeLine"], "Leaguestone"):
+            stdlogger.info("Leaguestone Found")
+        elif contains_word(each_item["typeLine"], "Flask"): 
+            stdlogger.info("Flask Found")
+        else:
+            parse_items(each_item, poe_account, tabIndex)
         
         
 def parse_items(each_item, poe_account, tab_index):
@@ -287,7 +295,10 @@ def parse_items(each_item, poe_account, tab_index):
             for n in numbers:
                 if n in each_mod:
                     each_mod = each_mod.replace(n, '#')
-            each_mod = re.sub('#+','#', each_mod)
+            each_mod = re.sub('#+','#', each_mod) # remove duplicates
+            # handle decimals
+            each_mod = each_mod.replace("#.#%", "#%")
+            #also need a new function to modify the translations file
             '''if '+%' in each_mod:
                 stdlogger.info("plus percent in each_mod %s", each_mod)
                 #each_mod = each_mod.replace('+%', '+')
@@ -303,7 +314,7 @@ def parse_items(each_item, poe_account, tab_index):
             except ObjectDoesNotExist as e:
                 stdlogger.info("==")
                 stdlogger.info("Here is an explicitMod %s", original_mod)
-                stdlogger.info("This mod wasn't found %s", each_mod)
+                stdlogger.info("This mod wasn't found ObjectDoesNotExist %s", each_mod)
             except ValueError as e:
                 stdlogger.info("==")
                 stdlogger.info("Here is an explicitMod %s", original_mod)
@@ -311,7 +322,7 @@ def parse_items(each_item, poe_account, tab_index):
             except IndexError as e:
                 stdlogger.info("==")
                 stdlogger.info("Here is an explicitMod %s", original_mod)
-                stdlogger.info("Value Error %s", each_mod)
+                stdlogger.info("IndexError %s", each_mod)
             except MultipleObjectsReturned as e:
                 pass
                 #stdlogger.info("==")
@@ -423,6 +434,11 @@ def get_location(id):
     return (the_item.location)
 
 def get_item_name(id):
+    """
+    Accepts:    The numerical ID of the item of interest where these items are
+                those stored in people's inventory                
+    Returns:    The name of the item, e.g. "Rift Scratch"
+    """
     the_item = poe.models.PoeItem.objects.get(ggg_id = id)
     return (the_item.name)
 
@@ -469,26 +485,72 @@ def load_stat_translations():
     data_path = proj_path+"poe/data/"
     df = open(data_path+"stat_translations.json").read()
     a = json.loads(df)
-    
     # scrape the file and add the model entries
     for x in a:
         # data base string is the 'id' field in RePoe's file and needs a bit of regex to format it into the same as the GGG webpage
         database_string = str(x["ids"][0])
-        database_string = (database_string.replace('_', ' ').title())
-        # download_string is the string appended to the item in the api download from ggg
-        download_string = str(x["English"][0]["string"]).replace('{0}','+')
-        download_string = str(x["English"][0]["string"]).replace('{1}','+')
-        try:
-            database_version = StatNames.objects.get(name = database_string)
-            stdlogger.info("success %s         %s", database_string, download_string)
-            # save mapping
-            mapping = StatTranslation.objects.get_or_create(
-                        name = download_string,
-                        web_name = database_version
-                        )
-            #mapping.save()
-        except StatNames.DoesNotExist:
-            pass # not expecting all lookups to work
+        #stdlogger.debug("database_string %s", database_string)
+        database_string = (database_string).title().replace('_', ' ')  
+        if len(x["ids"]) == 1:
+            # in case there are more than one mapping
+            for y in range(0, len(x["English"])):
+                # download_string is the string appended to the item in the api download from ggg
+                the_f = str(x["English"][y]["format"][0])
+                download_string = str(x["English"][y]["string"]).replace('{0}',the_f)
+                #download_string = download_string.replace('{1}',the_f)
+                try:
+                    database_version = StatNames.objects.get(name = database_string)
+                    stdlogger.debug("success %s %s", database_string, download_string)
+                    # save mapping
+                    mapping = StatTranslation.objects.get_or_create(
+                                name = download_string,
+                                web_name = database_version
+                                )
+                    #mapping.save()
+                except StatNames.DoesNotExist:
+                    stdlogger.info("StatNames.DoesNotExist %s", database_string) # not expecting all lookups to work
+                except Exception:
+                    stdlogger.info("something else went wrong")
+        if len(x["ids"]) == 2:
+            stdlogger.info("length of ids is 2")
+            for y in range(0,2):
+                # download_string is the string appended to the item in the api download from ggg
+                the_f = str(x["English"][0]["format"][y])
+                index_string = ''.join(['{',str(y),'}'])
+                #stdlogger.info("raw download_string %s", str(x["English"][0]["string"]))
+                #stdlogger.info("index_string %s", index_string)
+                download_string = str(x["English"][0]["string"]) #.replace(index_string,the_f)
+                download_string = download_string.replace('{0}',the_f)
+                download_string = download_string.replace('{1}',the_f)
+                #stdlogger.info("download_string %s", download_string)
+                # database string is the equivalent version on the poe/items page
+                database_string = str(x["ids"][y])
+                database_string = (database_string).title().replace('_', ' ')
+                stdlogger.info("NEW database_string %s", database_string)
+                try:
+                    database_version = StatNames.objects.get(name = database_string)
+                    #stdlogger.info("success %s %s", database_string, download_string)
+                    # save mapping
+                    mapping = StatTranslation.objects.get_or_create(
+                                name = download_string,
+                                web_name = database_version
+                                )
+                    #mapping.save()
+                except StatNames.DoesNotExist:
+                    stdlogger.info("StatNames.DoesNotExist %s", database_string) # not expecting all lookups to work
+                except Exception:
+                    stdlogger.info("something else went wrong")
+        if len(x["ids"]) > 2:
+            # ['bleed_on_hit_with_attacks_%', 'global_bleed_on_hit', 'cannot_cause_bleeding']
+            # ['unique_chaos_damage_to_reflect_to_self_on_attack_%_chance', 'unique_minimum_chaos_damage_to_reflect_to_self_on_attack', 'unique_maximum_chaos_damage_to_reflect_to_self_on_attack']
+            # ['map_fishy_effect_0', 'map_fishy_effect_1', 'map_fishy_effect_2', 'map_fishy_effect_3']
+            stdlogger.info("length of ids is greater than 2 %s", str(x["ids"]))
+
+def delete_stat_translations():
+    """ Deletes all entrires in the stat translation table """
+    data = poe.models.StatTranslation.objects.all()
+    for d in data:
+        d.delete()
 
 
 #trans = poe.models.StatTranslation.objects.all()
@@ -501,7 +563,10 @@ import poe.common.character_tools
 import poe.models
 import ast # enable conversion of string to dictionary
 
-#poe.common.character_tools.register_flicky()
+poe.common.character_tools.delete_stat_translations()
+poe.common.character_tools.load_stat_translations()
+
+poe.common.character_tools.register_flicky()
 account = poe.models.PoeAccount.objects.get(acc_name = 'greenmasterflick')
 x = poe.common.character_tools.get_tab_items(account, 15)
 
@@ -661,5 +726,6 @@ pprint.pprint(y['items'][7])
  'x': 8,
  'y': 4}
 """
+
 
 
