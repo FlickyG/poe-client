@@ -182,7 +182,17 @@ class GenericDataTableContents(TestCase):
         for x in data:
             names.append(x.name)
         names.sort()
-        self.assertListEqual(names, ['Clothes', 'Jewelry', 'Weapons'])
+        self.assertListEqual(names, ['Card',
+                                     'Clothes',
+                                     'Essences',
+                                     'Flasks',
+                                     'Gems',
+                                     'Jewel',
+                                     'Jewelry',
+                                     'Leaguestone',
+                                     'Maps',
+                                     'Weapons']
+                             )
 
     def test_item_types(self):
         data = models.ItemType.objects.all()
