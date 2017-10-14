@@ -2,6 +2,8 @@ from django.db import models
 from django.db import utils 
 from django.template.defaultfilters import slugify #section 7.3
 from django.contrib.auth.models import User #section 9
+from django.core.validators import MinLengthValidator #to check sessid is correct
+
 
 import autoslug
 
@@ -377,7 +379,9 @@ class PoeAccount(models.Model):
     wipe the psql.
     """
     acc_name = models.CharField(max_length=32, blank=False, )
-    sessid = models.CharField(max_length=32, blank=False, )
+    sessid = models.CharField(max_length=32, blank=False, 
+                              validators=[MinLengthValidator(32)]
+                              )
   
     class Meta:
         managed = True

@@ -50,8 +50,9 @@ def index(request):
             form = ResetSessID(request.POST)
             if form.is_valid():
                 # get the right account
-                me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
-                
+                me = poe.models.PoeAccount.objects.get(
+                        acc_name = request.user.poeuser.poe_account_name
+                        )
                 # commit new sessid passed to here
                 me.sessid = form['new_sessid'].value()
                 me.save(update_fields=['sessid'])
@@ -159,9 +160,8 @@ def index_rango(request):
 
 
 def about(request):
-    
+    print("in the about view")
     context_dict = {'helloimage': 'download.png', 'boldmessage': datetime.datetime.now()}
-    
     # If the visits session varible exists, take it and use it.
     # If it doesn't, we haven't visited the site so set the count to zero.
     if request.session.get('visits'):
@@ -172,6 +172,7 @@ def about(request):
     context_dict['last_visit'] = request.session.get('last_visit')
     # remember to include the visit data
     return render(request, 'poe/about.html', context_dict)
+
 
 
 def hello_world(request):
@@ -374,7 +375,7 @@ def ggg_characters(request, account_name_slug):
 
 
 def get_data(request, account_name_slug):
-    print("hello get data", account_name_slug)
+    stdlogger.info("hello get data %s", account_name_slug)
     this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
     poe.common.character_tools.get_characters(this_account)
     return redirect(index)

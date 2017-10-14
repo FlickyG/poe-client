@@ -3,22 +3,13 @@ from django.core.urlresolvers import reverse
 from . import models
 #from . import modeltools as poe2
 # Create your tests here.
+from django.contrib import auth # for teting authentication
+from django.contrib.auth.models import User
 
-class SimpleTestCase(TestCase):
-    '''def test_registration(self):
-        url = reverse("registration_register")
-        response = self.client.post(url, {
-            "username":'mike2001',
-            "password1":"password123",
-            "password2":"password123",
-            "poe_sessid": "lkjhkjh23",
-            "poe_account_name": "mikesaccount",
-            "email": "s@s.com"
-        })
-        #self.assertEqual(response.status_code, 302) 
-        models.PoeUser.objects.get(username = "mike2001")
-        session = self.client.session
-        '''
+import logging
+stdlogger = logging.getLogger("poe_generic")
+
+class TestRegistration(TestCase):
    
     def test_index_page(self):
         url = reverse("index")
@@ -64,7 +55,6 @@ class SimpleTestCase(TestCase):
         response = self.client.post(url, {"new_sessid" :'sdsdsdsd'})
         self.assertEqual(response.status_code, 200)
         print("sessid resp", response)
-
                 
     def test_login(self):
         url = reverse("registration_register")
@@ -81,6 +71,63 @@ class SimpleTestCase(TestCase):
                                           "password" :'password123'})
         print(response, " ", response.status_code)
         self.assertEqual(response.status_code, 302) # login worked!
+
+class TestBannerButtons(TestCase):
+    
+    def setUp(self):
+        self.user = models.PoeUser.objects.create_user(username='testuser', password='12345')
+        self.user.poe_account_name = "testaccount"
+        self.user.save()
+        self.PoeAccount = models.PoeAccount.objects.get_or_create(acc_name = "testaccount2", sessid = "abcd")
+        print("setup self.PoeAccount", str(self.PoeAccount))
+        url= '/accounts/login/'
+        #response = self.client.post(url, {"username": "testuser",
+        #                                  "password" :'12345'})
+        login = self.client.login(username='testuser', password='12345')   
+        self.assertIn('_auth_user_id', self.client.session)     
+
+    def test_poe_button(self):
+        users = models.PoeUser.objects.all()
+        user = auth.get_user(self.client)
+        url= '/accounts/login/'
+        response = self.client.post(url, {"username": "testuser",
+                                          "password" :'12345'})
+        self.assertEqual(response.status_code, 302) # if redirected login worked!
+        self.assertEqual(self.user.is_authenticated(), True)
+        
+    def test_home_button(self):
+        pass
+        # currently tested in the TestRegistration suite
+        
+    def test_restricted_button(self):
+        url = reverse("restricted")
+        response = self.client.post(url)
+        self.assertIn(b"Since you're logged in, you can see this text!", response.content)
+
+    def test_about_button(self):
+        url = reverse("about")
+        response = self.client.get(url)
+        self.assertIn(b"<h1>About</h1>", response.content)
+        self.assertIn(b'src="/static/images/poe-title.jpg" alt="Picture of Rango"', response.content)
+
+    def test_logout_button(self):   
+        self.assertIn('_auth_user_id', self.client.session)
+        url = '/accounts/logout/?next=/poe/'
+        response = self.client.get(url)
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertEqual(response.status_code, 302)
+        
+    def test_refresh_data_button(self):
+        print("self.user.poe_account_name", self.user.poe_account_name)
+        url = '/'.join(["/poe/download_ggg_data", self.user.poe_account_name])
+        #url = "/poe/about/"
+        with self.assertRaises(ValueError):
+            response = self.client.post(url, follow = True)
+        
+        print("== finished ==")
+        self.assertRedirects(response, '/poe/', status_code=301)
+        
+    # Test Refresh Data Button Works
         
 
 class GenericDataTableLengths(TestCase):

@@ -44,18 +44,17 @@
                 {% endif %}
 {% else %}
 	<h1>Flicky says... hello {{user.username}}</h1>
-		 <div class="container">
+		 <div class="container-fluid  ">
 			Current Session ID: {{ old_sessid }}
   			<form action="" method="POST" >
   			{% csrf_token %}
-
     			{{ form }}
 				<input type="submit" value="Save" />
   			</form>
 		</div>
 			<p>&nbsp;</p>
 		</div>
-		<div class="col-xs-12 col-sm-6 placeholder">
+		<div class="col-xs-12 col-sm-11 placeholder">
         	<div class="panel panel-primary">
             	<div class="panel-heading">
                 	<h3 class="panel-title">Account Tools</h3>

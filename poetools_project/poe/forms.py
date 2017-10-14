@@ -2,6 +2,12 @@ from django import forms
 from poe.models import Page, Category, PoeUser, PoeAccount
 from django.contrib.auth.models import User #section 9
 from registration.forms import RegistrationForm # to enable custom fields
+import logging
+
+from django.core.validators import MinLengthValidator
+
+stdlogger = logging.getLogger("poe_generic")
+
 
 class CategoryForm(forms.ModelForm):
     name = forms.CharField(max_length=128, help_text="Please enter the category name.")
@@ -59,16 +65,26 @@ class PoeRegistrationForm(RegistrationForm):
             print("amazing")
           
     
+class SessID(forms.Field):
+    
+    def validate(self, session_id):
+        """Check if value consists only of valid emails."""
+        # Use the parent's handling of required fields, etc.
+        super().validate(session_id)
+        try: MinLengthValidator("abc")
+        except Exception as e: print("validator ", "abc")
+
 class ResetSessID(forms.ModelForm):
-    new_sessid = forms.CharField(max_length=128, help_text="Please update your session ID here", required = False)
+    new_sessid = SessID()
+    #forms.CharField(widget=forms.TextInput(attrs={'class':'special', 'size': '32'})                        )
     
     def __init__(self, *args, **kwargs):
         super(ResetSessID, self).__init__(*args, **kwargs)
-        print("init of ResetSessID")
+        stdlogger.info("init of ResetSessID")
         #print("dir")#, self.fields.items['new_sessid'])
         if kwargs.get('instance'):
             new_sessid = kwargs['instance'].new_essid
-            print("inner kwargs loop")
+            stdlogger.info("inner kwargs loop")
             #kwargs.setdefault('initial', {})['confirm_email'] = email
         return super(ResetSessID, self).__init__(*args, **kwargs)
     
