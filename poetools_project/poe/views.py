@@ -62,12 +62,10 @@ def index(request):
             else:
                 context_dict['errors'] = form.errors
                 print("form has errors", form.errors)
-                for x in poe.models.PoeAccount.objects.all():
-                    print("@@@", x)
                 me = poe.models.PoeAccount.objects.get(
                         acc_name = request.user.poeuser.poe_account_name
                         )
-                context_dict['errors'] = form.errors
+                #context_dict['errors'] = form.errors
                 context_dict["old_sessid"] = me.sessid
                 context_dict['form'] = form
                 for x, y in form.errors.items():
@@ -76,8 +74,8 @@ def index(request):
                 #return response
     
         else:
-            form = ResetSessID(request.GET)
-            context_dict = {'form': form}
+            form = ResetSessID()
+            context_dict = {'form': ResetSessID()}
             me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
             context_dict["old_sessid"] = me.sessid
  
@@ -368,5 +366,6 @@ def ggg_characters(request, account_name_slug):
 def get_data(request, account_name_slug):
     stdlogger.info("hello get data %s", account_name_slug)
     this_account = poe.models.PoeAccount.objects.get(acc_name = account_name_slug)
+    here, check we correctly handle the case where the session id is invalid
     poe.common.character_tools.get_characters(this_account)
     return redirect(index)

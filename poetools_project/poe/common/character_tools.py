@@ -15,6 +15,7 @@ from django.core.exceptions import MultipleObjectsReturned
 import json
 import re
 
+import django.http # so we can raise errors on authentication
 
 from poe.models import ItemCategory, FixCategory, FixType, Fix, Stats 
 from poe.models import StatNames, FixName, Stats, ItemName, ItemType, ItemStat
@@ -57,7 +58,7 @@ def get_characters(poe_account):
     resp = s.get(ggg_url, cookies = {'POESESSID': poe_account.sessid})
     if resp.status_code == 401: # handle test cases where there is no sessid    
         #stdlogger.info("resp %s", resp.content)
-        raise ValueError
+        return django.http.HttpResponse("Authentication failed - is your session token up to date?.")
     print("RESP '", resp, len(str(resp)), type(resp), resp.status_code)
     data = resp.json()
     live_charnames = set([line['name'] for line in data])

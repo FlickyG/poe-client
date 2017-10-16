@@ -67,7 +67,7 @@ class PoeRegistrationForm(RegistrationForm):
             print("amazing")
           
     
-class SessID(forms.Field):
+class SessID(forms.CharField):
     
     def validate(self, session_id):
         """Check if value consists only of valid emails."""
@@ -96,8 +96,7 @@ class ResetSessID(forms.ModelForm):
         #print("dir")#, self.fields.items['new_sessid'])
         if kwargs.get('instance'):
             new_sessid = kwargs['instance'].new_essid
-            stdlogger.info("inner kwargs loop")
-            #kwargs.setdefault('initial', {})['confirm_email'] = email
+            stdlogger.info("inner kwargs loop")        
         return super(ResetSessID, self).__init__(*args, **kwargs)
     
     class Meta:
