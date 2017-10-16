@@ -98,6 +98,27 @@ class TestBannerButtons(TestCase):
     def test_home_button(self):
         pass
         # currently tested in the TestRegistration suite
+    
+    def test_index_sessid_short_strings(self):
+        url = reverse('index')
+        response = self.client.post(url, {'new_sessid': "f14"}) #e9f624642fff826c62cf647573b70"})
+        self.assertFormError(
+                     response,
+                     'form',
+                     "new_sessid",
+                     'The Session ID needs to be exactly 32 characters long')
+        
+    def test_index_sessid_special_characters(self):
+        url = reverse('index')  
+        response = self.client.post(url,
+                    {'new_sessid': "e9f624642fff826c62cf647573baaa7$"})
+        self.assertFormError(
+                     response,
+                     'form',
+                     "new_sessid",
+                     ('The Session ID should only have letters and '
+                     'numbers, no special characters')
+                     )
         
     def test_restricted_button(self):
         url = reverse("restricted")
@@ -116,7 +137,7 @@ class TestBannerButtons(TestCase):
         response = self.client.get(url)
         self.assertNotIn('_auth_user_id', self.client.session)
         self.assertEqual(response.status_code, 302)
-        
+    
     def test_refresh_data_button(self):
         print("self.user.poe_account_name", self.user.poe_account_name)
         url = '/'.join(["/poe/download_ggg_data", self.user.poe_account_name])

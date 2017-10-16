@@ -39,66 +39,54 @@ stdlogger = logging.getLogger("poe_generic")
 
 
 def index(request):
-    #print("hello", request.new_sessid)
     request.session.set_test_cookie()
     item_category_list = ItemCategory.objects.all()
     modifications_list = FixCategory.objects.all()
     context_dict = {}
     if request.user.is_authenticated:
-        print("user", type(request.user))
         if request.method == 'POST':
-            form = ResetSessID(request.POST)
+            form = ResetSessID(request.POST)    
             if form.is_valid():
                 # get the right account
                 me = poe.models.PoeAccount.objects.get(
                         acc_name = request.user.poeuser.poe_account_name
                         )
                 # commit new sessid passed to here
+               # me.full_clean()
                 me.sessid = form['new_sessid'].value()
                 me.save(update_fields=['sessid'])
                 context_dict["old_sessid"] = me.sessid
-                context_dict['form'] = ResetSessID
+                context_dict['form'] = form
                 response = render(request,'poe/index.html', context_dict)
-                return response
+                #return response
             else:
-                print("form has errors", form.fields)
-                #form = PageForm(request.POST)
-                
-                for x in form.errors:
-                      for y in x:
-                          print(x, y)
+                context_dict['errors'] = form.errors
+                print("form has errors", form.errors)
+                me = poe.models.PoeAccount.objects.get(
+                        acc_name = request.user.poeuser.poe_account_name
+                        )
+                context_dict['errors'] = form.errors
+                context_dict["old_sessid"] = me.sessid
+                context_dict['form'] = form
+                for x, y in form.errors.items():
+                    print("errors", x, y)
                 response = render(request,'poe/index.html', context_dict)
-    
-                return response
+                #return response
     
         else:
-            context_dict = {'form': ResetSessID}
+            context_dict = {'form': form}
             me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
             context_dict["old_sessid"] = me.sessid
-            """
-                print("in the else clause", request.method)
-                if form.is_valid():
-                    print("form is valid")
-                       # probably better to use a redirect here.
-                    return category(request, category_name_slug)
-                else:
-                    print("form has errors")
-                    print(form.errors)
-                """
-                
-    
-    
+ 
     context_dict.update({'item_categories': item_category_list, 'mods': modifications_list})
-
+    # make sure the session keeps track of the number of visits
     visits = request.session.get('visits')
     if not visits:
         visits = 1
     reset_last_visit_time = False
-
     last_visit = request.session.get('last_visit')
     if last_visit:
         last_visit_time = datetime.datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-
         if (datetime.datetime.now() - last_visit_time).seconds > 0:
             # ...reassign the value of the cookie to +1 of what it was before...
             visits = visits + 1
@@ -107,7 +95,7 @@ def index(request):
     else:
         # Cookie last_visit doesn't exist, so create it to the current date/time.
         reset_last_visit_time = True
-
+    # make sure the session keeps track of time last visited
     if reset_last_visit_time:
         request.session['last_visit'] = str(datetime.datetime.now())
         request.session['visits'] = visits

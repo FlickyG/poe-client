@@ -50,6 +50,13 @@
   			{% csrf_token %}
     			{{ form }}
 				<input type="submit" value="Save" />
+                {% if errors %}
+                    {% for key, error in errors.items %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
   			</form>
 		</div>
 			<p>&nbsp;</p>

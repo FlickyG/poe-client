@@ -4,7 +4,9 @@ from django.contrib.auth.models import User #section 9
 from registration.forms import RegistrationForm # to enable custom fields
 import logging
 
-from django.core.validators import MinLengthValidator
+from django.core.validators import ValidationError
+from django.utils.translation import ugettext as _
+import re
 
 stdlogger = logging.getLogger("poe_generic")
 
@@ -71,8 +73,18 @@ class SessID(forms.Field):
         """Check if value consists only of valid emails."""
         # Use the parent's handling of required fields, etc.
         super().validate(session_id)
-        try: MinLengthValidator("abc")
-        except Exception as e: print("validator ", "abc")
+        if len(session_id) < 32 > len(session_id):
+            raise ValidationError(
+                                  _('The Session ID needs to be exactly 32 characters long'),
+                                  code = 'sessid wrong length'
+                                  )
+        if not re.match("^[A-Za-z0-9]*$", session_id):
+            print("regex error")
+            raise ValidationError(
+                                  _('The Session ID should only have letters and numbers, no special characters'),
+                                  code = 'sessid not alphanumeric'
+                                  )        
+        
 
 class ResetSessID(forms.ModelForm):
     new_sessid = SessID()
