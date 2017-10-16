@@ -72,9 +72,15 @@ class PoeUser(User):
 
     def save(self, *args, **kwargs):
         super(PoeUser, self).save(*args, **kwargs)
-        stdlogger.info("self.poe_account_name %s", self.poe_account_name)
+        stdlogger.info("save self.poe_account_name %s", self.poe_account_name)
         x = PoeAccount(acc_name = self.poe_account_name)
         x.save()
+        
+    def delete(self, *args, **kwargs):
+        super(PoeUser, self).save(*args, **kwargs)
+        stdlogger.info("delete self.poe_account_name %s", self.poe_account_name)
+        x = self.poe_account_name
+        PoeAccount.objects.get(acc_name = x).delete()
 
 class ItemCategory(models.Model):
     """
@@ -378,7 +384,7 @@ class PoeAccount(models.Model):
     authentication one intact.  This way users do not need to re-register if we
     wipe the psql.
     """
-    acc_name = models.CharField(max_length=32, blank=False, )
+    acc_name = models.CharField(max_length=32, blank=False, unique = True)
     sessid = models.CharField(max_length=32, blank=False, 
                               validators=[MinLengthValidator(32)]
                               )

@@ -75,17 +75,21 @@ class TestRegistration(TestCase):
 class TestBannerButtons(TestCase):
     
     def setUp(self):
-        self.user = models.PoeUser.objects.create_user(username='testuser', password='12345')
-        self.user.poe_account_name = "testaccount"
-        self.user.save()
-        self.PoeAccount = models.PoeAccount.objects.get_or_create(acc_name = "testaccount2", sessid = "abcd")
-        print("setup self.PoeAccount", str(self.PoeAccount))
+        self.user = models.PoeUser.objects.create_user(username='testuser', password='12345', poe_account_name = "testaccount")
+        #self.user.poe_account_name = "testaccount"
         url= '/accounts/login/'
-        #response = self.client.post(url, {"username": "testuser",
-        #                                  "password" :'12345'})
         login = self.client.login(username='testuser', password='12345')   
-        self.assertIn('_auth_user_id', self.client.session)     
+        self.assertIn('_auth_user_id', self.client.session) 
+            
 
+    def tearDown(self):
+        #self.user = models.PoeUser.objects.get(username = "testuser")
+        for x in models.PoeUser.objects.all():
+            x.delete()        
+    
+    def test_blank(self):
+        pass
+        
     def test_poe_button(self):
         users = models.PoeUser.objects.all()
         user = auth.get_user(self.client)
@@ -98,7 +102,8 @@ class TestBannerButtons(TestCase):
     def test_home_button(self):
         pass
         # currently tested in the TestRegistration suite
-    
+
+ 
     def test_index_sessid_short_strings(self):
         url = reverse('index')
         response = self.client.post(url, {'new_sessid': "f14"}) #e9f624642fff826c62cf647573b70"})
@@ -138,6 +143,7 @@ class TestBannerButtons(TestCase):
         self.assertNotIn('_auth_user_id', self.client.session)
         self.assertEqual(response.status_code, 302)
     
+
     def test_refresh_data_button(self):
         print("self.user.poe_account_name", self.user.poe_account_name)
         url = '/'.join(["/poe/download_ggg_data", self.user.poe_account_name])
@@ -147,7 +153,7 @@ class TestBannerButtons(TestCase):
         
         print("== finished ==")
         self.assertRedirects(response, '/poe/', status_code=301)
-        
+    
     # Test Refresh Data Button Works
         
 

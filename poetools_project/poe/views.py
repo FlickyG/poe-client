@@ -62,6 +62,8 @@ def index(request):
             else:
                 context_dict['errors'] = form.errors
                 print("form has errors", form.errors)
+                for x in poe.models.PoeAccount.objects.all():
+                    print("@@@", x)
                 me = poe.models.PoeAccount.objects.get(
                         acc_name = request.user.poeuser.poe_account_name
                         )
@@ -74,6 +76,7 @@ def index(request):
                 #return response
     
         else:
+            form = ResetSessID(request.GET)
             context_dict = {'form': form}
             me = poe.models.PoeAccount.objects.get(acc_name = request.user.poeuser.poe_account_name)
             context_dict["old_sessid"] = me.sessid

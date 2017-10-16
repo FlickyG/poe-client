@@ -3,6 +3,8 @@ from django.core.urlresolvers import reverse
 
 import pprint
 import poe.models
+import poe.views
+
 
 import logging
 import time
@@ -54,6 +56,7 @@ def get_characters(poe_account):
     ggg_url = "https://www.pathofexile.com/character-window/get-characters"
     resp = s.get(ggg_url, cookies = {'POESESSID': poe_account.sessid})
     if resp.status_code == 401: # handle test cases where there is no sessid    
+        #stdlogger.info("resp %s", resp.content)
         raise ValueError
     print("RESP '", resp, len(str(resp)), type(resp), resp.status_code)
     data = resp.json()
